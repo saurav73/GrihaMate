@@ -1,6 +1,7 @@
 package com.grihamate.service;
 
 import com.grihamate.dto.RegisterRequest;
+import com.grihamate.dto.UserDto;
 import com.grihamate.entity.EmailOtp;
 import com.grihamate.entity.EmailVerificationToken;
 import com.grihamate.entity.PropertyVerification;
@@ -115,11 +116,11 @@ public class UserService {
     public void resendVerificationEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        
+
         if (user.getEmailVerified()) {
             throw new RuntimeException("Email already verified");
         }
-        
+
         // Generate new token
         String token = generateVerificationToken();
         EmailVerificationToken verificationToken = new EmailVerificationToken();
@@ -128,7 +129,7 @@ public class UserService {
         verificationToken.setExpiryDate(LocalDateTime.now().plusDays(1));
         verificationToken.setUsed(false);
         tokenRepository.save(verificationToken);
-        
+
         // Send verification email
         emailService.sendVerificationEmail(user.getEmail(), token, user.getFullName());
     }
@@ -171,7 +172,7 @@ public class UserService {
 
         // Generate new OTP
         String otp = generateOtp();
-        
+
         // Save OTP to database
         EmailOtp emailOtp = new EmailOtp();
         emailOtp.setEmail(email);
@@ -202,5 +203,74 @@ public class UserService {
 
         return true;
     }
-}
 
+    @Transactional
+    public void verifyUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setVerificationStatus(User.VerificationStatus.VERIFIED);
+
+        // Send email notification
+        try {
+            emailService.sendVerificationStatusUpdate(user.getEmail(), user.getFullName(), "VERIFIED",
+                    user.getRole().name());
+        } catch (Exception e) {
+            System.err.println("Failed to send verification email: " + e.getMessage());
+        }
+
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void rejectUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setVerificationStatus(User.VerificationStatus.REJECTED);
+
+        // Send email notification
+        try {
+            emailService.sendVerificationStatusUpdate(user.getEmail(), user.getFullName(), "REJECTED",
+                    user.getRole().name());
+        } catch (Exception e) {
+            System.err.println("Failed to send rejection email: " + e.getMessage());
+        }
+
+        userRepository.save(user);
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Transactional
+    public UserDto upgradeToPremium(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getRole() != User.Role.LANDLORD) {
+            throw new RuntimeException("Only landlords can upgrade subscription");
+        }
+
+        user.setSubscriptionStatus(User.SubscriptionStatus.PREMIUM);
+        User savedUser = userRepository.save(user); // Persist change
+        return mapToDto(savedUser);
+    }
+
+    private UserDto mapToDto(User user) {
+        UserDto dto = new UserDto();
+        dto.setId(user.getId());
+        dto.setFullName(user.getFullName());
+        dto.setEmail(user.getEmail());
+        dto.setPhoneNumber(user.getPhoneNumber());
+        dto.setProfileImageUrl(user.getProfileImageUrl());
+        dto.setRole(user.getRole());
+        dto.setActive(user.getActive());
+        dto.setEmailVerified(user.getEmailVerified());
+        dto.setCitizenshipNumber(user.getCitizenshipNumber());
+        dto.setVerificationStatus(user.getVerificationStatus());
+        dto.setSubscriptionStatus(user.getSubscriptionStatus());
+        dto.setCreatedAt(user.getCreatedAt());
+        return dto;
+    }
+}

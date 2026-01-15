@@ -20,8 +20,7 @@ public class PropertyService {
 
     public List<PropertyDto> getAllAvailableProperties() {
         List<Property> properties = propertyRepository.findByStatusAndVerified(
-                Property.PropertyStatus.AVAILABLE, true
-        );
+                Property.PropertyStatus.AVAILABLE, true);
         return properties.stream()
                 .map(PropertyDto::fromEntity)
                 .collect(Collectors.toList());
@@ -31,6 +30,13 @@ public class PropertyService {
         List<Property> properties = propertyRepository.findByCity(city);
         return properties.stream()
                 .filter(p -> p.getStatus() == Property.PropertyStatus.AVAILABLE && p.getVerified())
+                .map(PropertyDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<PropertyDto> searchProperties(String city, java.math.BigDecimal minPrice, java.math.BigDecimal maxPrice,
+            Property.PropertyType propertyType, Integer minBedrooms) {
+        return propertyRepository.searchProperties(city, minPrice, maxPrice, propertyType, minBedrooms).stream()
                 .map(PropertyDto::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -54,6 +60,15 @@ public class PropertyService {
             throw new RuntimeException("Landlord account must be verified to create properties");
         }
 
+        // Check room limit logic
+        if (landlord.getSubscriptionStatus() == User.SubscriptionStatus.FREE) {
+            long propertyCount = propertyRepository.countByLandlord(landlord);
+            if (propertyCount >= 2) {
+                throw new RuntimeException(
+                        "Free plan limit reached (max 2 properties). Please upgrade to Premium to list more.");
+            }
+        }
+
         Property property = new Property();
         property.setTitle(propertyDto.getTitle());
         property.setDescription(propertyDto.getDescription());
@@ -69,6 +84,7 @@ public class PropertyService {
         property.setStatus(Property.PropertyStatus.AVAILABLE);
         property.setImageUrls(propertyDto.getImageUrls());
         property.setVirtualTourUrl(propertyDto.getVirtualTourUrl());
+        property.setFeatures(propertyDto.getFeatures());
         property.setVerified(false); // Requires admin verification
         property.setLandlord(landlord);
 
@@ -86,9 +102,3 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 }
-
-
-
-
-
-
