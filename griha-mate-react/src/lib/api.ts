@@ -15,6 +15,7 @@ export interface UserDto {
   emailVerified: boolean;
   citizenshipNumber?: string;
   verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
+  subscriptionStatus?: 'FREE' | 'PREMIUM';
   createdAt: string;
 }
 
@@ -39,6 +40,7 @@ export interface PropertyDto {
   verified: boolean;
   landlordId: number;
   landlordName: string;
+  features?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -179,6 +181,21 @@ export const propertiesAPI = {
   getMyProperties: async (): Promise<PropertyDto[]> => {
     return apiRequest<PropertyDto[]>('/properties/my-properties');
   },
+
+  search: async (params: any): Promise<PropertyDto[]> => {
+    const queryParams = new URLSearchParams();
+    if (params.city) queryParams.append('city', params.city);
+    if (params.minPrice) queryParams.append('minPrice', params.minPrice.toString());
+    if (params.maxPrice) queryParams.append('maxPrice', params.maxPrice.toString());
+    if (params.propertyType) queryParams.append('type', params.propertyType); // Note parameter name 'type'
+    if (params.minBedrooms) queryParams.append('minBedrooms', params.minBedrooms.toString());
+
+    return apiRequest<PropertyDto[]>(`/properties/search?${queryParams.toString()}`);
+  },
+
+  requestProperty: async (propertyId: number, message: string): Promise<PropertyRequestDto> => {
+    return propertyRequestAPI.create(propertyId, message);
+  },
 };
 
 // Contact API
@@ -226,6 +243,114 @@ export const adminAPI = {
   rejectUser: async (userId: number): Promise<{ message: string }> => {
     return apiRequest<{ message: string }>(`/admin/users/${userId}/reject`, {
       method: 'PUT',
+    });
+  },
+  getAllProperties: async (): Promise<PropertyDto[]> => {
+    return apiRequest<PropertyDto[]>('/admin/properties');
+  },
+  verifyProperty: async (propertyId: number): Promise<{ message: string }> => {
+    return apiRequest<{ message: string }>(`/admin/properties/${propertyId}/verify`, {
+      method: 'PUT',
+    });
+  },
+  rejectProperty: async (propertyId: number): Promise<{ message: string }> => {
+    return apiRequest<{ message: string }>(`/admin/properties/${propertyId}/reject`, {
+      method: 'PUT',
+    });
+  },
+};
+
+// Room Request API
+export interface RoomRequestDto {
+  id?: number;
+  seekerId?: number;
+  seekerName?: string;
+  seekerEmail?: string;
+  seekerPhone?: string;
+  city: string;
+  district: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
+  maxPrice?: number;
+  minPrice?: number;
+  minBedrooms?: number;
+  maxBedrooms?: number;
+  propertyType?: 'ROOM' | 'FLAT' | 'APARTMENT' | 'HOUSE';
+  additionalRequirements?: string;
+  active?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PropertyRequestDto {
+  id: number;
+  seekerId: number;
+  seekerName: string;
+  seekerEmail: string;
+  propertyId: number;
+  propertyTitle: string;
+  propertyPrice?: number;
+  propertyImage?: string;
+  message: string;
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'PAID';
+  createdAt: string;
+}
+
+export const propertyRequestAPI = {
+  create: async (propertyId: number, message: string): Promise<PropertyRequestDto> => {
+    return apiRequest<PropertyRequestDto>('/property-requests', {
+      method: 'POST',
+      body: JSON.stringify({ propertyId, message }),
+    });
+  },
+
+  getMyRequests: async (): Promise<PropertyRequestDto[]> => {
+    return apiRequest<PropertyRequestDto[]>('/property-requests/my-requests');
+  },
+
+  getLandlordRequests: async (): Promise<PropertyRequestDto[]> => {
+    return apiRequest<PropertyRequestDto[]>('/property-requests/landlord-requests');
+  },
+
+  updateStatus: async (id: number, status: string): Promise<PropertyRequestDto> => {
+    return apiRequest<PropertyRequestDto>(`/property-requests/${id}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    });
+  },
+};
+
+export const roomRequestAPI = {
+  create: async (data: RoomRequestDto): Promise<RoomRequestDto> => {
+    return apiRequest<RoomRequestDto>('/room-requests', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  getMyRequests: async (): Promise<RoomRequestDto[]> => {
+    return apiRequest<RoomRequestDto[]>('/room-requests/my-requests');
+  },
+
+  getAll: async (): Promise<RoomRequestDto[]> => {
+    return apiRequest<RoomRequestDto[]>('/room-requests/all');
+  },
+
+  getByCity: async (city: string): Promise<RoomRequestDto[]> => {
+    return apiRequest<RoomRequestDto[]>(`/room-requests/city/${city}`);
+  },
+
+  update: async (id: number, data: Partial<RoomRequestDto>): Promise<RoomRequestDto> => {
+    return apiRequest<RoomRequestDto>(`/room-requests/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  delete: async (id: number): Promise<{ message: string }> => {
+    return apiRequest<{ message: string }>(`/room-requests/${id}`, {
+      method: 'DELETE',
     });
   },
 };
@@ -343,3 +468,25 @@ export const imageAPI = {
   },
 };
 
+
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+});
+
+// Add auth token to requests
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export const subscriptionAPI = {
+  upgrade: async () => {
+    const response = await api.post('/subscription/upgrade');
+    return response.data;
+  }
+};
