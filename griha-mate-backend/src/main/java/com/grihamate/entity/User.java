@@ -80,6 +80,10 @@ public class User {
         updatedAt = LocalDateTime.now();
     }
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SubscriptionStatus subscriptionStatus = SubscriptionStatus.FREE;
+
     public enum Role {
         SEEKER, LANDLORD, ADMIN
     }
@@ -88,8 +92,11 @@ public class User {
         PENDING, VERIFIED, REJECTED
     }
 
+    public enum SubscriptionStatus {
+        FREE, PREMIUM
+    }
+
     public enum KycDocumentType {
         CITIZENSHIP, PASSPORT, DRIVING_LICENSE
     }
 }
-

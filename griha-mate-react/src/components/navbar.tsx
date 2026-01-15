@@ -65,11 +65,11 @@ export function Navbar() {
     <nav className="sticky top-0 z-[9999] w-full border-b bg-white/95 backdrop-blur-md shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white">
+        <Link to="/" className="flex items-center gap-2 transition-all duration-300 hover:opacity-90 hover:scale-105 group">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white group-hover:bg-primary-dark group-hover:scale-110 transition-all duration-300">
             <Home className="h-6 w-6" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-primary-dark">GrihaMate</span>
+          <span className="text-xl font-bold tracking-tight text-primary-dark group-hover:text-primary transition-colors duration-300">GrihaMate</span>
         </Link>
 
         {/* Desktop Navigation - Centered */}
@@ -91,7 +91,7 @@ export function Navbar() {
               </Link>
             )
           })}
-          
+
           {isLoggedIn ? (
             <>
               <div className="h-6 w-px bg-border mx-2" />
@@ -146,7 +146,7 @@ export function Navbar() {
             <>
               <div className="h-6 w-px bg-border mx-2" />
               <Link to="/login">
-                <Button variant="ghost" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2 border-primary text-primary hover:bg-primary hover:text-white">
                   <User className="h-4 w-4" />
                   Sign In
                 </Button>
@@ -212,7 +212,7 @@ export function Navbar() {
             ) : (
               <>
                 <Link to="/login" className="w-full" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start gap-2 text-lg">
+                  <Button variant="outline" className="w-full justify-start gap-2 text-lg border-primary text-primary hover:bg-primary hover:text-white">
                     <User className="h-5 w-5" />
                     Sign In
                   </Button>

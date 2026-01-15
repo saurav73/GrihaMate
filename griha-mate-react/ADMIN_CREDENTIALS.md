@@ -96,3 +96,4 @@ To create additional admin users, you can:
 
 **Remember:** Change the default password in production! 🔒
 
+

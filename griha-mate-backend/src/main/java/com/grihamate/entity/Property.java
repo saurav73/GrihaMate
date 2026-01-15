@@ -71,6 +71,11 @@ public class Property {
     @Column(columnDefinition = "TEXT", nullable = true)
     private String virtualTourUrl; // 360° tour URL
 
+    @ElementCollection
+    @CollectionTable(name = "property_features", joinColumns = @JoinColumn(name = "property_id"))
+    @Column(name = "feature")
+    private List<String> features = new ArrayList<>();
+
     @Column(nullable = false)
     private Boolean verified = false;
 
@@ -103,4 +108,3 @@ public class Property {
         AVAILABLE, RENTED, UNAVAILABLE
     }
 }
-

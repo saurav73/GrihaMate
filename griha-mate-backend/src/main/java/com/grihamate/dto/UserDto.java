@@ -21,6 +21,7 @@ public class UserDto {
     private Boolean emailVerified;
     private String citizenshipNumber;
     private User.VerificationStatus verificationStatus;
+    private User.SubscriptionStatus subscriptionStatus;
     private LocalDateTime createdAt;
 
     public static UserDto fromEntity(User user) {
@@ -35,8 +36,7 @@ public class UserDto {
                 user.getEmailVerified(),
                 user.getCitizenshipNumber(),
                 user.getVerificationStatus(),
-                user.getCreatedAt()
-        );
+                user.getSubscriptionStatus(),
+                user.getCreatedAt());
     }
 }
-

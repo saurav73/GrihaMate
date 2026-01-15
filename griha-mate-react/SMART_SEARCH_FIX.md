@@ -236,3 +236,4 @@ Users can now **always search** regardless of voice API status:
 **Date**: 2026-01-13
 **Approach**: Redesign to make text primary, voice optional
 
+

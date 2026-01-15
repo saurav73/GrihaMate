@@ -1,13 +1,11 @@
 import * as React from "react"
-import { 
-  AudioOutlined, 
-  AudioMutedOutlined, 
-  SearchOutlined, 
+import {
+  AudioOutlined,
+  AudioMutedOutlined,
   CloseOutlined
 } from "@ant-design/icons"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { toast } from "react-toastify"
 
 interface VoiceSearchDialogProps {
@@ -26,8 +24,8 @@ export function AISearchDialog({ onSearch }: VoiceSearchDialogProps) {
 
   // Check if browser supports Speech Recognition
   const isSpeechRecognitionSupported = React.useMemo(() => {
-    return typeof window !== 'undefined' && 
-           ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)
+    return typeof window !== 'undefined' &&
+      ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)
   }, [])
 
   React.useEffect(() => {
@@ -114,25 +112,25 @@ export function AISearchDialog({ onSearch }: VoiceSearchDialogProps) {
     recognition.onend = () => {
       console.log('🔴 Speech recognition ended')
       setIsListening(false)
-      
+
       // Auto-search when speech recognition ends
       setTimeout(() => {
         const currentQuery = latestQueryRef.current
         console.log('🔍 Auto-search attempting with query:', currentQuery)
-        
+
         if (currentQuery && currentQuery.trim()) {
           console.log('✅ Executing search for:', currentQuery)
           onSearch?.(currentQuery.trim())
           setIsOpen(false)
-          
+
           // Check if it's a nearby search
           const lowerQuery = currentQuery.toLowerCase()
-          const isNearbySearch = lowerQuery.includes('nearby') || 
-                                lowerQuery.includes('near me') || 
-                                lowerQuery.includes('near my location') ||
-                                lowerQuery.includes('closest') ||
-                                lowerQuery.includes('nearest')
-          
+          const isNearbySearch = lowerQuery.includes('nearby') ||
+            lowerQuery.includes('near me') ||
+            lowerQuery.includes('near my location') ||
+            lowerQuery.includes('closest') ||
+            lowerQuery.includes('nearest')
+
           if (isNearbySearch) {
             toast.success(`🎤 Voice search: Finding nearest properties...`, {
               position: "top-center",
@@ -144,7 +142,7 @@ export function AISearchDialog({ onSearch }: VoiceSearchDialogProps) {
               autoClose: 2000,
             })
           }
-          
+
           // Clear the ref after search
           latestQueryRef.current = ""
         } else {
@@ -181,18 +179,18 @@ export function AISearchDialog({ onSearch }: VoiceSearchDialogProps) {
 
     setTranscript("")
     setQuery("")
-    
+
     try {
       // Request microphone permission first
       await navigator.mediaDevices.getUserMedia({ audio: true })
-      
+
       // Permission granted, now start recognition
       if (recognitionRef.current) {
         recognitionRef.current.start()
       }
     } catch (error: any) {
       console.error('Error starting recognition:', error)
-      
+
       if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
         setPermissionDenied(true)
         toast.error("Microphone permission denied. Please allow microphone access and try again.", {
@@ -219,21 +217,6 @@ export function AISearchDialog({ onSearch }: VoiceSearchDialogProps) {
     }
   }
 
-  const handleSearch = () => {
-    if (query.trim()) {
-      onSearch?.(query.trim())
-      setIsOpen(false)
-      toast.success(`Searching for: "${query.trim()}"`, {
-        position: "top-center",
-        autoClose: 2000,
-      })
-    } else {
-      toast.warning("Please speak or type your search query", {
-        position: "top-center",
-        autoClose: 2000,
-      })
-    }
-  }
 
   const clearQuery = () => {
     setQuery("")
@@ -291,11 +274,10 @@ export function AISearchDialog({ onSearch }: VoiceSearchDialogProps) {
               <button
                 onClick={isListening ? stopListening : startListening}
                 disabled={!isSpeechRecognitionSupported || speechFailed}
-                className={`size-24 rounded-full flex items-center justify-center transition-all duration-500 ${
-                  isListening
-                    ? "bg-red-500 shadow-[0_0_40px_rgba(239,68,68,0.4)] scale-110 animate-pulse"
-                    : "bg-primary hover:bg-primary-dark shadow-xl disabled:opacity-30 disabled:cursor-not-allowed"
-                }`}
+                className={`size-24 rounded-full flex items-center justify-center transition-all duration-500 ${isListening
+                  ? "bg-red-500 shadow-[0_0_40px_rgba(239,68,68,0.4)] scale-110 animate-pulse"
+                  : "bg-primary hover:bg-primary-dark shadow-xl disabled:opacity-30 disabled:cursor-not-allowed"
+                  }`}
               >
                 {isListening ? (
                   <AudioMutedOutlined className="text-white" style={{ fontSize: '40px' }} />
@@ -303,13 +285,13 @@ export function AISearchDialog({ onSearch }: VoiceSearchDialogProps) {
                   <AudioOutlined className="text-white" style={{ fontSize: '40px' }} />
                 )}
               </button>
-              
+
               <p className="mt-4 text-sm font-medium text-center px-4 text-gray-600">
-                {isListening 
-                  ? "🎤 Listening... Speak now" 
+                {isListening
+                  ? "🎤 Listening... Speak now"
                   : "Optional: Tap mic for voice search"}
               </p>
-              
+
               <p className="mt-1 text-xs text-gray-500 text-center italic">
                 Or just type your search below
               </p>
@@ -320,7 +302,7 @@ export function AISearchDialog({ onSearch }: VoiceSearchDialogProps) {
                     <div className="text-xs font-bold text-primary uppercase tracking-wider">
                       {isListening ? "Transcribing..." : "Your Search"}
                     </div>
-                    <button 
+                    <button
                       onClick={clearQuery}
                       className="text-gray-600 hover:text-primary"
                     >
@@ -333,7 +315,7 @@ export function AISearchDialog({ onSearch }: VoiceSearchDialogProps) {
             </div>
           )}
         </div>
-        
+
         <div className="text-center mt-4">
           <p className="text-xs text-gray-500">
             🎤 Search will execute automatically when you finish speaking

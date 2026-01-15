@@ -17,3 +17,4 @@ public interface PropertyVerificationRepository extends JpaRepository<PropertyVe
 
 
 
+

@@ -38,7 +38,7 @@ export default {
         'gradient-overlay': 'linear-gradient(180deg, rgba(14, 36, 64, 0.8) 0%, rgba(46, 94, 153, 0.9) 100%)',
       },
       borderColor: {
-        DEFAULT: '#E7F0FA',
+        DEFAULT: '#A9CBF0', // sapphire-200 - much more visible than E7F0FA
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
@@ -59,4 +59,5 @@ export default {
   },
   plugins: [],
 }
+
 

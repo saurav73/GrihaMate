@@ -7,25 +7,32 @@
 
 :root {
   /* Sapphire Veil Color Palette */
-  --background: #E7F0FA; /* Very light blue */
-  --foreground: #0D2440; /* Deep navy */
+  --background: #E7F0FA;
+  /* Very light blue */
+  --foreground: #0A1628;
+  /* Much darker navy for better readability */
   --card: #FFFFFF;
   --card-foreground: #0D2440;
   --popover: #FFFFFF;
   --popover-foreground: #0D2440;
 
   /* Primary - Sapphire Blue */
-  --primary: #2E5E99; /* Main blue */
+  --primary: #2E5E99;
+  /* Main blue */
   --primary-foreground: #FFFFFF;
-  --primary-light: #7BA4D0; /* Medium blue */
-  --primary-lightest: #E7F0FA; /* Very light blue */
-  --primary-dark: #0D2440; /* Deep navy */
+  --primary-light: #7BA4D0;
+  /* Medium blue */
+  --primary-lightest: #E7F0FA;
+  /* Very light blue */
+  --primary-dark: #0D2440;
+  /* Deep navy */
 
   --secondary: #7BA4D0;
   --secondary-foreground: #FFFFFF;
 
   --muted: #E7F0FA;
-  --muted-foreground: #7BA4D0;
+  --muted-foreground: #2E5E99;
+  /* Darker for better readability */
 
   --accent: #7BA4D0;
   --accent-foreground: #0D2440;
@@ -33,17 +40,17 @@
   --destructive: #ef4444;
   --destructive-foreground: #FFFFFF;
 
-  --border: #E7F0FA;
-  --input: #E7F0FA;
+  --border: #A9CBF0;
+  --input: #A9CBF0;
   --ring: #2E5E99;
-  
+
   /* Chart colors using Sapphire palette */
   --chart-1: #2E5E99;
   --chart-2: #7BA4D0;
   --chart-3: #0D2440;
   --chart-4: #E7F0FA;
   --chart-5: #5789BA;
-  
+
   --radius: 1rem;
   --sidebar: #FFFFFF;
   --sidebar-foreground: #0D2440;
@@ -91,8 +98,8 @@
 }
 
 @theme inline {
-  --font-sans: "Geist", "Geist Fallback";
-  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --font-sans: 'Merriweather', serif;
+  --font-heading: 'Montserrat', sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -135,25 +142,29 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
-    @apply bg-background text-foreground selection:bg-primary/10;
+    @apply bg-background text-foreground selection:bg-primary/10 font-sans;
   }
+
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    @apply font-bold tracking-tight text-balance;
+    @apply font-heading font-bold tracking-tight text-balance;
   }
-  
+
   /* Ensure Leaflet maps don't override navigation */
   .leaflet-container {
     z-index: 0 !important;
   }
+
   .leaflet-pane {
     z-index: auto !important;
   }
+
   .leaflet-top,
   .leaflet-bottom {
     z-index: 1 !important;
@@ -166,8 +177,32 @@
     transform: translate(-50%, -50%) scale(0.8);
     opacity: 1;
   }
+
   100% {
     transform: translate(-50%, -50%) scale(2);
     opacity: 0;
+  }
+}
+
+/* Enhanced hover effects for interactive elements */
+@layer utilities {
+
+  /* Smooth transitions for all interactive elements */
+  a,
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"] {
+    @apply transition-all duration-300;
+  }
+
+  /* Enhanced link hover */
+  a:hover {
+    @apply transition-colors duration-300;
+  }
+
+  /* Card hover elevation */
+  .hover-lift:hover {
+    @apply -translate-y-1 shadow-lg;
   }
 }

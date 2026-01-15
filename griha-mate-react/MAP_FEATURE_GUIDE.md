@@ -223,3 +223,4 @@ src/
 
 For questions or improvements, check the component code at `/src/components/PropertyMap.tsx`
 
+

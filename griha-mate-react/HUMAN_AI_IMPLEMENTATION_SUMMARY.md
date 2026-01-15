@@ -336,3 +336,4 @@ The GrihaMate application now speaks with a **warm, human voice** powered by cut
 
 **Happy coding! May your messages always feel human! 🚀✨**
 
+

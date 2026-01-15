@@ -30,9 +30,12 @@ public class PropertyDto {
     private Property.PropertyStatus status;
     private List<String> imageUrls;
     private String virtualTourUrl;
+    private List<String> features;
     private Boolean verified;
     private Long landlordId;
     private String landlordName;
+    private String landlordEmail;
+    private String landlordPhone;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -55,12 +58,22 @@ public class PropertyDto {
         dto.setStatus(property.getStatus());
         dto.setImageUrls(property.getImageUrls());
         dto.setVirtualTourUrl(property.getVirtualTourUrl());
+        dto.setFeatures(property.getFeatures());
         dto.setVerified(property.getVerified());
-        dto.setLandlordId(property.getLandlord().getId());
-        dto.setLandlordName(property.getLandlord().getFullName());
+        // dto.setLandlordId(property.getLandlord().getId()); // Removed as per
+        // instruction
+        // dto.setLandlordName(property.getLandlord().getFullName()); // Moved into null
+        // check
         dto.setCreatedAt(property.getCreatedAt());
         dto.setUpdatedAt(property.getUpdatedAt());
+
+        if (property.getLandlord() != null) {
+            dto.setLandlordId(property.getLandlord().getId()); // Keep landlordId if landlord exists
+            dto.setLandlordName(property.getLandlord().getFullName());
+            dto.setLandlordEmail(property.getLandlord().getEmail());
+            dto.setLandlordPhone(property.getLandlord().getPhoneNumber());
+        }
+
         return dto;
     }
 }
-
