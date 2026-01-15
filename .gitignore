@@ -1,0 +1,19 @@
+# Backend - Java/Maven
+griha-mate-backend/target/
+griha-mate-backend/.mvn/wrapper/maven-wrapper.jar
+griha-mate-backend/**/*.class
+griha-mate-backend/*.log
+
+# Frontend - Node/React
+griha-mate-react/node_modules/
+griha-mate-react/dist/
+griha-mate-react/build/
+griha-mate-react/.env
+griha-mate-react/.env.local
+griha-mate-react/.DS_Store
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.swp
