@@ -86,7 +86,7 @@ export default function PricingPage() {
                   </div>
                 ))}
                 <Link to="/login" className="block mt-8">
-                  <Button className="w-full bg-[#2D3142] hover:bg-[#1F222E] rounded-xl h-12">
+                  <Button className="w-full bg-primary hover:bg-primary-dark text-white rounded-xl h-12 shadow-md hover:shadow-lg">
                     Upgrade to Premium
                   </Button>
                 </Link>
@@ -216,7 +216,7 @@ export default function PricingPage() {
                 Join thousands of users in Nepal's most trusted rental platform.
               </p>
               <Link to="/explore">
-                <Button className="bg-[#2D3142] hover:bg-[#1F222E] rounded-full px-8 h-12 font-bold">
+                <Button className="bg-primary hover:bg-primary-dark text-white rounded-full px-8 h-12 font-bold shadow-md hover:shadow-lg">
                   Explore Listings <ArrowRight className="ml-2 size-4" />
                 </Button>
               </Link>

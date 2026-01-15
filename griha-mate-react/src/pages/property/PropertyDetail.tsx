@@ -2,17 +2,16 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { propertiesAPI, contactAPI, paymentAPI } from "@/lib/api"
+import { propertiesAPI, paymentAPI } from "@/lib/api"
 import type { PropertyDto } from "@/lib/api"
-import { sendContactNotification } from "@/lib/emailService"
-import { generateSuccessMessage, generateErrorMessage, generateInfoMessage } from "@/lib/humanLanguage"
+import { generateSuccessMessage } from "@/lib/humanLanguage"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { MapPin, Bed, Bath, Square, Phone, CreditCard, Wallet, Share2, Heart, Maximize2, Navigation as NavigationIcon, ExternalLink } from "lucide-react"
+import { MapPin, Bed, Bath, Square, Phone, CreditCard, Wallet, Share2, Heart, Maximize2, Navigation as NavigationIcon, ExternalLink, CheckCircle2 } from "lucide-react"
 import { toast } from "react-toastify"
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
@@ -50,7 +49,7 @@ export default function PropertyDetailPage() {
 
         const data = await propertiesAPI.getById(Number(params.id))
         setProperty(data)
-        
+
         // Check if property is in favorites
         const savedFavorites = localStorage.getItem("favorites")
         const favoriteIds: number[] = savedFavorites ? JSON.parse(savedFavorites) : []
@@ -72,10 +71,10 @@ export default function PropertyDetailPage() {
 
   const toggleFavorite = () => {
     if (!property) return
-    
+
     const savedFavorites = localStorage.getItem("favorites")
     const favoriteIds: number[] = savedFavorites ? JSON.parse(savedFavorites) : []
-    
+
     if (isFavorite) {
       // Remove from favorites
       const updatedFavorites = favoriteIds.filter((id) => id !== property.id)
@@ -113,32 +112,36 @@ export default function PropertyDetailPage() {
     }
   }
 
-  const handleContact = async () => {
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
+  const [requestMessage, setRequestMessage] = useState("")
+
+  const handleRequestClick = () => {
+    if (!localStorage.getItem('token')) {
+      toast.info("Please login to request this property", { position: "top-right" })
+      navigate('/login?redirect=/property/' + params.id)
+      return
+    }
+    // Pre-fill message
+    setRequestMessage(`I am interested in your property: ${property?.title}. Please let me know if it's available.`)
+    setIsRequestModalOpen(true)
+  }
+
+  const submitRequest = async () => {
     if (!property) return
     try {
-      const userData = localStorage.getItem("user")
-      const user = userData ? JSON.parse(userData) : null
-      
-      const result = await contactAPI.contactLandlord(property.id, `I am interested in your property: ${property.title}`)
-      
-      // Send email notification to landlord (non-blocking)
-      if (user) {
-        sendContactNotification(
-          property.landlordName + '@grihamate.com', // This should come from the API
-          property.landlordName,
-          user.fullName,
-          user.email,
-          property.title,
-          `I am interested in your property: ${property.title}`
-        ).catch(err => console.warn('Failed to send contact notification:', err))
-      }
-      
-      toast.success(result.message, {
+      await propertiesAPI.requestProperty(property.id, requestMessage)
+
+      // Also send the email notification as before, effectively double-notifying or we can rely on backend.
+      // Since backend now sends email, we can skip frontend email trigger or keep it as backup?
+      // Backend PropertyRequestService sends email. So we don't need to send it from frontend.
+
+      toast.success("Request sent successfully! Landlord will contact you.", {
         position: "top-right",
         autoClose: 5000,
       })
+      setIsRequestModalOpen(false)
     } catch (err: any) {
-      toast.error(err.message || "Failed to contact landlord", {
+      toast.error(err.message || "Failed to send request", {
         position: "top-right",
         autoClose: 5000,
       })
@@ -148,7 +151,7 @@ export default function PropertyDetailPage() {
   const handlePayment = async (method: 'esewa' | 'card') => {
     if (!property) return
     setPaymentMethod(method)
-    
+
     try {
       if (method === 'esewa') {
         const result = await paymentAPI.initiateEsewa(property.price, property.id)
@@ -156,7 +159,7 @@ export default function PropertyDetailPage() {
         const form = document.createElement('form')
         form.method = 'POST'
         form.action = result.action
-        
+
         Object.keys(result).forEach(key => {
           if (key !== 'action') {
             const input = document.createElement('input')
@@ -166,7 +169,7 @@ export default function PropertyDetailPage() {
             form.appendChild(input)
           }
         })
-        
+
         document.body.appendChild(form)
         form.submit()
       } else {
@@ -271,6 +274,20 @@ export default function PropertyDetailPage() {
                   <h2 className="text-xl font-bold mb-2">Description</h2>
                   <p className="text-muted-foreground">{property.description}</p>
                 </div>
+
+                {property.features && property.features.length > 0 && (
+                  <div>
+                    <h2 className="text-xl font-bold mb-3">Amenities & Features</h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {property.features.map((feature, idx) => (
+                        <div key={idx} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                          <CheckCircle2 className="size-4 text-green-600" />
+                          <span className="text-sm font-medium text-gray-700">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -480,39 +497,38 @@ export default function PropertyDetailPage() {
                 </div>
 
                 <div className="space-y-3">
-                  <Button 
+                  <Button
                     className="w-full bg-primary hover:bg-primary-dark text-white shadow-md hover:shadow-lg transition-all"
                     size="lg"
-                    onClick={handleContact}
+                    onClick={handleRequestClick}
                   >
                     <Phone className="mr-2 size-5" />
-                    Contact Landlord
+                    Request to Book / Contact
                   </Button>
                   <Button
                     variant="outline"
-                    className={`w-full ${
-                      isFavorite
-                        ? "bg-red-500 hover:bg-red-600 text-white border-red-500"
-                        : "border-red-200 text-red-500 hover:bg-red-50 hover:border-red-500"
-                    }`}
+                    className={`w-full ${isFavorite
+                      ? "bg-red-500 hover:bg-red-600 text-white border-red-500"
+                      : "border-red-200 text-red-500 hover:bg-red-50 hover:border-red-500"
+                      }`}
                     onClick={toggleFavorite}
                   >
                     <Heart className={`mr-2 size-4 ${isFavorite ? "fill-white" : ""}`} />
                     {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
                   </Button>
-                  
+
                   <div className="pt-3 border-t border-primary-lightest space-y-2">
                     <p className="text-xs text-muted-foreground font-medium mb-2">Payment Options</p>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="w-full border-primary-light text-primary hover:bg-primary-lightest"
                       onClick={() => handlePayment('esewa')}
                     >
                       <Wallet className="mr-2 size-4" />
                       Pay with eSewa
                     </Button>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="w-full border-primary-light text-primary hover:bg-primary-lightest"
                       onClick={() => handlePayment('card')}
                     >
@@ -536,6 +552,30 @@ export default function PropertyDetailPage() {
           </div>
         </div>
       </main>
+
+      {/* Request Dialog */}
+      <Dialog open={isRequestModalOpen} onOpenChange={setIsRequestModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Contact Landlord</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Message</Label>
+              <textarea
+                className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px]"
+                value={requestMessage}
+                onChange={(e) => setRequestMessage(e.target.value)}
+                placeholder="Hi, I am interested in this property..."
+              />
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setIsRequestModalOpen(false)}>Cancel</Button>
+              <Button onClick={submitRequest}>Send Request</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Sprite Payment Dialog */}
       <Dialog open={showPayment} onOpenChange={setShowPayment}>
@@ -605,7 +645,7 @@ export default function PropertyDetailPage() {
                 Cancel
               </Button>
               <Button
-                className="flex-1 bg-primary-dark hover:bg-[#1F222E]"
+                className="flex-1 bg-primary hover:bg-primary-dark text-white shadow-md hover:shadow-lg"
                 onClick={async () => {
                   if (!property) return
                   setProcessingPayment(true)

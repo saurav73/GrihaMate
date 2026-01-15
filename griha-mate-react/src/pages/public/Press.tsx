@@ -115,7 +115,7 @@ export default function PressPage() {
             </div>
 
             <div className="text-center">
-              <Button className="bg-[#2D3142] hover:bg-[#1F222E] rounded-xl px-8 h-12">
+              <Button className="bg-primary hover:bg-primary-dark text-white rounded-xl px-8 h-12 shadow-md hover:shadow-lg">
                 <Download className="size-4 mr-2" /> Download Full Media Kit
               </Button>
             </div>

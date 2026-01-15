@@ -159,14 +159,14 @@ export default function TrustSafetyPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/explore">
-                  <Button className="bg-white text-primary-dark hover:bg-white/90 rounded-full px-8 h-12 font-bold">
+                  <Button className="bg-primary hover:bg-primary-dark text-white rounded-full px-8 h-12 font-bold shadow-lg hover:shadow-xl transition-all">
                     Find a Room
                   </Button>
                 </Link>
                 <Link to="/list-property">
                   <Button
                     variant="outline"
-                    className="border-white text-white hover:bg-white/10 rounded-full px-8 h-12 font-bold"
+                    className="border-2 border-white text-white hover:bg-white hover:text-primary-dark rounded-full px-8 h-12 font-bold transition-all"
                   >
                     List Property
                   </Button>

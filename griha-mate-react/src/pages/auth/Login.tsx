@@ -9,8 +9,8 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { authAPI } from "@/lib/api"
 import { sendLoginNotification } from "@/lib/emailService"
-import { generateSuccessMessage, generateErrorMessage, generateGreeting } from "@/lib/humanLanguage"
-import { useState, useEffect } from "react"
+import { generateSuccessMessage, generateErrorMessage } from "@/lib/humanLanguage"
+import { useState } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { toast } from "react-toastify"
 
@@ -30,18 +30,18 @@ export default function LoginPage() {
       const response = await authAPI.login(email, password)
       localStorage.setItem('token', response.token)
       localStorage.setItem('user', JSON.stringify(response.user))
-      
+
       // Send login notification email (non-blocking)
       sendLoginNotification(response.user.email, response.user.fullName, new Date())
         .catch(err => console.warn('Failed to send login notification:', err))
-      
+
       // Generate human-like welcome message
       const welcomeMsg = await generateSuccessMessage('login', `user ${response.user.fullName.split(' ')[0]}`)
       toast.success(welcomeMsg, {
         position: "top-right",
         autoClose: 3000,
       })
-      
+
       // Redirect based on user role
       if (response.user.role === 'ADMIN') {
         navigate('/admin')
@@ -54,7 +54,7 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       const errorMessage = err.message || 'Login failed. Please check your credentials.'
-      
+
       // Show specific error messages with human-like language
       if (errorMessage.includes('Invalid email or password') || errorMessage.includes('Bad credentials')) {
         const msg = await generateErrorMessage('invalid credentials', 'login attempt')
@@ -93,7 +93,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-primary-lightest flex flex-col">
       <Navbar />
-      
+
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="w-full max-w-md space-y-6">
           <Card className="w-full border-primary-lightest shadow-2xl rounded-3xl overflow-hidden bg-white">
@@ -103,16 +103,16 @@ export default function LoginPage() {
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="seeker" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-8 bg-white p-1 rounded-xl">
+                <TabsList className="grid w-full grid-cols-2 mb-8 bg-primary-lightest p-1 rounded-xl">
                   <TabsTrigger
                     value="seeker"
-                    className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                    className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md text-primary-dark font-medium"
                   >
                     Seeker
                   </TabsTrigger>
                   <TabsTrigger
                     value="landlord"
-                    className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                    className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md text-primary-dark font-medium"
                   >
                     Landlord
                   </TabsTrigger>
@@ -147,20 +147,20 @@ export default function LoginPage() {
                     </div>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                      <Input 
-                        id="password" 
-                        type="password" 
-                        className="pl-10 border-primary-lightest h-12 rounded-xl" 
+                      <Input
+                        id="password"
+                        type="password"
+                        className="pl-10 border-primary-lightest h-12 rounded-xl"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        required 
+                        required
                         disabled={loading}
                       />
                     </div>
                   </div>
-                  <Button 
+                  <Button
                     type="submit"
-                    className="w-full bg-primary-dark hover:bg-[#1F222E] h-12 rounded-xl text-base font-bold mt-4"
+                    className="w-full bg-primary hover:bg-primary-dark text-white h-12 rounded-xl text-base font-bold mt-4 shadow-md hover:shadow-lg transition-all"
                     disabled={loading}
                   >
                     {loading ? 'Signing in...' : 'Sign In'} <ArrowRight className="ml-2 size-4" />
@@ -187,7 +187,7 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   )

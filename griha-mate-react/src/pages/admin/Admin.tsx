@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CheckCircle2, XCircle, Clock, Users } from "lucide-react"
+import { CheckCircle2, XCircle, Clock, Users, MapPin, Home as HomeIcon } from "lucide-react"
 import { toast } from "react-toastify"
-import { adminAPI } from "@/lib/api"
+import { adminAPI, roomRequestAPI, type RoomRequestDto } from "@/lib/api"
 
 interface User {
   id: number
@@ -23,6 +23,7 @@ interface User {
 export default function AdminPage() {
   const navigate = useNavigate()
   const [users, setUsers] = useState<User[]>([])
+  const [roomRequests, setRoomRequests] = useState<RoomRequestDto[]>([])
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
 
@@ -69,8 +70,18 @@ export default function AdminPage() {
         setLoading(false)
       }
     }
+
+    const fetchRoomRequests = async () => {
+      try {
+        const data = await roomRequestAPI.getAll()
+        setRoomRequests(data)
+      } catch (err: any) {
+        console.error("Failed to load room requests:", err)
+      }
+    }
     
     fetchUsers()
+    fetchRoomRequests()
   }, [navigate])
 
   const handleVerify = async (userId: number) => {
@@ -323,6 +334,81 @@ export default function AdminPage() {
                 )}
               </TabsContent>
             </Tabs>
+          </CardContent>
+        </Card>
+
+        {/* Room Requests */}
+        <Card className="border-primary-lightest mt-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MapPin className="size-5 text-primary" />
+              Room Requests ({roomRequests.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {roomRequests.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">No active room requests</p>
+            ) : (
+              <div className="space-y-4">
+                {roomRequests.map((request) => (
+                  <Card key={request.id} className="border-primary-lightest">
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h4 className="font-semibold text-lg">{request.seekerName}</h4>
+                            <Badge variant="secondary">{request.active ? "Active" : "Inactive"}</Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3">{request.seekerEmail} • {request.seekerPhone}</p>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                            <div className="flex items-center gap-2">
+                              <MapPin className="size-4 text-primary" />
+                              <span><strong>Location:</strong> {request.city}, {request.district}</span>
+                            </div>
+                            {request.address && (
+                              <div>
+                                <strong>Area:</strong> {request.address}
+                              </div>
+                            )}
+                            {(request.minPrice || request.maxPrice) && (
+                              <div className="flex items-center gap-2">
+                                <HomeIcon className="size-4 text-primary" />
+                                <span>
+                                  <strong>Budget:</strong> {request.minPrice ? `Rs. ${request.minPrice.toLocaleString()}` : 'Any'} - 
+                                  {request.maxPrice ? ` Rs. ${request.maxPrice.toLocaleString()}` : ' Any'}
+                                </span>
+                              </div>
+                            )}
+                            {(request.minBedrooms || request.maxBedrooms) && (
+                              <div>
+                                <strong>Bedrooms:</strong> {request.minBedrooms || 'Any'} - {request.maxBedrooms || 'Any'}
+                              </div>
+                            )}
+                            {request.propertyType && (
+                              <div>
+                                <strong>Type:</strong> {request.propertyType}
+                              </div>
+                            )}
+                          </div>
+                          
+                          {request.additionalRequirements && (
+                            <div className="mt-3 p-3 bg-primary-lightest rounded-lg">
+                              <p className="text-sm"><strong>Additional Requirements:</strong></p>
+                              <p className="text-sm text-muted-foreground">{request.additionalRequirements}</p>
+                            </div>
+                          )}
+                          
+                          <p className="text-xs text-muted-foreground mt-3">
+                            Requested: {request.createdAt ? new Date(request.createdAt).toLocaleDateString() : 'N/A'}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </main>

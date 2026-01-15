@@ -106,7 +106,7 @@ export default function CareersPage() {
                         </span>
                       </div>
                     </div>
-                    <Button className="bg-[#2D3142] hover:bg-[#1F222E] rounded-xl px-6">
+                    <Button className="bg-primary hover:bg-primary-dark text-white rounded-xl px-6 shadow-md hover:shadow-lg">
                       Apply Now <ArrowRight className="ml-2 size-4" />
                     </Button>
                   </div>

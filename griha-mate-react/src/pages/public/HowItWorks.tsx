@@ -25,46 +25,46 @@ export default function HowItWorksPage() {
             <h2 className="text-3xl font-bold text-primary-dark">Find Your Perfect Home</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="border-primary-lightest">
+            <Card className="border-primary-lightest hover:border-primary-light hover:shadow-lg transition-all duration-300 cursor-pointer group">
               <CardContent className="p-6 text-center">
-                <div className="size-16 rounded-full bg-primary-lightest flex items-center justify-center mx-auto mb-4">
-                  <User className="size-8 text-primary-dark" />
+                <div className="size-16 rounded-full bg-primary-lightest flex items-center justify-center mx-auto mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                  <User className="size-8 text-primary-dark group-hover:text-white transition-colors duration-300" />
                 </div>
-                <div className="text-2xl font-bold text-primary-dark mb-2">1. Sign Up</div>
+                <div className="text-2xl font-bold text-primary-dark mb-2 group-hover:text-primary transition-colors duration-300">1. Sign Up</div>
                 <p className="text-muted-foreground mb-4">
                   Create your account and verify your identity with citizenship documents
                 </p>
                 <Link to="/register">
-                  <Button variant="outline" size="sm" className="border-primary text-primary-dark">
+                  <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-white">
                     Get Started <ArrowRight className="ml-2 size-4" />
                   </Button>
                 </Link>
               </CardContent>
             </Card>
 
-            <Card className="border-primary-lightest">
+            <Card className="border-primary-lightest hover:border-primary-light hover:shadow-lg transition-all duration-300 cursor-pointer group">
               <CardContent className="p-6 text-center">
-                <div className="size-16 rounded-full bg-primary-lightest flex items-center justify-center mx-auto mb-4">
-                  <Search className="size-8 text-primary-dark" />
+                <div className="size-16 rounded-full bg-primary-lightest flex items-center justify-center mx-auto mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                  <Search className="size-8 text-primary-dark group-hover:text-white transition-colors duration-300" />
                 </div>
-                <div className="text-2xl font-bold text-primary-dark mb-2">2. Explore</div>
+                <div className="text-2xl font-bold text-primary-dark mb-2 group-hover:text-primary transition-colors duration-300">2. Explore</div>
                 <p className="text-muted-foreground mb-4">
                   Browse verified properties with 360° virtual tours and detailed information
                 </p>
                 <Link to="/explore">
-                  <Button variant="outline" size="sm" className="border-primary text-primary-dark">
+                  <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-white">
                     Explore Now <ArrowRight className="ml-2 size-4" />
                   </Button>
                 </Link>
               </CardContent>
             </Card>
 
-            <Card className="border-primary-lightest">
+            <Card className="border-primary-lightest hover:border-primary-light hover:shadow-lg transition-all duration-300 cursor-pointer group">
               <CardContent className="p-6 text-center">
-                <div className="size-16 rounded-full bg-primary-lightest flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle2 className="size-8 text-primary-dark" />
+                <div className="size-16 rounded-full bg-primary-lightest flex items-center justify-center mx-auto mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                  <CheckCircle2 className="size-8 text-primary-dark group-hover:text-white transition-colors duration-300" />
                 </div>
-                <div className="text-2xl font-bold text-primary-dark mb-2">3. Connect & Rent</div>
+                <div className="text-2xl font-bold text-primary-dark mb-2 group-hover:text-primary transition-colors duration-300">3. Connect & Rent</div>
                 <p className="text-muted-foreground mb-4">
                   Contact landlords, schedule visits, and secure your new home with secure payments
                 </p>
@@ -80,36 +80,36 @@ export default function HowItWorksPage() {
             <h2 className="text-3xl font-bold text-primary-dark">List Your Property</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="border-primary-lightest">
+            <Card className="border-primary-lightest hover:border-primary-light hover:shadow-lg transition-all duration-300 cursor-pointer group">
               <CardContent className="p-6 text-center">
-                <div className="size-16 rounded-full bg-primary-lightest flex items-center justify-center mx-auto mb-4">
-                  <ShieldCheck className="size-8 text-primary-dark" />
+                <div className="size-16 rounded-full bg-primary-lightest flex items-center justify-center mx-auto mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                  <ShieldCheck className="size-8 text-primary-dark group-hover:text-white transition-colors duration-300" />
                 </div>
-                <div className="text-2xl font-bold text-primary-dark mb-2">1. Verify</div>
+                <div className="text-2xl font-bold text-primary-dark mb-2 group-hover:text-primary transition-colors duration-300">1. Verify</div>
                 <p className="text-muted-foreground mb-4">
                   Register as a landlord and complete KYC verification with property documents
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-primary-lightest">
+            <Card className="border-primary-lightest hover:border-primary-light hover:shadow-lg transition-all duration-300 cursor-pointer group">
               <CardContent className="p-6 text-center">
-                <div className="size-16 rounded-full bg-primary-lightest flex items-center justify-center mx-auto mb-4">
-                  <Home className="size-8 text-primary-dark" />
+                <div className="size-16 rounded-full bg-primary-lightest flex items-center justify-center mx-auto mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                  <Home className="size-8 text-primary-dark group-hover:text-white transition-colors duration-300" />
                 </div>
-                <div className="text-2xl font-bold text-primary-dark mb-2">2. List Property</div>
+                <div className="text-2xl font-bold text-primary-dark mb-2 group-hover:text-primary transition-colors duration-300">2. List Property</div>
                 <p className="text-muted-foreground mb-4">
                   Add your property with photos, 360° tours, and detailed information
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-primary-lightest">
+            <Card className="border-primary-lightest hover:border-primary-light hover:shadow-lg transition-all duration-300 cursor-pointer group">
               <CardContent className="p-6 text-center">
-                <div className="size-16 rounded-full bg-primary-lightest flex items-center justify-center mx-auto mb-4">
-                  <Users className="size-8 text-primary-dark" />
+                <div className="size-16 rounded-full bg-primary-lightest flex items-center justify-center mx-auto mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                  <Users className="size-8 text-primary-dark group-hover:text-white transition-colors duration-300" />
                 </div>
-                <div className="text-2xl font-bold text-primary-dark mb-2">3. Connect</div>
+                <div className="text-2xl font-bold text-primary-dark mb-2 group-hover:text-primary transition-colors duration-300">3. Connect</div>
                 <p className="text-muted-foreground mb-4">
                   Receive inquiries from verified seekers and manage applications easily
                 </p>

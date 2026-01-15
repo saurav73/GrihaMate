@@ -478,19 +478,23 @@ export default function RegisterPage() {
                 }}
                 className={`p-6 rounded-2xl border-2 transition-all text-left ${
                   formData.userType === "seeker"
-                    ? "border-[#2D3142] bg-white shadow-lg scale-105"
-                    : "border-primary-lightest bg-white hover:border-[#2D3142] hover:shadow-md"
+                    ? "border-primary bg-primary-lightest shadow-lg scale-105"
+                    : "border-primary-light bg-white hover:border-primary hover:shadow-md hover:bg-primary-lightest/50"
                 }`}
               >
                 <div className="flex items-center gap-4">
-                  <div className="size-12 rounded-xl bg-primary-dark flex items-center justify-center">
-                    <User className="size-6 text-white" />
+                  <div className={`size-12 rounded-xl flex items-center justify-center transition-colors ${
+                    formData.userType === "seeker" ? "bg-primary text-white" : "bg-primary-lightest border-2 border-primary-light"
+                  }`}>
+                    <User className={`size-6 ${formData.userType === "seeker" ? "text-white" : "text-primary"}`} />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-lg mb-1">I'm Looking for a Room</h3>
+                    <h3 className={`font-bold text-lg mb-1 transition-colors ${
+                      formData.userType === "seeker" ? "text-primary-dark" : "text-primary-dark"
+                    }`}>I'm Looking for a Room</h3>
                     <p className="text-sm text-muted-foreground">Find verified rooms and roommates</p>
                   </div>
-                  {formData.userType === "seeker" && <CheckCircle2 className="size-6 text-primary-dark" />}
+                  {formData.userType === "seeker" && <CheckCircle2 className="size-6 text-primary" />}
                 </div>
               </button>
               <button
@@ -500,19 +504,23 @@ export default function RegisterPage() {
                 }}
                 className={`p-6 rounded-2xl border-2 transition-all text-left ${
                   formData.userType === "landlord"
-                    ? "border-[#2D3142] bg-white shadow-lg scale-105"
-                    : "border-primary-lightest bg-white hover:border-[#2D3142] hover:shadow-md"
+                    ? "border-primary bg-primary-lightest shadow-lg scale-105"
+                    : "border-primary-light bg-white hover:border-primary hover:shadow-md hover:bg-primary-lightest/50"
                 }`}
               >
                 <div className="flex items-center gap-4">
-                  <div className="size-12 rounded-xl bg-primary-dark flex items-center justify-center">
-                    <Building2 className="size-6 text-white" />
+                  <div className={`size-12 rounded-xl flex items-center justify-center transition-colors ${
+                    formData.userType === "landlord" ? "bg-primary text-white" : "bg-primary-lightest border-2 border-primary-light"
+                  }`}>
+                    <Building2 className={`size-6 ${formData.userType === "landlord" ? "text-white" : "text-primary"}`} />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-lg mb-1">I'm a Landlord</h3>
+                    <h3 className={`font-bold text-lg mb-1 transition-colors ${
+                      formData.userType === "landlord" ? "text-primary-dark" : "text-primary-dark"
+                    }`}>I'm a Landlord</h3>
                     <p className="text-sm text-muted-foreground">List your property and find tenants</p>
                   </div>
-                  {formData.userType === "landlord" && <CheckCircle2 className="size-6 text-primary-dark" />}
+                  {formData.userType === "landlord" && <CheckCircle2 className="size-6 text-primary" />}
                 </div>
               </button>
             </div>
@@ -684,7 +692,7 @@ export default function RegisterPage() {
                     variant="outline"
                     onClick={handleSendOtp}
                     disabled={loading}
-                    className="border-primary-lightest"
+                    className="border-primary text-primary hover:bg-primary hover:text-white"
                   >
                     Resend Code
                   </Button>
@@ -692,7 +700,7 @@ export default function RegisterPage() {
                     type="button"
                     onClick={handleVerifyOtp}
                     disabled={formData.emailOtp.length !== 6 || loading || formData.emailVerified}
-                    className="bg-primary-dark hover:bg-[#1a1d2a] text-white"
+                    className="bg-primary hover:bg-primary-dark text-white shadow-md hover:shadow-lg disabled:opacity-50"
                   >
                     {loading ? "Verifying..." : "Verify"}
                   </Button>
@@ -1215,32 +1223,30 @@ export default function RegisterPage() {
       
       <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-6">
         <div className="w-full max-w-lg space-y-6">
-          <Card className="w-full border-primary-lightest shadow-2xl rounded-3xl overflow-hidden bg-white">
-        {/* Progress Bar */}
-        <div className="px-6 pt-6 pb-4">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-medium text-muted-foreground">
-              {formData.userType ? `Step ${currentStep} of ${totalSteps}` : "Step 1"}
-            </span>
-            {formData.userType && (
-              <span className="text-sm font-medium text-muted-foreground">
-                {Math.round((currentStep / totalSteps) * 100)}%
+          {/* Progress Bar - Above Card */}
+          <div className="w-full bg-white rounded-2xl p-4 shadow-md border border-primary-lightest">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-semibold text-primary-dark">
+                {formData.userType ? `Step ${currentStep} of ${totalSteps}` : "Step 1 of 10"}
               </span>
-            )}
+              <span className="text-sm font-semibold text-primary">
+                {formData.userType ? `${Math.round((currentStep / totalSteps) * 100)}%` : "10%"}
+              </span>
+            </div>
+            <div className="w-full h-3 bg-primary-lightest rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full transition-all duration-500 ease-out shadow-sm"
+                style={{ 
+                  width: formData.userType 
+                    ? `${(currentStep / totalSteps) * 100}%` 
+                    : "10%" // Show minimal progress when no selection
+                }}
+              />
+            </div>
           </div>
-          <div className="w-full h-2 bg-primary-lightest rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary-dark rounded-full transition-all duration-500 ease-out"
-              style={{ 
-                width: formData.userType 
-                  ? `${(currentStep / totalSteps) * 100}%` 
-                  : "12.5%" // Show minimal progress when no selection
-              }}
-            />
-          </div>
-        </div>
-
-        <CardHeader className="space-y-1 pb-6 text-center">
+          
+          <Card className="w-full border-primary-lightest shadow-2xl rounded-3xl overflow-hidden bg-white">
+        <CardHeader className="space-y-1 pb-6 text-center pt-6">
           <CardTitle className="text-xl md:text-2xl font-bold">Create your account</CardTitle>
           <CardDescription className="text-sm md:text-base">
             {steps[currentStep - 1]?.title || "Join thousands of verified users"}
@@ -1254,10 +1260,10 @@ export default function RegisterPage() {
           <div className="flex items-center justify-between gap-4 mt-8 pt-6 border-t border-[#F2EDE4]">
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               onClick={handleBack}
               disabled={currentStep === 1}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 border-primary text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ArrowLeft className="size-4" />
               Back
@@ -1267,7 +1273,7 @@ export default function RegisterPage() {
               type="button"
               onClick={handleNext}
               disabled={!isStepValid() || loading}
-              className="flex items-center gap-2 bg-primary-dark hover:bg-[#1F222E] px-6"
+              className="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-6 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>Processing...</>

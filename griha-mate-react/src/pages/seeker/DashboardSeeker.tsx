@@ -11,17 +11,23 @@ import { Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
+import { PaymentModal } from "@/components/payment/PaymentModal"
+import { propertyRequestAPI, type PropertyRequestDto } from "@/lib/api"
 
 export default function DashboardSeekerPage() {
   const [properties, setProperties] = useState<PropertyDto[]>([])
+  const [requests, setRequests] = useState<PropertyRequestDto[]>([])
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false)
+  const [selectedRequest, setSelectedRequest] = useState<PropertyRequestDto | null>(null)
+
   const navigate = useNavigate()
 
   useEffect(() => {
     const token = localStorage.getItem('token')
     const userData = localStorage.getItem('user')
-    
+
     if (!token || !userData) {
       toast.error("Please login to access your dashboard", {
         position: "top-right",
@@ -34,7 +40,7 @@ export default function DashboardSeekerPage() {
     try {
       const parsedUser = JSON.parse(userData)
       setUser(parsedUser)
-      
+
       if (parsedUser.role !== 'SEEKER') {
         navigate('/dashboard/landlord')
         return
@@ -75,10 +81,40 @@ export default function DashboardSeekerPage() {
       }
     }
 
-    // Fetch both profile and properties
+    const fetchRequests = async () => {
+      try {
+        const data = await propertyRequestAPI.getMyRequests()
+        setRequests(data)
+      } catch (err) {
+        console.error("Failed to fetch requests", err)
+      }
+    }
+
+    // Fetch both profile, properties and requests
     fetchUserProfile()
     fetchProperties()
+    fetchRequests()
   }, [navigate])
+
+  const handlePayClick = (request: PropertyRequestDto) => {
+    setSelectedRequest(request)
+    setPaymentModalOpen(true)
+  }
+
+  const handlePaymentSuccess = () => {
+    // In a real app, verify transaction
+    // For now, we update local state optimistically or re-fetch
+    if (selectedRequest) {
+      // Assume backend or payment webhook will update status eventually
+      // For visual feedback, we can manually trigger status update if backend allows, or just re-fetch
+      // But since we don't have a direct "mark as paid" endpoint for frontend (insecure), 
+      // we rely on re-fetching. For this demo, let's delay re-fetch slightly.
+      setTimeout(async () => {
+        const data = await propertyRequestAPI.getMyRequests()
+        setRequests(data)
+      }, 1000)
+    }
+  }
 
   const handleLogout = () => {
     localStorage.removeItem('token')
@@ -99,7 +135,7 @@ export default function DashboardSeekerPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F2EDE4] via-[#F9F7F2] to-[#F2EDE4] flex flex-col">
       <Navbar />
-      
+
       <div className="flex-1 max-w-7xl mx-auto w-full px-4 md:px-6 py-6 md:py-8">
         {/* Profile Header */}
         <Card className="mb-8 border-primary-lightest shadow-lg bg-white">
@@ -162,7 +198,21 @@ export default function DashboardSeekerPage() {
               </CardContent>
             </Card>
           </Link>
-          
+
+          <Link to="/room-request">
+            <Card className="hover:shadow-xl transition-all cursor-pointer border-primary-lightest bg-white group">
+              <CardContent className="p-6 flex items-center gap-4">
+                <div className="size-14 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <MapPin className="text-white size-7" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg mb-1">Request a Room</h3>
+                  <p className="text-sm text-muted-foreground">Get notified when matching rooms are available</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
           <Link to="/favorites">
             <Card className="hover:shadow-xl transition-all cursor-pointer border-primary-lightest bg-white group">
               <CardContent className="p-6 flex items-center gap-4">
@@ -178,6 +228,62 @@ export default function DashboardSeekerPage() {
           </Link>
         </div>
 
+        {/* My Applications */}
+        <div className="mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-primary-dark mb-4">My Applications</h2>
+          {requests.length === 0 ? (
+            <Card className="p-8 text-center text-gray-500 bg-white border-primary-lightest">
+              <p>You haven't applied for any properties yet.</p>
+            </Card>
+          ) : (
+            <div className="grid gap-4">
+              {requests.map((request) => (
+                <Card key={request.id} className="border-none shadow-md hover:shadow-lg transition-all bg-white">
+                  <CardContent className="p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="size-16 bg-gray-100 rounded-lg overflow-hidden">
+                        <img
+                          src={request.propertyImage || "/placeholder.svg"}
+                          alt={request.propertyTitle}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-[#0D2440]">{request.propertyTitle}</h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge className={`
+                                                ${request.status === 'ACCEPTED' ? 'bg-green-100 text-green-700' : ''}
+                                                ${request.status === 'REJECTED' ? 'bg-red-100 text-red-700' : ''}
+                                                ${request.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : ''}
+                                                ${request.status === 'PAID' ? 'bg-blue-100 text-blue-700' : ''}
+                                            `}>
+                            {request.status}
+                          </Badge>
+                          <span className="text-xs text-gray-400">{new Date(request.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {request.status === 'ACCEPTED' && (
+                      <Button
+                        className="bg-green-600 hover:bg-green-700 text-white w-full md:w-auto"
+                        onClick={() => handlePayClick(request)}
+                      >
+                        Pay Booking Fee
+                      </Button>
+                    )}
+                    {request.status === 'PAID' && (
+                      <Button variant="outline" className="border-green-200 text-green-700 bg-green-50 pointer-events-none">
+                        Booking Confirmed
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Featured Properties */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
@@ -186,10 +292,10 @@ export default function DashboardSeekerPage() {
               <p className="text-muted-foreground">Discover verified rooms and flats in Nepal</p>
             </div>
             <Link to="/explore">
-              <Button className="bg-primary-dark hover:bg-[#1a1d2a] text-white">View All</Button>
+              <Button className="bg-primary hover:bg-primary-dark text-white shadow-md hover:shadow-lg">View All</Button>
             </Link>
           </div>
-          
+
           {loading ? (
             <p className="text-muted-foreground">Loading properties...</p>
           ) : properties.length === 0 ? (
@@ -223,7 +329,7 @@ export default function DashboardSeekerPage() {
                           <div className="font-bold text-xl text-primary-dark">Rs. {property.price.toLocaleString()}</div>
                           <div className="text-xs text-muted-foreground">per month</div>
                         </div>
-                        <Button size="sm" className="bg-primary-dark hover:bg-[#1a1d2a] text-white">
+                        <Button size="sm" className="bg-primary hover:bg-primary-dark text-white shadow-md hover:shadow-lg">
                           View Details
                         </Button>
                       </div>
@@ -237,6 +343,17 @@ export default function DashboardSeekerPage() {
       </div>
 
       <Footer />
+
+      {selectedRequest && (
+        <PaymentModal
+          isOpen={paymentModalOpen}
+          onClose={() => setPaymentModalOpen(false)}
+          amount={selectedRequest.propertyPrice || 5000} // Default booking amount if price missing
+          propertyId={selectedRequest.propertyId}
+          propertyTitle={selectedRequest.propertyTitle}
+          onSuccess={handlePaymentSuccess}
+        />
+      )}
     </div>
   )
 }
