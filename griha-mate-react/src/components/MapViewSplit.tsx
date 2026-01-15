@@ -133,6 +133,17 @@ export function MapViewSplit({ properties, userLocation, onPropertySelect, onReq
     return p
   });
 
+  const navigate = useNavigate();
+
+  const handlePropertyClick = useCallback((property: PropertyDto) => {
+    setSelectedProperty(property);
+    if (onPropertySelect) {
+      onPropertySelect(property);
+    }
+    // Navigate to property detail page
+    navigate(`/property/${property.id}`);
+  }, [onPropertySelect, navigate]);
+
   return (
     <div className="relative w-full h-full overflow-hidden rounded-2xl border border-primary-lightest shadow-sm group">
       <MapContainer

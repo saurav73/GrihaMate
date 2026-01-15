@@ -43,110 +43,78 @@ export function PropertyCard({ property, variant = 'grid', userLocation }: Prope
     if (variant === 'list') {
         return (
             <Link to={`/property/${property.id}`}>
-                <Card className="group border-primary-lightest overflow-hidden hover:shadow-xl hover:border-primary-light transition-all duration-300 cursor-pointer hover:-translate-y-1">
-                    <div className="flex flex-col sm:flex-row">
-                        {/* Image */}
-                        <div className="relative sm:w-60 h-48 sm:h-auto overflow-hidden shrink-0">
+                {/* Card with padding, blue border, and very rounded corners */}
+                <Card className="group border border-indigo-100 hover:border-indigo-300 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden bg-white rounded-[2rem] p-3">
+                    <div className="flex flex-col sm:flex-row h-full gap-4 items-center">
+                        {/* Image Section - Rounded and separated */}
+                        <div className="relative w-full sm:w-48 md:w-56 h-40 sm:h-40 shrink-0 rounded-2xl overflow-hidden">
                             <img
                                 src={property.imageUrls?.[0] || "/placeholder.svg"}
                                 alt={property.title}
                                 className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                             />
                             {property.verified && (
-                                <Badge className="absolute top-3 left-3 bg-green-500 text-white border-none text-xs">
+                                <Badge className="absolute top-2 left-2 bg-green-500 text-white border-none text-[10px] px-2 py-0.5 font-medium shadow-sm rounded-full">
                                     ✓ Verified
-                                </Badge>
-                            )}
-                            {distance && (
-                                <Badge className="absolute bottom-3 right-3 bg-black/70 text-white border-none text-xs flex items-center gap-1">
-                                    <MapPin className="size-3" /> {distance}
-                                </Badge>
-                            )}
-                            {property.virtualTourUrl && (
-                                <Badge className="absolute bottom-3 left-3 bg-white/90 text-primary-dark border-none text-xs">
-                                    360° Tour
                                 </Badge>
                             )}
                             <Button
                                 size="icon"
                                 variant="ghost"
-                                className="absolute top-3 right-3 bg-white/90 hover:bg-white hover:scale-110 z-20 transition-all"
+                                className="absolute top-2 right-2 size-7 bg-white/90 hover:bg-white rounded-full shadow-sm z-20 transition-all"
                                 onClick={toggleFavorite}
                             >
                                 <Heart
                                     className={`size-4 transition-all ${isFavorite
-                                        ? "fill-red-500 text-red-500"
-                                        : "text-gray-600 hover:text-red-500"
+                                        ? "fill-gray-500 text-gray-500"
+                                        : "text-gray-500 hover:text-red-500"
                                         }`}
                                 />
                             </Button>
                         </div>
 
-                        {/* Content */}
-                        <CardContent className="flex-1 p-4">
-                            <div className="flex justify-between items-start mb-3">
-                                <div className="flex-1">
-                                    <h3 className="font-bold text-lg text-primary-dark group-hover:text-primary transition-colors line-clamp-1 mb-1">
-                                        {property.title}
-                                    </h3>
-                                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                        <MapPin className="size-3.5" />
-                                        {property.city}, {property.district}
-                                    </div>
-                                </div>
-                                <Badge variant="secondary" className="bg-primary-lightest text-primary-dark text-xs shrink-0">
+                        {/* Content Section */}
+                        <CardContent className="flex-1 p-0 flex flex-col h-full justify-center">
+                            <div className="flex justify-between items-start mb-1">
+                                <h3 className="font-bold text-lg text-primary-dark group-hover:text-primary transition-colors line-clamp-1">
+                                    {property.title}
+                                </h3>
+                                <span className="text-xs font-serif text-gray-500 uppercase tracking-wider mt-1">
                                     {property.propertyType}
-                                </Badge>
+                                </span>
                             </div>
 
-                            {/* Property Details */}
-                            <div className="flex items-center gap-4 mb-4 text-sm text-gray-600">
-                                {property.bedrooms > 0 && (
-                                    <div className="flex items-center gap-1.5">
-                                        <Bed className="size-4 text-primary" />
-                                        <span>{property.bedrooms} Bed</span>
-                                    </div>
-                                )}
-                                {property.bathrooms > 0 && (
-                                    <div className="flex items-center gap-1.5">
-                                        <Bath className="size-4 text-primary" />
-                                        <span>{property.bathrooms} Bath</span>
-                                    </div>
-                                )}
-                                {property.area > 0 && (
-                                    <div className="flex items-center gap-1.5">
-                                        <Maximize className="size-4 text-primary" />
-                                        <span>{property.area} sq.ft</span>
-                                    </div>
-                                )}
+                            <div className="flex items-center gap-1.5 text-sm text-primary/80 mb-2">
+                                <MapPin className="size-3.5 fill-current" />
+                                <span className="line-clamp-1">{property.address}, {property.city}</span>
                             </div>
 
-                            {/* Features */}
-                            {property.features && property.features.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mb-4">
-                                    {property.features.slice(0, 3).map((feature, idx) => (
-                                        <Badge key={idx} variant="outline" className="text-xs border-primary-light text-primary-dark">
-                                            {feature}
-                                        </Badge>
-                                    ))}
-                                    {property.features.length > 3 && (
-                                        <Badge variant="outline" className="text-xs border-primary-light text-primary-dark">
-                                            +{property.features.length - 3} more
-                                        </Badge>
-                                    )}
+                            {/* Icons Row */}
+                            <div className="flex items-center gap-4 text-xs text-gray-600 mb-3 font-medium">
+                                <div className="flex items-center gap-1.5">
+                                    <Bed className="size-4 text-primary" />
+                                    <span>{property.bedrooms}</span>
                                 </div>
-                            )}
+                                <div className="flex items-center gap-1.5">
+                                    <Bath className="size-4 text-primary" />
+                                    <span>{property.bathrooms}</span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                    <Maximize className="size-4 text-primary" />
+                                    <span>{property.area} sq.ft</span>
+                                </div>
+                            </div>
 
-                            {/* Price */}
-                            <div className="flex items-center justify-between border-t border-primary-lightest pt-3 mt-auto">
-                                <div>
-                                    <div className="font-bold text-2xl text-primary">
+                            {/* Price & Action */}
+                            <div className="flex items-center justify-between mt-auto">
+                                <div className="flex items-baseline gap-1">
+                                    <div className="font-bold text-xl text-primary-dark">
                                         Rs. {property.price.toLocaleString()}
                                     </div>
-                                    <div className="text-xs text-muted-foreground">per month</div>
+                                    <div className="text-xs text-gray-500">/mo</div>
                                 </div>
-                                <Button className="bg-primary hover:bg-primary-dark text-white">
-                                    View Details
+                                <Button className="bg-primary hover:bg-primary-dark text-white rounded-full px-5 h-8 text-xs font-medium shadow-md transition-all">
+                                    Details
                                 </Button>
                             </div>
                         </CardContent>
@@ -177,6 +145,11 @@ export function PropertyCard({ property, variant = 'grid', userLocation }: Prope
                         {property.virtualTourUrl && (
                             <Badge className="absolute top-3 left-3 bg-white/90 text-primary-dark border-none text-[10px] uppercase font-bold tracking-wider">
                                 360° Tour
+                            </Badge>
+                        )}
+                        {distance && (
+                            <Badge className="absolute bottom-3 left-3 bg-black/70 text-white border-none text-[10px] flex items-center gap-1 px-2 py-1 z-10 backdrop-blur-sm">
+                                <MapPin className="size-3" /> {distance}
                             </Badge>
                         )}
                         <Button

@@ -13,9 +13,30 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { MapPin, Bed, Bath, Square, Phone, CreditCard, Wallet, Share2, Heart, Maximize2, Navigation as NavigationIcon, ExternalLink, CheckCircle2 } from "lucide-react"
 import { toast } from "react-toastify"
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+
+// Helper Component to fit map bounds
+function MapBoundsController({ bounds }: { bounds: L.LatLngBounds }) {
+  const map = useMap()
+  useEffect(() => {
+    map.fitBounds(bounds, { padding: [50, 50] })
+  }, [bounds, map])
+  return null
+}
+
+// Calculate distance helper
+const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+  const R = 6371
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLon = (lon2 - lon1) * Math.PI / 180
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  return R * c
+}
 
 export default function PropertyDetailPage() {
   const params = useParams()
@@ -26,6 +47,40 @@ export default function PropertyDetailPage() {
   const [, setPaymentMethod] = useState<'esewa' | 'card' | null>(null)
   const [isFavorite, setIsFavorite] = useState(false)
   const [showVirtualTour, setShowVirtualTour] = useState(false)
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
+  const [routeCoordinates, setRouteCoordinates] = useState<[number, number][]>([])
+  const [routeInfo, setRouteInfo] = useState<{ distance: number, duration: number } | null>(null)
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          })
+        },
+        (error) => console.warn(error)
+      )
+    }
+  }, [])
+
+  useEffect(() => {
+    if (userLocation && property?.latitude && property?.longitude) {
+      // Fetch OSRM Route
+      fetch(`https://router.project-osrm.org/route/v1/driving/${userLocation.lng},${userLocation.lat};${property.longitude},${property.latitude}?overview=full&geometries=geojson`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.routes && data.routes[0]) {
+            // OSRM returns [lon, lat], Leaflet needs [lat, lon]
+            const coords = data.routes[0].geometry.coordinates.map((c: any) => [c[1], c[0]] as [number, number])
+            setRouteCoordinates(coords)
+            setRouteInfo({ distance: data.routes[0].distance, duration: data.routes[0].duration })
+          }
+        })
+        .catch(err => console.error("Routing error", err))
+    }
+  }, [userLocation, property])
   const [cardDetails, setCardDetails] = useState({
     cardNumber: '',
     expiryDate: '',
@@ -377,23 +432,23 @@ export default function PropertyDetailPage() {
               </Card>
             )}
 
-            {/* Location Map */}
+            {/* Location Map with Route */}
             {property.latitude && property.longitude && (
               <Card className="border-primary-lightest overflow-hidden relative z-0">
                 <CardContent className="p-0">
-                  <div className="bg-gradient-to-br from-primary to-primary p-6 text-white">
+                  <div className="bg-gradient-to-br from-primary to-primary-dark p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
                         <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
                           <MapPin className="size-6" />
-                          Property Location
+                          Location & Route
                         </h2>
                         <p className="text-blue-100">
                           {property.address}, {property.city}
                         </p>
                       </div>
                       <a
-                        href={`https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`}
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${property.latitude},${property.longitude}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -407,75 +462,104 @@ export default function PropertyDetailPage() {
                       </a>
                     </div>
                   </div>
-                  <div className="h-[400px] relative z-0">
+
+                  <div className="h-[400px] md:h-[500px] bg-gray-100 relative z-0">
                     <MapContainer
                       center={[property.latitude, property.longitude]}
-                      zoom={15}
-                      className="h-full w-full z-0"
-                      zoomControl={true}
+                      zoom={13}
+                      className="h-full w-full"
+                      scrollWheelZoom={false}
                     >
                       <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       />
+
+                      {/* Property Marker */}
                       <Marker
                         position={[property.latitude, property.longitude]}
                         icon={L.divIcon({
-                          html: `<div style="
-                            background-color: #2E5E99;
-                            width: 40px;
-                            height: 40px;
-                            border-radius: 50% 50% 50% 0;
-                            transform: rotate(-45deg);
-                            border: 3px solid white;
-                            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-                            display: flex;
-                            align-items: center;
-                            justify-center: center;
-                          ">
-                            <div style="transform: rotate(45deg); color: white; font-size: 20px;">🏠</div>
-                          </div>`,
-                          className: 'custom-marker',
+                          className: 'bg-transparent',
+                          html: `<div class="bg-primary text-white p-2 rounded-full shadow-xl border-2 border-white transform hover:scale-110 transition-transform">
+                                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                                 </div>`,
                           iconSize: [40, 40],
-                          iconAnchor: [20, 40],
+                          iconAnchor: [20, 40]
                         })}
                       >
-                        <Popup>
-                          <div className="text-center p-2">
-                            <h3 className="font-bold text-base mb-1">{property.title}</h3>
-                            <p className="text-sm text-gray-600">{property.address}</p>
-                            <p className="text-sm text-gray-600">{property.city}, {property.district}</p>
-                            <p className="text-lg font-bold text-primary-dark mt-2">
-                              Rs. {property.price.toLocaleString()}/month
-                            </p>
-                          </div>
-                        </Popup>
+                        <Popup>{property.title}</Popup>
                       </Marker>
+
+                      {/* User Location & Route */}
+                      {userLocation && (
+                        <>
+                          <Marker
+                            position={[userLocation.lat, userLocation.lng]}
+                            icon={L.divIcon({
+                              className: 'bg-transparent',
+                              html: `<div class="bg-blue-500 text-white p-1.5 rounded-full shadow-lg border-2 border-white ring-2 ring-blue-200">
+                                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+                                     </div>`,
+                              iconSize: [32, 32],
+                              iconAnchor: [16, 16]
+                            })}
+                          >
+                            <Popup>You are here</Popup>
+                          </Marker>
+
+                          {routeCoordinates.length > 0 ? (
+                            <Polyline
+                              positions={routeCoordinates}
+                              color="#8b5cf6"
+                              weight={5}
+                              opacity={0.8}
+                              dashArray="10, 10"
+                            />
+                          ) : (
+                            <Polyline
+                              positions={[
+                                [userLocation.lat, userLocation.lng],
+                                [property.latitude, property.longitude]
+                              ]}
+                              color="#8b5cf6"
+                              weight={4}
+                              opacity={0.5}
+                              dashArray="5, 5"
+                            />
+                          )}
+
+                          <MapBoundsController bounds={L.latLngBounds([
+                            [userLocation.lat, userLocation.lng],
+                            [property.latitude, property.longitude]
+                          ])} />
+                        </>
+                      )}
                     </MapContainer>
-                  </div>
-                  <div className="p-4 bg-gray-50 border-t">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <p className="text-gray-600 mb-1">Address</p>
-                        <p className="font-semibold text-gray-900">{property.address}</p>
+
+                    {/* Route Info Overlay */}
+                    {userLocation && (
+                      <div className="absolute top-4 right-4 z-[500] animate-in fade-in slide-in-from-top-4 duration-500">
+                        <Card className="shadow-2xl border-none bg-white/95 backdrop-blur">
+                          <CardContent className="p-4 flex items-center gap-6">
+                            <div className="text-center">
+                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-0.5">Distance</p>
+                              <p className="text-xl font-bold text-gray-900">
+                                {routeInfo ? (routeInfo.distance / 1000).toFixed(1) : calculateDistance(userLocation.lat, userLocation.lng, property.latitude, property.longitude).toFixed(1)}
+                                <span className="text-sm font-normal text-gray-500 ml-1">km</span>
+                              </p>
+                            </div>
+                            <div className="w-px h-8 bg-gray-200" />
+                            <div className="text-center">
+                              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-0.5">Est. Time</p>
+                              <p className="text-xl font-bold text-blue-600">
+                                {routeInfo ? Math.round(routeInfo.duration / 60) : Math.round(calculateDistance(userLocation.lat, userLocation.lng, property.latitude, property.longitude) * 3)}
+                                <span className="text-sm font-normal text-gray-500 ml-1">min</span>
+                              </p>
+                            </div>
+                          </CardContent>
+                        </Card>
                       </div>
-                      <div>
-                        <p className="text-gray-600 mb-1">Area</p>
-                        <p className="font-semibold text-gray-900">
-                          {property.city}, {property.district}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600 mb-1">Province</p>
-                        <p className="font-semibold text-gray-900">{property.province}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600 mb-1">Coordinates</p>
-                        <p className="font-semibold text-gray-900 text-xs">
-                          {property.latitude.toFixed(6)}, {property.longitude.toFixed(6)}
-                        </p>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -548,13 +632,13 @@ export default function PropertyDetailPage() {
                   </div>
                 </div>
               </CardContent>
-            </Card>
-          </div>
-        </div>
-      </main>
+            </Card >
+          </div >
+        </div >
+      </main >
 
       {/* Request Dialog */}
-      <Dialog open={isRequestModalOpen} onOpenChange={setIsRequestModalOpen}>
+      < Dialog open={isRequestModalOpen} onOpenChange={setIsRequestModalOpen} >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Contact Landlord</DialogTitle>
@@ -575,10 +659,10 @@ export default function PropertyDetailPage() {
             </div>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog >
 
       {/* Sprite Payment Dialog */}
-      <Dialog open={showPayment} onOpenChange={setShowPayment}>
+      < Dialog open={showPayment} onOpenChange={setShowPayment} >
         <DialogContent className="sm:max-w-md" aria-describedby="payment-dialog-description">
           <DialogHeader>
             <DialogTitle>Card Payment</DialogTitle>
@@ -677,9 +761,9 @@ export default function PropertyDetailPage() {
             </p>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog >
 
       <Footer />
-    </div>
+    </div >
   )
 }

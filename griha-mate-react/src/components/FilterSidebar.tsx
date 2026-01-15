@@ -34,7 +34,7 @@ export function FilterSidebar({
 
     return (
         <div className={`
-      bg-white p-6 rounded-2xl border border-primary-lightest h-fit
+      bg-white p-6 rounded-2xl border border-primary-lightest h-fit shadow-lg
       ${showMobile ? 'fixed inset-0 z-50 overflow-y-auto m-0 rounded-none' : 'hidden lg:block w-72 shrink-0 sticky top-24'}
     `}>
             <div className="flex items-center justify-between mb-6">
