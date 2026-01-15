@@ -40,6 +40,17 @@ public class PropertyController {
         return ResponseEntity.ok(properties);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<PropertyDto>> searchProperties(
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) java.math.BigDecimal minPrice,
+            @RequestParam(required = false) java.math.BigDecimal maxPrice,
+            @RequestParam(required = false) com.grihamate.entity.Property.PropertyType type,
+            @RequestParam(required = false) Integer minBedrooms) {
+        List<PropertyDto> properties = propertyService.searchProperties(city, minPrice, maxPrice, type, minBedrooms);
+        return ResponseEntity.ok(properties);
+    }
+
     @PostMapping("/create")
     @PreAuthorize("hasRole('LANDLORD')")
     public ResponseEntity<?> createProperty(@Valid @RequestBody PropertyDto propertyDto, Principal principal) {
@@ -58,9 +69,3 @@ public class PropertyController {
         return ResponseEntity.ok(properties);
     }
 }
-
-
-
-
-
-
