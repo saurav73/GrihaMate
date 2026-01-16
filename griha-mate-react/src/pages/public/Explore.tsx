@@ -362,7 +362,7 @@ export default function ExplorePage() {
 
               {/* Map View - Sticky */}
               {viewMode === 'split' && (
-                <div className="hidden lg:block w-[450px] shrink-0 sticky top-40 h-[calc(100vh-172px)] rounded-2xl overflow-hidden shadow-md border border-gray-200">
+                <div className="hidden lg:block w-[450px] shrink-0 sticky top-48 h-[calc(100vh-200px)] rounded-2xl overflow-hidden shadow-md border border-gray-200">
                   <MapViewSplit
                     properties={sortedProperties}
                     userLocation={userLocation}

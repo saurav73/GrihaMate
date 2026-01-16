@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import { 
-  Home, Plus, Edit, Trash2, Eye, EyeOff, MapPin, 
+import {
+  Home, Plus, Edit, Trash2, Eye, EyeOff, MapPin,
   Bed, Bath, Square, Calendar, TrendingUp, AlertCircle, CheckCircle
 } from "lucide-react"
 import { Navbar } from "@/components/navbar"
@@ -102,10 +102,10 @@ export default function ManagePropertiesPage() {
     try {
       // TODO: Implement delete API endpoint
       // await propertiesAPI.delete(propertyToDelete.id)
-      
+
       // For now, just remove from local state
       setProperties(properties.filter((p) => p.id !== propertyToDelete.id))
-      
+
       toast.success("Property deleted successfully!", {
         position: "top-center",
         autoClose: 2000,
@@ -126,14 +126,14 @@ export default function ManagePropertiesPage() {
     try {
       // Call API to update status
       // await propertiesAPI.updateStatus(property.id, newStatus)
-      
+
       // Update local state
       setProperties(
         properties.map((p) =>
           p.id === property.id ? { ...p, status: newStatus } : p
         )
       )
-      
+
       toast.success(
         `Property marked as ${newStatus.toLowerCase()}`,
         {
@@ -169,10 +169,8 @@ export default function ManagePropertiesPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8F6F3]">
-      <Navbar />
-
-      <main className="flex-1 pt-20">
+    <div className="min-h-full">
+      <main className="">
         {/* Header */}
         <section className="py-12 bg-gradient-to-br from-[#2E5E99] to-[#2E5E99]">
           <div className="container mx-auto px-4">
@@ -186,7 +184,7 @@ export default function ManagePropertiesPage() {
                     View and manage all your listed properties
                   </p>
                 </div>
-                <Link to="/list-property">
+                <Link to="/dashboard/landlord/list-property">
                   <Button
                     size="lg"
                     className="bg-white text-primary-dark hover:bg-gray-100"
@@ -309,7 +307,7 @@ export default function ManagePropertiesPage() {
                         ? "Start by listing your first property"
                         : `No properties with status: ${filterStatus.toLowerCase()}`}
                     </p>
-                    <Link to="/list-property">
+                    <Link to="/dashboard/landlord/list-property">
                       <Button className="bg-primary hover:bg-primary-dark">
                         <Plus className="w-4 h-4 mr-2" />
                         List a Property
@@ -448,8 +446,6 @@ export default function ManagePropertiesPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

@@ -48,15 +48,13 @@ export default function LandlordRequestsPage() {
     }
 
     if (loading) return (
-        <LandlordLayout>
-            <div className="flex items-center justify-center h-full">
-                <p>Loading requests...</p>
-            </div>
-        </LandlordLayout>
+        <div className="flex items-center justify-center h-full">
+            <p>Loading requests...</p>
+        </div>
     )
 
     return (
-        <LandlordLayout>
+        <>
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-[#0D2440]">Property Requests</h1>
                 <p className="text-[#2E5E99]">Manage inquiries from potential tenants</p>
@@ -126,6 +124,6 @@ export default function LandlordRequestsPage() {
                     ))
                 )}
             </div>
-        </LandlordLayout>
+        </>
     )
 }

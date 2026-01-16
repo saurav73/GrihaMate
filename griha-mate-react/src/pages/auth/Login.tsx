@@ -80,10 +80,19 @@ export default function LoginPage() {
           autoClose: 5000,
         })
       } else {
-        toast.error(errorMessage, {
-          position: "top-right",
-          autoClose: 5000,
-        })
+        // If it's a generic "Oops" from fallback, but we have a raw message, show the raw one
+        const humanMsg = await generateErrorMessage(errorMessage, 'login attempt')
+        if (humanMsg.includes('Oops') && errorMessage !== 'Login failed') {
+          toast.error(errorMessage, {
+            position: "top-right",
+            autoClose: 6000,
+          })
+        } else {
+          toast.error(humanMsg, {
+            position: "top-right",
+            autoClose: 5000,
+          })
+        }
       }
     } finally {
       setLoading(false)

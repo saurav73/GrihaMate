@@ -4,15 +4,16 @@ import { LandlordLayout } from "@/components/landlord/LandlordLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { propertiesAPI, authAPI, subscriptionAPI, type PropertyDto } from "@/lib/api"
+import { propertiesAPI, authAPI, subscriptionAPI, propertyRequestAPI, type PropertyDto, type PropertyRequestDto } from "@/lib/api"
 import { toast } from "react-toastify"
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { Home, Users, Wallet, Clock, Plus, Crown } from "lucide-react"
+import { Home, Users, Wallet, Clock, Plus, Crown, MessageSquare } from "lucide-react"
 import { Link } from "react-router-dom"
 import { PaymentModal } from "@/components/payment/PaymentModal"
 
 export default function DashboardLandlordPage() {
   const [properties, setProperties] = useState<PropertyDto[]>([])
+  const [requests, setRequests] = useState<PropertyRequestDto[]>([])
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
@@ -41,12 +42,14 @@ export default function DashboardLandlordPage() {
 
     const fetchData = async () => {
       try {
-        const [profile, props] = await Promise.all([
+        const [profile, props, reqs] = await Promise.all([
           authAPI.getProfile(),
-          propertiesAPI.getMyProperties()
+          propertiesAPI.getMyProperties(),
+          propertyRequestAPI.getLandlordRequests()
         ])
         setUser(profile)
         setProperties(props)
+        setRequests(reqs)
       } catch (err: any) {
         console.error("Failed to load dashboard data", err)
       } finally {
@@ -60,27 +63,31 @@ export default function DashboardLandlordPage() {
   if (!user) return null
 
   const activeListings = properties.filter(p => p.status === 'AVAILABLE').length
-  const totalEarnings = 85000 // Mock
-  const totalViews = 1240 // Mock
+  const pendingApplications = requests.filter(r => r.status === 'PENDING').length
 
+  // Dynamic mocked stats based on real data
+  const totalEarnings = requests.filter(r => r.status === 'PAID' || r.status === 'ACCEPTED').length * 15000
+  const totalViews = properties.length * 124 // Simple multiplier for effect
+
+  // Dynamic chart data based on properties and requests
   const chartData = [
-    { name: 'Mon', views: 40, earnings: 2400 },
-    { name: 'Tue', views: 30, earnings: 1398 },
-    { name: 'Wed', views: 20, earnings: 9800 },
-    { name: 'Thu', views: 27, earnings: 3908 },
-    { name: 'Fri', views: 18, earnings: 4800 },
-    { name: 'Sat', views: 23, earnings: 3800 },
-    { name: 'Sun', views: 34, earnings: 4300 },
+    { name: 'Mon', views: Math.min(40, properties.length * 10), earnings: requests.length * 1000 },
+    { name: 'Tue', views: Math.min(30, properties.length * 15), earnings: requests.length * 1200 },
+    { name: 'Wed', views: Math.min(60, properties.length * 20), earnings: requests.length * 1500 },
+    { name: 'Thu', views: Math.min(45, properties.length * 12), earnings: requests.length * 1100 },
+    { name: 'Fri', views: Math.min(80, properties.length * 25), earnings: requests.length * 1800 },
+    { name: 'Sat', views: Math.min(55, properties.length * 18), earnings: requests.length * 1400 },
+    { name: 'Sun', views: Math.min(70, properties.length * 22), earnings: requests.length * 1600 },
   ]
 
   return (
-    <LandlordLayout>
+    <>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-[#0D2440]">Landlord Dashboard</h1>
           <p className="text-[#2E5E99]">Welcome back, {user.fullName.split(' ')[0]}</p>
         </div>
-        <Link to="/list-property">
+        <Link to="/dashboard/landlord/list-property">
           <Button className="bg-[#2E5E99] hover:bg-[#1C3860] text-white rounded-full">
             <Plus className="mr-2 size-4" /> Add New Property
           </Button>
@@ -117,7 +124,7 @@ export default function DashboardLandlordPage() {
         <StatsCard title="Active Listings" value={activeListings} icon={Home} color="text-blue-600" />
         <StatsCard title="Total Views" value={totalViews.toLocaleString()} icon={Users} color="text-purple-600" />
         <StatsCard title="Total Earnings" value={`Rs. ${totalEarnings.toLocaleString()}`} icon={Wallet} color="text-green-600" />
-        <StatsCard title="Pending Applications" value="3" icon={Clock} color="text-orange-600" />
+        <StatsCard title="Pending Applications" value={pendingApplications} icon={Clock} color="text-orange-600" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -150,21 +157,29 @@ export default function DashboardLandlordPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {[
-                { user: "Sarah K.", action: "Viewed Property", time: "2m ago", icon: Users, bg: "bg-blue-100", text: "text-blue-600" },
-                { user: "Rajesh M.", action: "Applied for API A...", time: "1h ago", icon: Clock, bg: "bg-orange-100", text: "text-orange-600" },
-                { user: "System", action: "Payout Processed", time: "5h ago", icon: Wallet, bg: "bg-green-100", text: "text-green-600" }
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-4">
-                  <div className={`size-10 rounded-full ${item.bg} flex items-center justify-center ${item.text}`}>
-                    <item.icon className="size-5" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-[#0D2440]">{item.user}</p>
-                    <p className="text-xs text-gray-500">{item.action} • {item.time}</p>
-                  </div>
+              {requests.length === 0 ? (
+                <div className="text-center py-8 text-gray-400">
+                  <Clock className="size-8 mx-auto mb-2 opacity-20" />
+                  <p className="text-sm">No recent activity</p>
                 </div>
-              ))}
+              ) : (
+                requests.slice(0, 5).map((req, i) => (
+                  <div key={i} className="flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300" style={{ animationDelay: `${i * 100}ms` }}>
+                    <div className={cn(
+                      "size-10 rounded-full flex items-center justify-center",
+                      req.status === 'PENDING' ? "bg-orange-100 text-orange-600" :
+                        req.status === 'ACCEPTED' ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"
+                    )}>
+                      {req.status === 'PENDING' ? <Clock className="size-5" /> :
+                        req.status === 'ACCEPTED' ? <Home className="size-5" /> : <MessageSquare className="size-5" />}
+                    </div>
+                    <div>
+                      <p className="font-medium text-[#0D2440]">{req.seekerName}</p>
+                      <p className="text-xs text-gray-500">{req.status === 'PENDING' ? 'New property request' : `Request ${req.status.toLowerCase()}`} • {new Date(req.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
@@ -212,7 +227,7 @@ export default function DashboardLandlordPage() {
         }}
         type="subscription"
       />
-    </LandlordLayout>
+    </>
   )
 }
 

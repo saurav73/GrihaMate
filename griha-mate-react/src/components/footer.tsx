@@ -103,11 +103,11 @@ export function Footer() {
         </div>
 
 
-        <div className="mt-16 border-t-2 border-gray-200 pt-8 text-center text-sm text-gray-600">
-          <div className="flex items-center justify-between">
-            <p>© {new Date().getFullYear()} GrihaMate. All rights reserved. Designed for Nepal.</p>
-            <Link to="/admin/login" className="text-xs text-gray-500 hover:text-primary hover:font-semibold transition-all duration-300">
-              Admin
+        <div className="mt-16 border-t border-gray-100 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-gray-500">© {new Date().getFullYear()} GrihaMate. All rights reserved. Designed for Nepal.</p>
+          <div className="flex items-center gap-6">
+            <Link to="/admin/login" className="text-[10px] text-gray-400 hover:text-primary-dark uppercase tracking-widest font-bold transition-all duration-300">
+              Staff Portal
             </Link>
           </div>
         </div>

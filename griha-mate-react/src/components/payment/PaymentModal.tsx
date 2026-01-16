@@ -13,12 +13,13 @@ interface PaymentModalProps {
     onClose: () => void
     amount: number
     propertyId: number
+    requestId?: number
     propertyTitle: string
     onSuccess: () => void
     type?: 'booking' | 'subscription'
 }
 
-export function PaymentModal({ isOpen, onClose, amount, propertyId, propertyTitle, onSuccess, type = 'booking' }: PaymentModalProps) {
+export function PaymentModal({ isOpen, onClose, amount, propertyId, requestId, propertyTitle, onSuccess, type = 'booking' }: PaymentModalProps) {
     const [loading, setLoading] = useState(false)
     const [cardDetails, setCardDetails] = useState({
         cardNumber: '',
@@ -31,14 +32,14 @@ export function PaymentModal({ isOpen, onClose, amount, propertyId, propertyTitl
     const handleEsewaPayment = async () => {
         try {
             setLoading(true)
-            const data = await paymentAPI.initiateEsewa(amount, propertyId)
+            // Use requestId for bookings, or user id/propertyId for subs if needed
+            const data = await paymentAPI.initiateEsewa(amount, requestId || propertyId, type)
 
             // eSewa requires a form submission
             // We'll create a hidden form and submit it
             const form = document.createElement("form")
             form.setAttribute("method", "POST")
             form.setAttribute("action", data.action)
-            form.setAttribute("target", "_blank") // Open in new tab
 
             for (const key in data) {
                 if (key !== 'action') {
@@ -69,7 +70,7 @@ export function PaymentModal({ isOpen, onClose, amount, propertyId, propertyTitl
         e.preventDefault()
         try {
             setLoading(true)
-            const initData = await paymentAPI.initiateSprite(amount, propertyId)
+            const initData = await paymentAPI.initiateSprite(amount, requestId || propertyId, type)
             const data = await paymentAPI.processSprite(initData.transactionId, cardDetails)
 
             if (data.status === 'success') {

@@ -3,6 +3,9 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { AutoLogoutHandler } from './components/AutoLogoutHandler'
 
+// Layouts
+import { LandlordLayout } from './components/landlord/LandlordLayout'
+
 // Pages
 import HomePage from './pages/public/Home'
 import AboutPage from './pages/public/About'
@@ -28,6 +31,8 @@ import AdminRequestsPage from './pages/admin/Requests'
 import FavoritesPage from './pages/seeker/Favorites'
 import RoomRequestPage from './pages/seeker/RoomRequest'
 import ManagePropertiesPage from './pages/landlord/ManageProperties'
+import PaymentSuccessPage from './pages/payment/PaymentSuccess'
+import PaymentFailurePage from './pages/payment/PaymentFailure'
 import NotFoundPage from './pages/public/NotFound'
 
 function App() {
@@ -39,14 +44,20 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/how-it-works" element={<HowItWorksPage />} />
-        <Route path="/list-property" element={<ListPropertyPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/property/:id" element={<PropertyDetailPage />} />
-        <Route path="/dashboard/landlord" element={<DashboardLandlordPage />} />
-        <Route path="/dashboard/landlord/requests" element={<LandlordRequestsPage />} />
+
+        {/* Landlord Dashboard Routes */}
+        <Route path="/dashboard/landlord" element={<LandlordLayout />}>
+          <Route index element={<DashboardLandlordPage />} />
+          <Route path="requests" element={<LandlordRequestsPage />} />
+          <Route path="manage-properties" element={<ManagePropertiesPage />} />
+          <Route path="list-property" element={<ListPropertyPage />} />
+        </Route>
+
         <Route path="/dashboard/seeker" element={<DashboardSeekerPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/terms" element={<TermsPage />} />
@@ -58,7 +69,8 @@ function App() {
         <Route path="/admin/requests" element={<AdminRequestsPage />} />
         <Route path="/favorites" element={<FavoritesPage />} />
         <Route path="/room-request" element={<RoomRequestPage />} />
-        <Route path="/manage-properties" element={<ManagePropertiesPage />} />
+        <Route path="/payment/success" element={<PaymentSuccessPage />} />
+        <Route path="/payment/failure" element={<PaymentFailurePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <ToastContainer

@@ -18,12 +18,12 @@ const sidebarItems = [
     },
     {
         title: "My Properties",
-        href: "/manage-properties",
+        href: "/dashboard/landlord/manage-properties",
         icon: Home,
     },
     {
         title: "Add Property",
-        href: "/list-property",
+        href: "/dashboard/landlord/list-property",
         icon: PlusCircle,
     },
     {

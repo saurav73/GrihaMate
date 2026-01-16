@@ -35,34 +35,42 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .authorizeHttpRequests(auth -> auth
-                // Public endpoints
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/images/upload").permitAll() // Allow profile image upload during registration
-                .requestMatchers("/api/images/upload-document").permitAll() // Allow document upload during registration
-                .requestMatchers("/api/images/upload-citizenship").permitAll()
-                .requestMatchers("/api/images/upload-kyc").permitAll()
-                .requestMatchers("/api/images/upload-property-document").permitAll()
-                .requestMatchers("/api/images/**").authenticated()
-                // Only authenticated and verified seekers can view properties
-                .requestMatchers("/api/properties", "/api/properties/{id}").hasRole("SEEKER")
-                // Only authenticated and verified landlords can create properties
-                .requestMatchers("/api/properties/create", "/api/properties/my-properties").hasRole("LANDLORD")
-                // Payment endpoints
-                .requestMatchers("/api/payment/**").authenticated()
-                // Contact endpoints (only verified seekers)
-                .requestMatchers("/api/contact/**").authenticated()
-                // Admin endpoints
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            .authenticationProvider(authenticationProvider())
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/images/upload", "/api/images/upload-document",
+                                "/api/images/upload-citizenship", "/api/images/upload-kyc",
+                                "/api/images/upload-property-document")
+                        .permitAll()
+                        .requestMatchers("/api/images/**").authenticated()
+
+                        // Landlord specific endpoints (more specific paths FIRST)
+                        .requestMatchers("/api/properties/create", "/api/properties/my-properties").hasRole("LANDLORD")
+                        .requestMatchers("/api/property-requests/landlord-requests").hasRole("LANDLORD")
+                        .requestMatchers("/api/property-requests/*/status").hasRole("LANDLORD")
+
+                        // Seeker specific endpoints
+                        .requestMatchers("/api/properties", "/api/properties/{id}").authenticated() // Allow all
+                                                                                                    // authenticated to
+                                                                                                    // view basic
+                                                                                                    // property info
+                        .requestMatchers("/api/property-requests", "/api/property-requests/my-requests")
+                        .hasRole("SEEKER")
+
+                        // Common authenticated endpoints
+                        .requestMatchers("/api/payment/**").authenticated()
+                        .requestMatchers("/api/contact/**").authenticated()
+                        .requestMatchers("/api/auth/profile").authenticated()
+
+                        // Admin endpoints
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -92,10 +100,9 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
-

@@ -129,8 +129,29 @@ export default function AdminLoginPage() {
                                 </Button>
                             </form>
 
-                            <div className="mt-8 pt-6 border-t border-[#F2EDE4] text-center">
-                                <p className="text-sm text-muted-foreground">
+                            <div className="mt-8 pt-6 border-t border-[#F2EDE4]">
+                                <div className="bg-blue-50/50 rounded-2xl p-4 border border-blue-100/50">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="size-2 rounded-full bg-blue-500 animate-pulse"></div>
+                                        <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider">Test Account Helper</span>
+                                    </div>
+                                    <p className="text-[11px] text-blue-600/80 mb-3 leading-relaxed">
+                                        For testing, use the admin credentials below to access the management portal.
+                                    </p>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                            setEmail("admin@grihamate.com")
+                                            setPassword("admin123")
+                                        }}
+                                        className="w-full bg-white border-blue-200 text-blue-700 hover:bg-blue-50 h-9 text-xs font-bold rounded-xl"
+                                    >
+                                        Autofill Credentials
+                                    </Button>
+                                </div>
+
+                                <p className="text-sm text-muted-foreground mt-6 text-center">
                                     Not an admin?{" "}
                                     <Link to="/login" className="text-primary-dark font-bold hover:underline">
                                         Regular Login

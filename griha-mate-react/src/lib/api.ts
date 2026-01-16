@@ -210,16 +210,21 @@ export const contactAPI = {
 
 // Payment API
 export const paymentAPI = {
-  initiateEsewa: async (amount: number, propertyId?: number): Promise<any> => {
+  initiateEsewa: async (amount: number, requestId?: number, type: 'booking' | 'subscription' = 'booking'): Promise<any> => {
     return apiRequest<any>('/payment/esewa', {
       method: 'POST',
-      body: JSON.stringify({ total_amount: amount, property_id: propertyId }),
+      body: JSON.stringify({ amount, request_id: requestId, type }),
     });
   },
-  initiateSprite: async (amount: number, propertyId?: number): Promise<any> => {
+  verifyEsewa: async (data: string, signature: string): Promise<any> => {
+    return apiRequest<any>(`/payment/verify?data=${encodeURIComponent(data)}&signature=${encodeURIComponent(signature)}`, {
+      method: 'POST',
+    });
+  },
+  initiateSprite: async (amount: number, requestId?: number, type: 'booking' | 'subscription' = 'booking'): Promise<any> => {
     return apiRequest<any>('/payment/sprite/initiate', {
       method: 'POST',
-      body: JSON.stringify({ amount, property_id: propertyId }),
+      body: JSON.stringify({ amount, request_id: requestId, type }),
     });
   },
   processSprite: async (transactionId: string, cardDetails: any): Promise<any> => {

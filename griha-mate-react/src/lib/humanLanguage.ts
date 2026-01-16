@@ -17,13 +17,13 @@ export async function generateSuccessMessage(action: string, context?: string): 
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" })
     const prompt = `Generate a short, friendly, and enthusiastic success message (max 10 words) for: ${action}${context ? `. Context: ${context}` : ''}. Use emojis naturally. Be conversational and warm.`
-    
+
     const result = await model.generateContent(prompt)
     const response = await result.response
     const message = response.text().trim().replace(/['"]/g, '')
-    
+
     messageCache.set(cacheKey, message)
     return message
   } catch (error) {
@@ -42,13 +42,13 @@ export async function generateErrorMessage(error: string, context?: string): Pro
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" })
     const prompt = `Generate a short, empathetic, and helpful error message (max 15 words) for: ${error}${context ? `. Context: ${context}` : ''}. Be understanding and suggest what to do next. Use a supportive tone.`
-    
+
     const result = await model.generateContent(prompt)
     const response = await result.response
     const message = response.text().trim().replace(/['"]/g, '')
-    
+
     messageCache.set(cacheKey, message)
     return message
   } catch (error) {
@@ -67,13 +67,13 @@ export async function generateInfoMessage(info: string, context?: string): Promi
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" })
     const prompt = `Generate a short, informative, and friendly message (max 12 words) for: ${info}${context ? `. Context: ${context}` : ''}. Be clear and helpful. Use a conversational tone.`
-    
+
     const result = await model.generateContent(prompt)
     const response = await result.response
     const message = response.text().trim().replace(/['"]/g, '')
-    
+
     messageCache.set(cacheKey, message)
     return message
   } catch (error) {
@@ -92,13 +92,13 @@ export async function generateWarningMessage(warning: string, context?: string):
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" })
     const prompt = `Generate a short, cautionary but friendly warning message (max 12 words) for: ${warning}${context ? `. Context: ${context}` : ''}. Be helpful and guide the user. Use a caring tone.`
-    
+
     const result = await model.generateContent(prompt)
     const response = await result.response
     const message = response.text().trim().replace(/['"]/g, '')
-    
+
     messageCache.set(cacheKey, message)
     return message
   } catch (error) {
@@ -113,11 +113,11 @@ export async function generateWarningMessage(warning: string, context?: string):
 export async function generateGreeting(userName?: string): Promise<string> {
   const hour = new Date().getHours()
   const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening'
-  
+
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" })
     const prompt = `Generate a warm, personalized ${timeOfDay} greeting${userName ? ` for ${userName}` : ''} (max 8 words). Be friendly and welcoming. Use appropriate emojis.`
-    
+
     const result = await model.generateContent(prompt)
     const response = await result.response
     return response.text().trim().replace(/['"]/g, '')
@@ -132,9 +132,9 @@ export async function generateGreeting(userName?: string): Promise<string> {
  */
 export async function enhancePropertyDescription(originalDescription: string): Promise<string> {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" })
     const prompt = `Make this property description more engaging, vivid, and appealing (max 50 words). Keep the key details but make it sound more inviting and descriptive: "${originalDescription}"`
-    
+
     const result = await model.generateContent(prompt)
     const response = await result.response
     return response.text().trim()
@@ -149,9 +149,9 @@ export async function enhancePropertyDescription(originalDescription: string): P
  */
 export async function generateSearchSuggestion(query: string): Promise<string> {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" })
     const prompt = `Based on the search query "${query}", generate a helpful, encouraging message (max 15 words) to help the user refine their search or understand what they're looking for. Be supportive and constructive.`
-    
+
     const result = await model.generateContent(prompt)
     const response = await result.response
     return response.text().trim().replace(/['"]/g, '')
@@ -177,7 +177,7 @@ function getFallbackSuccessMessage(action: string): string {
   return messages[action] || '✓ Done! That went well!'
 }
 
-function getFallbackErrorMessage(error: string): string {
+function getFallbackErrorMessage(error: any): string {
   const messages: Record<string, string> = {
     'network': '😕 Connection hiccup. Check your internet?',
     'auth': '🔐 Hmm, credentials don\'t match. Try again?',
@@ -185,7 +185,17 @@ function getFallbackErrorMessage(error: string): string {
     'permission': '⛔ You don\'t have access to this. Need help?',
     'validation': '📝 Some info looks off. Mind double-checking?',
   }
-  return messages[error] || '😅 Oops, something went wrong. Try again?'
+
+  const errStr = String(error || '');
+
+  if (messages[errStr]) return messages[errStr];
+
+  if (errStr.includes('pending')) return '⏳ Your account verification is pending admin approval.';
+  if (errStr.includes('deactivated')) return '⛔ Your account has been deactivated. Please contact support.';
+  if (errStr.includes('verify your email')) return '📧 Please verify your email before logging in.';
+  if (errStr.includes('Invalid') || errStr.includes('Bad credentials')) return '🔐 Hmm, credentials don\'t match. Try again?';
+
+  return '😅 Oops, something went wrong. Try again?';
 }
 
 function getFallbackInfoMessage(info: string): string {

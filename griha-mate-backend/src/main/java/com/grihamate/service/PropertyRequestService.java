@@ -105,6 +105,14 @@ public class PropertyRequestService {
         return mapToDto(updated);
     }
 
+    @Transactional
+    public void confirmPayment(Long requestId) {
+        PropertyRequest request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+        request.setStatus(PropertyRequest.RequestStatus.PAID);
+        requestRepository.save(request);
+    }
+
     private PropertyRequestDto mapToDto(PropertyRequest request) {
         PropertyRequestDto dto = new PropertyRequestDto();
         dto.setId(request.getId());

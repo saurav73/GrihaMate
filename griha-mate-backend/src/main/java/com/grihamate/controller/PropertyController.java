@@ -20,21 +20,21 @@ public class PropertyController {
     private final PropertyService propertyService;
 
     @GetMapping
-    @PreAuthorize("hasRole('SEEKER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<PropertyDto>> getAllProperties() {
         List<PropertyDto> properties = propertyService.getAllAvailableProperties();
         return ResponseEntity.ok(properties);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('SEEKER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PropertyDto> getPropertyById(@PathVariable Long id) {
         PropertyDto property = propertyService.getPropertyById(id);
         return ResponseEntity.ok(property);
     }
 
     @GetMapping("/city/{city}")
-    @PreAuthorize("hasRole('SEEKER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<PropertyDto>> getPropertiesByCity(@PathVariable String city) {
         List<PropertyDto> properties = propertyService.getPropertiesByCity(city);
         return ResponseEntity.ok(properties);

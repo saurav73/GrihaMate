@@ -350,6 +350,7 @@ export default function DashboardSeekerPage() {
           onClose={() => setPaymentModalOpen(false)}
           amount={selectedRequest.propertyPrice || 5000} // Default booking amount if price missing
           propertyId={selectedRequest.propertyId}
+          requestId={selectedRequest.id}
           propertyTitle={selectedRequest.propertyTitle}
           onSuccess={handlePaymentSuccess}
         />

@@ -15,6 +15,7 @@ import {
   IdCard,
   Home,
   X,
+  Loader2,
 } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
@@ -29,6 +30,7 @@ import type { RegisterRequest } from "@/lib/api"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
+import { getCurrentLocationDetails } from "@/lib/location"
 
 type UserType = "seeker" | "landlord" | null
 
@@ -114,6 +116,7 @@ export default function RegisterPage() {
     propertyDocument: null,
     propertyAddress: "",
   })
+  const [locationLoading, setLocationLoading] = useState(false)
 
   const steps = getSteps(formData.userType)
   const totalSteps = steps.length
@@ -261,6 +264,22 @@ export default function RegisterPage() {
       setFormData({ ...formData, emailOtp: "" })
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleGetLocation = async () => {
+    setLocationLoading(true)
+    try {
+      const locationData = await getCurrentLocationDetails()
+      setFormData({
+        ...formData,
+        propertyAddress: locationData.address
+      })
+      toast.success("Location address auto-filled!")
+    } catch (err: any) {
+      toast.error(err.message || "Failed to get location")
+    } finally {
+      setLocationLoading(false)
     }
   }
 
@@ -422,7 +441,7 @@ export default function RegisterPage() {
       await authAPI.register(registerData)
 
       // Show success message
-      toast.success("Registration successful! Please check your email to verify your account.", {
+      toast.success("Registration successful!", {
         position: "top-right",
         autoClose: 6000,
       })
@@ -433,7 +452,7 @@ export default function RegisterPage() {
       }, 2000)
     } catch (err: any) {
       const errorMessage = err.message || "Registration failed. Please try again."
-      
+
       // Show specific error messages
       if (errorMessage.includes("Email already exists")) {
         toast.error("This email is already registered. Please use a different email or try logging in.", {
@@ -476,22 +495,19 @@ export default function RegisterPage() {
                 onClick={() => {
                   setFormData({ ...formData, userType: "seeker" })
                 }}
-                className={`p-6 rounded-2xl border-2 transition-all text-left ${
-                  formData.userType === "seeker"
-                    ? "border-primary bg-primary-lightest shadow-lg scale-105"
-                    : "border-primary-light bg-white hover:border-primary hover:shadow-md hover:bg-primary-lightest/50"
-                }`}
+                className={`p-6 rounded-2xl border-2 transition-all text-left ${formData.userType === "seeker"
+                  ? "border-primary bg-primary-lightest shadow-lg scale-105"
+                  : "border-primary-light bg-white hover:border-primary hover:shadow-md hover:bg-primary-lightest/50"
+                  }`}
               >
                 <div className="flex items-center gap-4">
-                  <div className={`size-12 rounded-xl flex items-center justify-center transition-colors ${
-                    formData.userType === "seeker" ? "bg-primary text-white" : "bg-primary-lightest border-2 border-primary-light"
-                  }`}>
+                  <div className={`size-12 rounded-xl flex items-center justify-center transition-colors ${formData.userType === "seeker" ? "bg-primary text-white" : "bg-primary-lightest border-2 border-primary-light"
+                    }`}>
                     <User className={`size-6 ${formData.userType === "seeker" ? "text-white" : "text-primary"}`} />
                   </div>
                   <div className="flex-1">
-                    <h3 className={`font-bold text-lg mb-1 transition-colors ${
-                      formData.userType === "seeker" ? "text-primary-dark" : "text-primary-dark"
-                    }`}>I'm Looking for a Room</h3>
+                    <h3 className={`font-bold text-lg mb-1 transition-colors ${formData.userType === "seeker" ? "text-primary-dark" : "text-primary-dark"
+                      }`}>I'm Looking for a Room</h3>
                     <p className="text-sm text-muted-foreground">Find verified rooms and roommates</p>
                   </div>
                   {formData.userType === "seeker" && <CheckCircle2 className="size-6 text-primary" />}
@@ -502,22 +518,19 @@ export default function RegisterPage() {
                 onClick={() => {
                   setFormData({ ...formData, userType: "landlord" })
                 }}
-                className={`p-6 rounded-2xl border-2 transition-all text-left ${
-                  formData.userType === "landlord"
-                    ? "border-primary bg-primary-lightest shadow-lg scale-105"
-                    : "border-primary-light bg-white hover:border-primary hover:shadow-md hover:bg-primary-lightest/50"
-                }`}
+                className={`p-6 rounded-2xl border-2 transition-all text-left ${formData.userType === "landlord"
+                  ? "border-primary bg-primary-lightest shadow-lg scale-105"
+                  : "border-primary-light bg-white hover:border-primary hover:shadow-md hover:bg-primary-lightest/50"
+                  }`}
               >
                 <div className="flex items-center gap-4">
-                  <div className={`size-12 rounded-xl flex items-center justify-center transition-colors ${
-                    formData.userType === "landlord" ? "bg-primary text-white" : "bg-primary-lightest border-2 border-primary-light"
-                  }`}>
+                  <div className={`size-12 rounded-xl flex items-center justify-center transition-colors ${formData.userType === "landlord" ? "bg-primary text-white" : "bg-primary-lightest border-2 border-primary-light"
+                    }`}>
                     <Building2 className={`size-6 ${formData.userType === "landlord" ? "text-white" : "text-primary"}`} />
                   </div>
                   <div className="flex-1">
-                    <h3 className={`font-bold text-lg mb-1 transition-colors ${
-                      formData.userType === "landlord" ? "text-primary-dark" : "text-primary-dark"
-                    }`}>I'm a Landlord</h3>
+                    <h3 className={`font-bold text-lg mb-1 transition-colors ${formData.userType === "landlord" ? "text-primary-dark" : "text-primary-dark"
+                      }`}>I'm a Landlord</h3>
                     <p className="text-sm text-muted-foreground">List your property and find tenants</p>
                   </div>
                   {formData.userType === "landlord" && <CheckCircle2 className="size-6 text-primary" />}
@@ -1027,17 +1040,37 @@ export default function RegisterPage() {
                   <Label htmlFor="propertyAddress" className="text-base">
                     Property Address
                   </Label>
-                  <div className="relative">
-                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
+                  <div className="relative group">
+                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground transition-all group-focus-within:text-primary group-focus-within:scale-110" />
                     <Input
                       id="propertyAddress"
                       placeholder="Enter full property address"
                       value={formData.propertyAddress || ""}
                       onChange={(e) => setFormData({ ...formData, propertyAddress: e.target.value })}
-                      className="pl-12 border-primary-lightest h-14 rounded-xl text-base"
+                      className="pl-12 pr-40 border-primary-lightest h-14 rounded-2xl text-base shadow-sm focus:shadow-md focus:ring-primary/20 transition-all"
                       required
                       autoFocus
                     />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                      <button
+                        type="button"
+                        onClick={handleGetLocation}
+                        disabled={locationLoading}
+                        className="flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-xl transition-all duration-300 font-semibold text-sm disabled:opacity-50 group/btn shadow-sm hover:shadow-md"
+                      >
+                        {locationLoading ? (
+                          <>
+                            <Loader2 className="size-4 animate-spin text-primary" />
+                            <span>Locating...</span>
+                          </>
+                        ) : (
+                          <>
+                            <MapPin className="size-4 group-hover/btn:animate-bounce" />
+                            <span>Locate Me</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -1220,7 +1253,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-primary-lightest flex flex-col">
       <Navbar />
-      
+
       <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-6">
         <div className="w-full max-w-lg space-y-6">
           {/* Progress Bar - Above Card */}
@@ -1236,62 +1269,62 @@ export default function RegisterPage() {
             <div className="w-full h-3 bg-primary-lightest rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full transition-all duration-500 ease-out shadow-sm"
-                style={{ 
-                  width: formData.userType 
-                    ? `${(currentStep / totalSteps) * 100}%` 
+                style={{
+                  width: formData.userType
+                    ? `${(currentStep / totalSteps) * 100}%`
                     : "10%" // Show minimal progress when no selection
                 }}
               />
             </div>
           </div>
-          
+
           <Card className="w-full border-primary-lightest shadow-2xl rounded-3xl overflow-hidden bg-white">
-        <CardHeader className="space-y-1 pb-6 text-center pt-6">
-          <CardTitle className="text-xl md:text-2xl font-bold">Create your account</CardTitle>
-          <CardDescription className="text-sm md:text-base">
-            {steps[currentStep - 1]?.title || "Join thousands of verified users"}
-          </CardDescription>
-        </CardHeader>
+            <CardHeader className="space-y-1 pb-6 text-center pt-6">
+              <CardTitle className="text-xl md:text-2xl font-bold">Create your account</CardTitle>
+              <CardDescription className="text-sm md:text-base">
+                {steps[currentStep - 1]?.title || "Join thousands of verified users"}
+              </CardDescription>
+            </CardHeader>
 
-        <CardContent className="px-6 pb-6">
-          {renderStepContent()}
+            <CardContent className="px-6 pb-6">
+              {renderStepContent()}
 
-          {/* Navigation Buttons */}
-          <div className="flex items-center justify-between gap-4 mt-8 pt-6 border-t border-[#F2EDE4]">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleBack}
-              disabled={currentStep === 1}
-              className="flex items-center gap-2 border-primary text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ArrowLeft className="size-4" />
-              Back
-            </Button>
+              {/* Navigation Buttons */}
+              <div className="flex items-center justify-between gap-4 mt-8 pt-6 border-t border-[#F2EDE4]">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleBack}
+                  disabled={currentStep === 1}
+                  className="flex items-center gap-2 border-primary text-primary hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ArrowLeft className="size-4" />
+                  Back
+                </Button>
 
-            <Button
-              type="button"
-              onClick={handleNext}
-              disabled={!isStepValid() || loading}
-              className="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-6 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <>Processing...</>
-              ) : currentStep === totalSteps ? (
-                <>
-                  <Sparkles className="size-4" />
-                  Create Account
-                </>
-              ) : (
-                <>
-                  Continue
-                  <ArrowRight className="size-4" />
-                </>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+                <Button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={!isStepValid() || loading}
+                  className="flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-6 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <>Processing...</>
+                  ) : currentStep === totalSteps ? (
+                    <>
+                      <Sparkles className="size-4" />
+                      Create Account
+                    </>
+                  ) : (
+                    <>
+                      Continue
+                      <ArrowRight className="size-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -1307,7 +1340,7 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   )

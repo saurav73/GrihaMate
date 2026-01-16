@@ -50,7 +50,8 @@ public class UserService {
         user.setRole(request.getUserType());
         // Email is verified during registration via OTP, so set to true
         user.setEmailVerified(true);
-        user.setVerificationStatus(User.VerificationStatus.PENDING);
+        // For testing/development convenience, auto-verify all users
+        user.setVerificationStatus(User.VerificationStatus.VERIFIED);
 
         // Set seeker-specific fields
         if (request.getUserType() == User.Role.SEEKER) {
@@ -67,29 +68,12 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        // Generate and send email verification token
-        String token = generateVerificationToken();
-        EmailVerificationToken verificationToken = new EmailVerificationToken();
-        verificationToken.setToken(token);
-        verificationToken.setUser(savedUser);
-        verificationToken.setExpiryDate(LocalDateTime.now().plusDays(1));
-        verificationToken.setUsed(false);
-        tokenRepository.save(verificationToken);
-
         // Send welcome email
         try {
             emailService.sendWelcomeEmail(savedUser.getEmail(), savedUser.getFullName(), savedUser.getRole().name());
         } catch (Exception e) {
             // Log error but don't fail registration
             System.err.println("Failed to send welcome email: " + e.getMessage());
-        }
-
-        // Send verification email
-        try {
-            emailService.sendVerificationEmail(savedUser.getEmail(), token, savedUser.getFullName());
-        } catch (Exception e) {
-            // Log error but don't fail registration
-            System.err.println("Failed to send verification email: " + e.getMessage());
         }
 
         // Create property verification for landlord
@@ -255,6 +239,14 @@ public class UserService {
         user.setSubscriptionStatus(User.SubscriptionStatus.PREMIUM);
         User savedUser = userRepository.save(user); // Persist change
         return mapToDto(savedUser);
+    }
+
+    @Transactional
+    public void upgradeToPremiumById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setSubscriptionStatus(User.SubscriptionStatus.PREMIUM);
+        userRepository.save(user);
     }
 
     private UserDto mapToDto(User user) {
