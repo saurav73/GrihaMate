@@ -10,6 +10,8 @@ public class PropertyRequestDto {
     private Long seekerId;
     private String seekerName;
     private String seekerEmail;
+    private String seekerPhone;
+    private String seekerImage;
     private Long propertyId;
     private String propertyTitle;
     private String propertyImage;

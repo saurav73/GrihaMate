@@ -130,6 +130,8 @@ public class PropertyRequestService {
         dto.setSeekerId(request.getSeeker().getId());
         dto.setSeekerName(request.getSeeker().getFullName());
         dto.setSeekerEmail(request.getSeeker().getEmail());
+        dto.setSeekerPhone(request.getSeeker().getPhoneNumber());
+        dto.setSeekerImage(request.getSeeker().getProfileImageUrl());
         dto.setPropertyId(request.getProperty().getId());
         dto.setPropertyTitle(request.getProperty().getTitle());
         dto.setPropertyPrice(request.getProperty().getPrice());

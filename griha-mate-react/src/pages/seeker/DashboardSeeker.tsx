@@ -1,4 +1,4 @@
-import { Search, Heart, Settings, LogOut, MapPin, Star, Calendar, TrendingUp } from "lucide-react"
+import { Search, Heart, Settings, LogOut, MapPin, Star, Calendar, TrendingUp, Bell } from "lucide-react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { propertiesAPI, authAPI } from "@/lib/api"

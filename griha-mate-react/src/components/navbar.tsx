@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { User, Menu, Home, Compass, PlusCircle, LogOut, Settings, LayoutDashboard, Heart, Info, HelpCircle } from "lucide-react"
+import { Bell, User, Menu, Home, Compass, PlusCircle, LogOut, Settings, LayoutDashboard, Heart, Info, HelpCircle, Star, MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState, useEffect } from "react"
 import {
@@ -51,7 +51,13 @@ export function Navbar() {
     navigate('/')
   }
 
-  const navItems = [
+  const navItems = isLoggedIn && user?.role === 'SEEKER' ? [
+    { label: "Explore", href: "/explore", icon: Compass, requireAuth: false },
+    { label: "My Requests", href: "/dashboard/seeker", icon: LayoutDashboard, requireAuth: true },
+    { label: "Search Alerts", href: "/room-request", icon: Bell, requireAuth: true },
+    { label: "Feedback", href: "/dashboard/seeker/feedback", icon: MessageSquare, requireAuth: true },
+    { label: "How It Works", href: "/how-it-works", icon: HelpCircle, requireAuth: false },
+  ] : [
     { label: "Home", href: "/", icon: Home, requireAuth: false },
     { label: "About", href: "/about", icon: Info, requireAuth: false },
     { label: "Explore", href: "/explore", icon: Compass, requireAuth: false },
@@ -97,10 +103,14 @@ export function Navbar() {
               <div className="h-6 w-px bg-border mx-2" />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                    <Avatar className="h-10 w-10">
+                  <Button variant="ghost" className="relative flex items-center gap-3 px-2 py-1.5 h-auto rounded-full hover:bg-primary-lightest/50 transition-all border border-transparent hover:border-primary-light/30">
+                    <div className="flex flex-col items-end hidden lg:flex">
+                      <p className="text-sm font-bold text-primary-dark leading-none">{user?.fullName}</p>
+                      <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">{user?.role?.toLowerCase()}</p>
+                    </div>
+                    <Avatar className="h-10 w-10 ring-2 ring-primary/10 ring-offset-2 ring-offset-white">
                       <AvatarImage src={user?.profileImageUrl} alt={user?.fullName} />
-                      <AvatarFallback className="bg-primary-lightest text-primary-dark font-semibold">
+                      <AvatarFallback className="bg-primary text-white font-bold">
                         {userInitials}
                       </AvatarFallback>
                     </Avatar>

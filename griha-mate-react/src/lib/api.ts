@@ -365,6 +365,8 @@ export interface PropertyRequestDto {
   seekerId: number;
   seekerName: string;
   seekerEmail: string;
+  seekerPhone: string;
+  seekerImage: string | null;
   propertyId: number;
   propertyTitle: string;
   propertyPrice?: number;
