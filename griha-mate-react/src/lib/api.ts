@@ -396,6 +396,9 @@ export const propertyRequestAPI = {
       body: JSON.stringify({ status }),
     });
   },
+  checkStatus: async (propertyId: number): Promise<PropertyRequestDto | null> => {
+    return apiRequest<PropertyRequestDto | null>(`/property-requests/check?propertyId=${propertyId}`);
+  },
 };
 
 export const roomRequestAPI = {

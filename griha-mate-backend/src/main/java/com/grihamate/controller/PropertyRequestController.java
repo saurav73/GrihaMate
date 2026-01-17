@@ -40,6 +40,13 @@ public class PropertyRequestController {
         return ResponseEntity.ok(requestService.getMyRequests(currentUser.getId()));
     }
 
+    @GetMapping("/check")
+    public ResponseEntity<PropertyRequestDto> checkRequestStatus(@RequestParam Long propertyId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userService.getUserByEmail(auth.getName());
+        return ResponseEntity.ok(requestService.getRequestBySeekerAndProperty(currentUser.getId(), propertyId));
+    }
+
     @GetMapping("/landlord-requests")
     public ResponseEntity<List<PropertyRequestDto>> getLandlordRequests() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

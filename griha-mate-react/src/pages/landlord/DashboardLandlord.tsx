@@ -10,6 +10,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Home, Users, Wallet, Clock, Plus, Crown, MessageSquare } from "lucide-react"
 import { Link } from "react-router-dom"
 import { PaymentModal } from "@/components/payment/PaymentModal"
+import { cn } from "@/lib/utils"
 
 export default function DashboardLandlordPage() {
   const [properties, setProperties] = useState<PropertyDto[]>([])

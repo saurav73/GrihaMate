@@ -113,6 +113,17 @@ public class PropertyRequestService {
         requestRepository.save(request);
     }
 
+    public PropertyRequestDto getRequestBySeekerAndProperty(Long seekerId, Long propertyId) {
+        User seeker = userRepository.findById(seekerId)
+                .orElseThrow(() -> new RuntimeException("Seeker not found"));
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+
+        return requestRepository.findBySeekerAndProperty(seeker, property)
+                .map(this::mapToDto)
+                .orElse(null);
+    }
+
     private PropertyRequestDto mapToDto(PropertyRequest request) {
         PropertyRequestDto dto = new PropertyRequestDto();
         dto.setId(request.getId());
