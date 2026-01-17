@@ -100,10 +100,8 @@ export default function ManagePropertiesPage() {
 
     setDeleting(true)
     try {
-      // TODO: Implement delete API endpoint
-      // await propertiesAPI.delete(propertyToDelete.id)
+      await propertiesAPI.delete(propertyToDelete.id)
 
-      // For now, just remove from local state
       setProperties(properties.filter((p) => p.id !== propertyToDelete.id))
 
       toast.success("Property deleted successfully!", {
@@ -316,7 +314,7 @@ export default function ManagePropertiesPage() {
                   </CardContent>
                 </Card>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredProperties.map((property) => (
                     <Card
                       key={property.id}
@@ -326,7 +324,7 @@ export default function ManagePropertiesPage() {
                         <img
                           src={property.imageUrls?.[0] || "/placeholder.svg"}
                           alt={property.title}
-                          className="w-full h-48 object-cover"
+                          className="w-full h-40 object-cover"
                         />
                         <div className="absolute top-3 right-3">
                           {getStatusBadge(property.status)}
@@ -391,7 +389,7 @@ export default function ManagePropertiesPage() {
 
                         {/* Actions */}
                         <div className="grid grid-cols-2 gap-2">
-                          <Link to={`/property/${property.id}`} className="flex-1">
+                          <Link to={`/dashboard/landlord/properties/${property.id}`} className="flex-1">
                             <Button
                               variant="outline"
                               size="sm"
@@ -430,8 +428,8 @@ export default function ManagePropertiesPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-primary text-primary-dark hover:bg-primary-lightest"
-                            onClick={() => toast.info("Edit feature coming soon!")}
+                            className="border-primary text-primary-dark hover:bg-primary-lightest hover:text-primary-dark"
+                            onClick={() => navigate(`/dashboard/landlord/edit-property/${property.id}`)}
                           >
                             <Edit className="w-4 h-4 mr-1" />
                             Edit

@@ -184,7 +184,7 @@ export default function DashboardSeekerPage() {
         </Card>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           <Link to="/explore">
             <Card className="hover:shadow-xl transition-all cursor-pointer border-primary-lightest bg-white group">
               <CardContent className="p-6 flex items-center gap-4">
@@ -222,6 +222,34 @@ export default function DashboardSeekerPage() {
                 <div className="flex-1">
                   <h3 className="font-bold text-lg mb-1">Favorites</h3>
                   <p className="text-sm text-muted-foreground">Your saved properties</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/dashboard/seeker/availability-requests">
+            <Card className="hover:shadow-xl transition-all cursor-pointer border-primary-lightest bg-white group">
+              <CardContent className="p-6 flex items-center gap-4">
+                <div className="size-14 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Bell className="text-white size-7" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg mb-1">Availability Alerts</h3>
+                  <p className="text-sm text-muted-foreground">Manage your location alerts</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/dashboard/seeker/feedback">
+            <Card className="hover:shadow-xl transition-all cursor-pointer border-primary-lightest bg-white group">
+              <CardContent className="p-6 flex items-center gap-4">
+                <div className="size-14 rounded-xl bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Star className="text-white size-7" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg mb-1">Give Feedback</h3>
+                  <p className="text-sm text-muted-foreground">Share your experience with us</p>
                 </div>
               </CardContent>
             </Card>
@@ -344,18 +372,20 @@ export default function DashboardSeekerPage() {
 
       <Footer />
 
-      {selectedRequest && (
-        <PaymentModal
-          isOpen={paymentModalOpen}
-          onClose={() => setPaymentModalOpen(false)}
-          amount={selectedRequest.propertyPrice || 5000} // Default booking amount if price missing
-          propertyId={selectedRequest.propertyId}
-          requestId={selectedRequest.id}
-          propertyTitle={selectedRequest.propertyTitle}
-          onSuccess={handlePaymentSuccess}
-        />
-      )}
-    </div>
+      {
+        selectedRequest && (
+          <PaymentModal
+            isOpen={paymentModalOpen}
+            onClose={() => setPaymentModalOpen(false)}
+            amount={selectedRequest.propertyPrice || 5000} // Default booking amount if price missing
+            propertyId={selectedRequest.propertyId}
+            requestId={selectedRequest.id}
+            propertyTitle={selectedRequest.propertyTitle}
+            onSuccess={handlePaymentSuccess}
+          />
+        )
+      }
+    </div >
   )
 }
 

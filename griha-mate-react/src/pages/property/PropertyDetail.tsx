@@ -38,7 +38,7 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c
 }
 
-export default function PropertyDetailPage() {
+export default function PropertyDetailPage({ isDashboard = false }: { isDashboard?: boolean }) {
   const params = useParams()
   const navigate = useNavigate()
   const [property, setProperty] = useState<PropertyDto | null>(null)
@@ -268,9 +268,9 @@ export default function PropertyDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-primary-lightest flex flex-col">
-      <Navbar />
-      <main className="flex-1 max-w-7xl mx-auto px-4 md:px-6 py-8 w-full">
+    <div className={`min-h-screen ${isDashboard ? 'bg-transparent pb-12' : 'bg-primary-lightest flex flex-col'}`}>
+      {!isDashboard && <Navbar />}
+      <main className={`flex-1 ${isDashboard ? 'max-w-full' : 'max-w-7xl mx-auto px-4 md:px-6 py-8 w-full'}`}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
@@ -348,26 +348,26 @@ export default function PropertyDetailPage() {
 
             {/* 360° Virtual Tour */}
             {property.virtualTourUrl && (
-              <Card className="border-primary-lightest overflow-hidden">
+              <Card className="border-none shadow-xl overflow-hidden rounded-[32px]">
                 <CardContent className="p-0">
                   <div className="relative">
-                    <div className="bg-gradient-to-br from-primary to-primary p-6 text-white">
+                    <div className="bg-[#1C3B6F] p-8 text-white">
                       <div className="flex items-center justify-between">
                         <div>
-                          <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-                            <Maximize2 className="size-6" />
+                          <h2 className="text-2xl font-bold mb-2 flex items-center gap-3">
+                            <Maximize2 className="size-6 rotate-45" />
                             360° Virtual Tour
                           </h2>
-                          <p className="text-blue-100">
+                          <p className="text-blue-100/80 text-lg">
                             Explore every corner from anywhere
                           </p>
                         </div>
-                        <Badge className="bg-white/20 text-white border-white/30 text-sm px-3 py-1">
+                        <Badge className="bg-white/10 hover:bg-white/20 text-white border-white/20 text-sm px-4 py-1.5 rounded-full backdrop-blur-md">
                           Live 360°
                         </Badge>
                       </div>
                     </div>
-                    <div className="aspect-video bg-gray-900 relative">
+                    <div className="aspect-[21/9] bg-slate-900 relative">
                       {showVirtualTour ? (
                         <iframe
                           src={property.virtualTourUrl}
@@ -377,22 +377,22 @@ export default function PropertyDetailPage() {
                           title="360° Virtual Tour"
                         />
                       ) : (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-primary/90 to-primary/90">
-                          <div className="text-center space-y-4">
-                            <div className="w-20 h-20 mx-auto bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                              <Maximize2 className="size-10 text-white" />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#1C3B6F]/95 to-[#0D2440]/95">
+                          <div className="text-center space-y-6">
+                            <div className="w-24 h-24 mx-auto bg-white/10 rounded-full flex items-center justify-center backdrop-blur-xl border border-white/20 animate-pulse">
+                              <Maximize2 className="size-10 text-white rotate-45" />
                             </div>
-                            <div>
-                              <h3 className="text-white text-xl font-bold mb-2">
+                            <div className="space-y-2">
+                              <h3 className="text-white text-2xl font-bold">
                                 Immersive 360° Experience
                               </h3>
-                              <p className="text-blue-100 text-sm mb-4">
+                              <p className="text-blue-100/70">
                                 Walk through the property virtually
                               </p>
                             </div>
                             <Button
                               size="lg"
-                              className="bg-white text-primary-dark hover:bg-primary-lightest"
+                              className="bg-white text-[#1C3B6F] hover:bg-blue-50 rounded-full px-8 h-12 font-bold shadow-2xl transition-all hover:scale-105 active:scale-95"
                               onClick={() => setShowVirtualTour(true)}
                             >
                               <Share2 className="mr-2 size-5" />
@@ -402,26 +402,30 @@ export default function PropertyDetailPage() {
                         </div>
                       )}
                     </div>
-                    <div className="p-4 bg-primary-lightest border-t border-blue-100">
+                    <div className="p-5 bg-white border-t border-slate-100">
                       <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-4 text-gray-600">
-                          <div className="flex items-center gap-1">
-                            ✓ High-definition 360° panoramas
+                        <div className="flex items-center gap-6 text-slate-500 font-medium">
+                          <div className="flex items-center gap-2">
+                            <span className="size-1.5 rounded-full bg-[#1C3B6F]" />
+                            High-definition panoramas
                           </div>
-                          <div className="flex items-center gap-1">
-                            ✓ Interactive navigation
+                          <div className="flex items-center gap-2">
+                            <span className="size-1.5 rounded-full bg-[#1C3B6F]" />
+                            Interactive navigation
                           </div>
-                          <div className="flex items-center gap-1">
-                            ✓ Room-to-room walkthrough
+                          <div className="flex items-center gap-2">
+                            <span className="size-1.5 rounded-full bg-[#1C3B6F]" />
+                            Room-to-room walkthrough
                           </div>
                         </div>
                         {showVirtualTour && (
                           <Button
                             variant="ghost"
                             size="sm"
+                            className="text-[#1C3B6F] font-bold hover:bg-blue-50 rounded-full"
                             onClick={() => window.open(property.virtualTourUrl, '_blank')}
                           >
-                            <ExternalLink className="size-4 mr-1" />
+                            <ExternalLink className="size-4 mr-2" />
                             Open in new tab
                           </Button>
                         )}
@@ -632,13 +636,13 @@ export default function PropertyDetailPage() {
                   </div>
                 </div>
               </CardContent>
-            </Card >
-          </div >
-        </div >
-      </main >
+            </Card>
+          </div>
+        </div>
+      </main>
 
       {/* Request Dialog */}
-      < Dialog open={isRequestModalOpen} onOpenChange={setIsRequestModalOpen} >
+      <Dialog open={isRequestModalOpen} onOpenChange={setIsRequestModalOpen} >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Contact Landlord</DialogTitle>
@@ -659,10 +663,10 @@ export default function PropertyDetailPage() {
             </div>
           </div>
         </DialogContent>
-      </Dialog >
+      </Dialog>
 
       {/* Sprite Payment Dialog */}
-      < Dialog open={showPayment} onOpenChange={setShowPayment} >
+      <Dialog open={showPayment} onOpenChange={setShowPayment} >
         <DialogContent className="sm:max-w-md" aria-describedby="payment-dialog-description">
           <DialogHeader>
             <DialogTitle>Card Payment</DialogTitle>
@@ -761,9 +765,9 @@ export default function PropertyDetailPage() {
             </p>
           </div>
         </DialogContent>
-      </Dialog >
+      </Dialog>
 
-      <Footer />
-    </div >
+      {!isDashboard && <Footer />}
+    </div>
   )
 }

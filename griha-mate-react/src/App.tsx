@@ -20,6 +20,8 @@ import PropertyDetailPage from './pages/property/PropertyDetail'
 import DashboardLandlordPage from './pages/landlord/DashboardLandlord'
 import LandlordRequestsPage from './pages/landlord/LandlordRequests'
 import DashboardSeekerPage from './pages/seeker/DashboardSeeker'
+import FeedbackPage from './pages/seeker/Feedback'
+import AvailabilitySubscriptionsPage from './pages/seeker/AvailabilitySubscriptions'
 import ContactPage from './pages/public/Contact'
 import TermsPage from './pages/public/Terms'
 import PrivacyPage from './pages/public/Privacy'
@@ -31,6 +33,7 @@ import AdminRequestsPage from './pages/admin/Requests'
 import FavoritesPage from './pages/seeker/Favorites'
 import RoomRequestPage from './pages/seeker/RoomRequest'
 import ManagePropertiesPage from './pages/landlord/ManageProperties'
+import EditPropertyPage from './pages/landlord/EditProperty'
 import PaymentSuccessPage from './pages/payment/PaymentSuccess'
 import PaymentFailurePage from './pages/payment/PaymentFailure'
 import NotFoundPage from './pages/public/NotFound'
@@ -55,10 +58,14 @@ function App() {
           <Route index element={<DashboardLandlordPage />} />
           <Route path="requests" element={<LandlordRequestsPage />} />
           <Route path="manage-properties" element={<ManagePropertiesPage />} />
+          <Route path="edit-property/:id" element={<EditPropertyPage />} />
+          <Route path="properties/:id" element={<PropertyDetailPage isDashboard={true} />} />
           <Route path="list-property" element={<ListPropertyPage />} />
         </Route>
 
         <Route path="/dashboard/seeker" element={<DashboardSeekerPage />} />
+        <Route path="/dashboard/seeker/feedback" element={<FeedbackPage />} />
+        <Route path="/dashboard/seeker/availability-requests" element={<AvailabilitySubscriptionsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />

@@ -68,4 +68,27 @@ public class PropertyController {
         List<PropertyDto> properties = propertyService.getLandlordProperties(principal.getName());
         return ResponseEntity.ok(properties);
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('LANDLORD')")
+    public ResponseEntity<?> updateProperty(@PathVariable Long id, @Valid @RequestBody PropertyDto propertyDto,
+            Principal principal) {
+        try {
+            PropertyDto updatedProperty = propertyService.updateProperty(id, propertyDto, principal.getName());
+            return ResponseEntity.ok(updatedProperty);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('LANDLORD')")
+    public ResponseEntity<?> deleteProperty(@PathVariable Long id, Principal principal) {
+        try {
+            propertyService.deleteProperty(id, principal.getName());
+            return ResponseEntity.ok(Map.of("message", "Property deleted successfully"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
 }

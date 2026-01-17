@@ -1,4 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081/api';
+import axios from 'axios';
 
 export interface AuthResponse {
   token: string;
@@ -182,12 +183,25 @@ export const propertiesAPI = {
     return apiRequest<PropertyDto[]>('/properties/my-properties');
   },
 
+  update: async (id: number, data: Partial<PropertyDto>): Promise<PropertyDto> => {
+    return apiRequest<PropertyDto>(`/properties/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  delete: async (id: number): Promise<{ message: string }> => {
+    return apiRequest<{ message: string }>(`/properties/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
   search: async (params: any): Promise<PropertyDto[]> => {
     const queryParams = new URLSearchParams();
     if (params.city) queryParams.append('city', params.city);
     if (params.minPrice) queryParams.append('minPrice', params.minPrice.toString());
     if (params.maxPrice) queryParams.append('maxPrice', params.maxPrice.toString());
-    if (params.propertyType) queryParams.append('type', params.propertyType); // Note parameter name 'type'
+    if (params.propertyType) queryParams.append('type', params.propertyType);
     if (params.minBedrooms) queryParams.append('minBedrooms', params.minBedrooms.toString());
 
     return apiRequest<PropertyDto[]>(`/properties/search?${queryParams.toString()}`);
@@ -196,6 +210,37 @@ export const propertiesAPI = {
   requestProperty: async (propertyId: number, message: string): Promise<PropertyRequestDto> => {
     return propertyRequestAPI.create(propertyId, message);
   },
+};
+
+// Feedback API
+export const feedbackAPI = {
+  submit: async (comment: string, rating: number): Promise<any> => {
+    return apiRequest<any>('/feedbacks/submit', {
+      method: 'POST',
+      body: JSON.stringify({ comment, rating }),
+    });
+  },
+  getAll: async (): Promise<any[]> => {
+    return apiRequest<any[]>('/feedbacks');
+  }
+};
+
+// Availability Subscription API
+export const availabilitySubscriptionAPI = {
+  subscribe: async (city: string, district: string): Promise<any> => {
+    return apiRequest<any>('/availability-subscriptions/subscribe', {
+      method: 'POST',
+      body: JSON.stringify({ city, district }),
+    });
+  },
+  getMySubscriptions: async (): Promise<any[]> => {
+    return apiRequest<any[]>('/availability-subscriptions/my-subscriptions');
+  },
+  unsubscribe: async (id: number): Promise<{ message: string }> => {
+    return apiRequest<{ message: string }>(`/availability-subscriptions/${id}`, {
+      method: 'DELETE',
+    });
+  }
 };
 
 // Contact API
@@ -263,7 +308,25 @@ export const adminAPI = {
       method: 'PUT',
     });
   },
+  getStats: async (): Promise<AdminStats> => {
+    return apiRequest<AdminStats>('/admin/stats');
+  },
+  getAllPropertyRequests: async (): Promise<PropertyRequestDto[]> => {
+    return apiRequest<PropertyRequestDto[]>('/admin/property-requests');
+  },
 };
+
+export interface AdminStats {
+  totalUsers: number;
+  verifiedUsers: number;
+  pendingUsers: number;
+  totalProperties: number;
+  verifiedProperties: number;
+  pendingProperties: number;
+  totalRoomRequests: number;
+  totalPropertyInquiries: number;
+  growthData: { name: string; users: number }[];
+}
 
 // Room Request API
 export interface RoomRequestDto {
@@ -473,8 +536,6 @@ export const imageAPI = {
   },
 };
 
-
-import axios from 'axios';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

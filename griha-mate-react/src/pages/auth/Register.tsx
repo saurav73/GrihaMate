@@ -1131,15 +1131,8 @@ export default function RegisterPage() {
             </div>
           )
         }
-        // Terms step for seekers (step 7)
+        // Terms step for seekers falls through to here
         return renderTermsStep()
-
-      case 9:
-        // Terms step for seekers (step 9)
-        if (formData.userType === "seeker") {
-          return renderTermsStep()
-        }
-        return null
 
       case 10:
         // Terms step for landlords (step 10)

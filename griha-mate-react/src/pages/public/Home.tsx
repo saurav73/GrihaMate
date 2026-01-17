@@ -14,97 +14,89 @@ export default function HomePage() {
       <Navbar />
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="relative px-6 py-20 md:py-32 flex flex-col items-center text-center max-w-5xl mx-auto overflow-hidden">
-          {/* Enhanced Animated Gradient Background */}
+        {/* Hero Section - Full Width Background */}
+        <section className="relative w-full py-20 md:py-32 overflow-hidden">
+          {/* Background Image with Overlay - Full Width */}
           <div className="absolute inset-0 -z-10">
-            {/* Pattern Background with better opacity */}
+            {/* Real Background Image */}
             <div
-              className="absolute inset-0 opacity-20"
+              className="absolute inset-0"
               style={{
-                backgroundImage: 'url(/hero-pattern.png)',
+                backgroundImage: 'url(/hero-background.png)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat'
               }}
             />
-            {/* Enhanced Gradient Overlay */}
+            {/* Light white gradient overlay for text readability */}
             <div
-              className="absolute inset-0 opacity-70"
-              style={{
-                background: 'linear-gradient(135deg, #E7F0FA 0%, #7BA4D0 35%, #9BB8DD 65%, #E7F0FA 100%)',
-                backgroundSize: '400% 400%',
-                animation: 'gradientShift 20s ease infinite'
-              }}
+              className="absolute inset-0 bg-gradient-to-b from-white/50 via-white/40 to-white/50"
             />
             {/* Subtle radial overlay for depth */}
             <div
-              className="absolute inset-0 opacity-40"
+              className="absolute inset-0 opacity-20"
               style={{
-                background: 'radial-gradient(circle at 50% 50%, rgba(46, 94, 153, 0.1) 0%, transparent 70%)'
+                background: 'radial-gradient(circle at 50% 50%, rgba(46, 94, 153, 0.15) 0%, transparent 70%)'
               }}
             />
           </div>
-          <style>{`
-            @keyframes gradientShift {
-              0% { background-position: 0% 50%; }
-              50% { background-position: 100% 50%; }
-              100% { background-position: 0% 50%; }
-            }
-          `}</style>
-          <Badge
-            variant="outline"
-            className="mb-6 py-1 px-4 rounded-full border-primary-lightest bg-primary-lightest text-primary-dark flex items-center gap-2"
-          >
-            <div className="size-1.5 rounded-full bg-green-500 animate-pulse" />
-            New: AI-powered roommate matching is live
-          </Badge>
-          <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-[1.1] tracking-tight text-primary-dark">
-            Verified Rooms & Roommates for Modern Living in Nepal
-          </h1>
-          <p className="text-lg md:text-xl text-primary-dark/80 mb-12 max-w-2xl leading-relaxed">
-            Discover your next home with 360° virtual tours, verified listings, and a community of trusted renters.
-            Secure, transparent, and easy.
-          </p>
 
-          <div className="w-full max-w-2xl relative mb-16">
-            <div className="bg-white p-2 rounded-2xl shadow-xl border border-primary-lightest hover:shadow-2xl hover:border-primary-light transition-all duration-300 flex flex-col sm:flex-row gap-2">
-              <div className="flex-1 flex items-center px-4 gap-3">
-                <Search className="size-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                <Input
-                  placeholder="Where do you want to live?"
-                  className="border-none bg-transparent focus-visible:ring-0 text-base hover:placeholder:text-primary transition-colors"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      window.location.href = `/explore?q=${e.currentTarget.value}`
-                    }
-                  }}
-                />
-              </div>
-              <div className="flex items-center px-4 gap-2 sm:border-l border-primary-lightest hover:border-primary-light transition-colors">
-                <MapPin className="size-5 text-muted-foreground hover:text-primary transition-colors" />
-                <span className="text-sm font-medium whitespace-nowrap hover:text-primary transition-colors">Kathmandu, NP</span>
-              </div>
-              <AISearchDialog />
-            </div>
-          </div>
+          {/* Content - Centered */}
+          <div className="px-6 flex flex-col items-center text-center max-w-5xl mx-auto">
+            <Badge
+              variant="outline"
+              className="mb-6 py-1 px-4 rounded-full border-primary-lightest bg-primary-lightest text-primary-dark flex items-center gap-2"
+            >
+              <div className="size-1.5 rounded-full bg-green-500 animate-pulse" />
+              New: AI-powered roommate matching is live
+            </Badge>
+            <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-[1.1] tracking-tight text-primary-dark" style={{ textShadow: '0 2px 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.5)' }}>
+              Verified Rooms & Roommates for Modern Living in Nepal
+            </h1>
+            <p className="text-lg md:text-xl text-primary-dark/80 mb-12 max-w-2xl leading-relaxed" style={{ textShadow: '0 1px 8px rgba(255, 255, 255, 0.9)' }}>
+              Discover your next home with 360° virtual tours, verified listings, and a community of trusted renters.
+              Secure, transparent, and easy.
+            </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full border-t border-primary-dark/20 pt-12 text-left">
-            <div>
-              <div className="text-3xl font-bold text-primary-dark">15k+</div>
-              <div className="text-sm text-primary-dark/70">Verified Listings</div>
+            <div className="w-full max-w-2xl relative mb-16">
+              <div className="bg-white p-2 rounded-2xl shadow-xl border border-primary-lightest hover:shadow-2xl hover:border-primary-light transition-all duration-300 flex flex-col sm:flex-row gap-2">
+                <div className="flex-1 flex items-center px-4 gap-3">
+                  <Search className="size-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <Input
+                    placeholder="Where do you want to live?"
+                    className="border-none bg-transparent focus-visible:ring-0 text-base hover:placeholder:text-primary transition-colors"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        window.location.href = `/explore?q=${e.currentTarget.value}`
+                      }
+                    }}
+                  />
+                </div>
+                <div className="flex items-center px-4 gap-2 sm:border-l border-primary-lightest hover:border-primary-light transition-colors">
+                  <MapPin className="size-5 text-muted-foreground hover:text-primary transition-colors" />
+                  <span className="text-sm font-medium whitespace-nowrap hover:text-primary transition-colors">Kathmandu, NP</span>
+                </div>
+                <AISearchDialog />
+              </div>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-primary-dark">98%</div>
-              <div className="text-sm text-primary-dark/70">Tenant Satisfaction</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-primary-dark">360°</div>
-              <div className="text-sm text-primary-dark/70">Virtual Tours</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-primary-dark">24/7</div>
-              <div className="text-sm text-primary-dark/70">Local Support</div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full border-t border-primary-dark/20 pt-12 text-left">
+              <div>
+                <div className="text-3xl font-bold text-primary-dark">15k+</div>
+                <div className="text-sm text-primary-dark/70">Verified Listings</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-primary-dark">98%</div>
+                <div className="text-sm text-primary-dark/70">Tenant Satisfaction</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-primary-dark">360°</div>
+                <div className="text-sm text-primary-dark/70">Virtual Tours</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-primary-dark">24/7</div>
+                <div className="text-sm text-primary-dark/70">Local Support</div>
+              </div>
             </div>
           </div>
         </section>

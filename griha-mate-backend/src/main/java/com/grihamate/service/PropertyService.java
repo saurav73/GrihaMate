@@ -85,6 +85,8 @@ public class PropertyService {
         property.setImageUrls(propertyDto.getImageUrls());
         property.setVirtualTourUrl(propertyDto.getVirtualTourUrl());
         property.setFeatures(propertyDto.getFeatures());
+        property.setLatitude(propertyDto.getLatitude());
+        property.setLongitude(propertyDto.getLongitude());
         property.setVerified(false); // Requires admin verification
         property.setLandlord(landlord);
 
@@ -100,5 +102,50 @@ public class PropertyService {
         return properties.stream()
                 .map(PropertyDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public PropertyDto updateProperty(Long id, PropertyDto propertyDto, String landlordEmail) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+
+        if (!property.getLandlord().getEmail().equals(landlordEmail)) {
+            throw new RuntimeException("You can only update your own properties");
+        }
+
+        property.setTitle(propertyDto.getTitle());
+        property.setDescription(propertyDto.getDescription());
+        property.setAddress(propertyDto.getAddress());
+        property.setCity(propertyDto.getCity());
+        property.setDistrict(propertyDto.getDistrict());
+        property.setProvince(propertyDto.getProvince());
+        property.setPrice(propertyDto.getPrice());
+        property.setBedrooms(propertyDto.getBedrooms());
+        property.setBathrooms(propertyDto.getBathrooms());
+        property.setArea(propertyDto.getArea());
+        property.setPropertyType(propertyDto.getPropertyType());
+        property.setImageUrls(propertyDto.getImageUrls());
+        property.setVirtualTourUrl(propertyDto.getVirtualTourUrl());
+        property.setFeatures(propertyDto.getFeatures());
+        property.setLatitude(propertyDto.getLatitude());
+        property.setLongitude(propertyDto.getLongitude());
+
+        // Optionally reset verification status if critical fields change
+        // property.setVerified(false);
+
+        Property savedProperty = propertyRepository.save(property);
+        return PropertyDto.fromEntity(savedProperty);
+    }
+
+    @Transactional
+    public void deleteProperty(Long id, String landlordEmail) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+
+        if (!property.getLandlord().getEmail().equals(landlordEmail)) {
+            throw new RuntimeException("You can only delete your own properties");
+        }
+
+        propertyRepository.delete(property);
     }
 }

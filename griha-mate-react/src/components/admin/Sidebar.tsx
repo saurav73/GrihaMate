@@ -6,7 +6,8 @@ import {
     MapPin,
     Settings,
     LogOut,
-    ShieldCheck
+    ShieldCheck,
+    Home
 } from "lucide-react"
 
 const sidebarItems = [
@@ -19,6 +20,11 @@ const sidebarItems = [
         title: "User Management",
         href: "/admin/users",
         icon: Users,
+    },
+    {
+        title: "Room Inventory",
+        href: "/admin/properties",
+        icon: Home,
     },
     {
         title: "Room Requests",

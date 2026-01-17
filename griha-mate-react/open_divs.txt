@@ -1,0 +1,68 @@
+248:      <div className="min-h-screen bg-primary-lightest flex flex-col">
+250:        <div className="flex-1 flex items-center justify-center">
+260:      <div className="min-h-screen bg-primary-lightest flex flex-col">
+262:        <div className="flex-1 flex items-center justify-center">
+271:    <div className={`min-h-screen ${isDashboard ? 'bg-transparent pb-12' : 'bg-primary-lightest flex flex-col'}`}>
+274:        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+276:          <div className="lg:col-span-2 space-y-6">
+278:            <div className="space-y-4">
+279:              <div className="relative aspect-video rounded-2xl overflow-hidden">
+292:                <div className="grid grid-cols-4 gap-2">
+294:                    <div key={idx} className="relative aspect-square rounded-lg overflow-hidden">
+305:                <div>
+307:                  <div className="flex items-center gap-2 text-muted-foreground">
+313:                <div className="flex items-center gap-6">
+314:                  <div className="flex items-center gap-2">
+318:                  <div className="flex items-center gap-2">
+322:                  <div className="flex items-center gap-2">
+328:                <div>
+334:                  <div>
+336:                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+338:                        <div key={idx} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100">
+353:                  <div className="relative">
+354:                    <div className="bg-[#1C3B6F] p-8 text-white">
+355:                      <div className="flex items-center justify-between">
+356:                        <div>
+370:                    <div className="aspect-[21/9] bg-slate-900 relative">
+380:                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#1C3B6F]/95 to-[#0D2440]/95">
+381:                          <div className="text-center space-y-6">
+382:                            <div className="w-24 h-24 mx-auto bg-white/10 rounded-full flex items-center justify-center backdrop-blur-xl border border-white/20 animate-pulse">
+385:                            <div className="space-y-2">
+405:                    <div className="p-5 bg-white border-t border-slate-100">
+406:                      <div className="flex items-center justify-between text-sm">
+407:                        <div className="flex items-center gap-6 text-slate-500 font-medium">
+408:                          <div className="flex items-center gap-2">
+412:                          <div className="flex items-center gap-2">
+416:                          <div className="flex items-center gap-2">
+443:                  <div className="bg-gradient-to-br from-primary to-primary-dark p-6 text-white">
+444:                    <div className="flex items-center justify-between">
+445:                      <div>
+470:                  <div className="h-[400px] md:h-[500px] bg-gray-100 relative z-0">
+487:                          html: `<div class="bg-primary text-white p-2 rounded-full shadow-xl border-2 border-white transform hover:scale-110 transition-transform">
+504:                              html: `<div class="bg-blue-500 text-white p-1.5 rounded-full shadow-lg border-2 border-white ring-2 ring-blue-200">
+545:                      <div className="absolute top-4 right-4 z-[500] animate-in fade-in slide-in-from-top-4 duration-500">
+548:                            <div className="text-center">
+555:                            <div className="w-px h-8 bg-gray-200" />
+556:                            <div className="text-center">
+574:          <div className="space-y-6">
+577:              <div className="bg-gradient-to-br from-primary to-primary-dark p-4 text-white">
+578:                <div className="text-3xl font-bold">Rs. {property.price.toLocaleString()}</div>
+579:                <div className="text-primary-lightest text-sm">per month</div>
+582:                <div className="hidden">
+583:                  <div className="text-4xl font-bold text-primary-dark">Rs. {property.price.toLocaleString()}</div>
+584:                  <div className="text-muted-foreground">per month</div>
+587:                <div className="space-y-3">
+608:                  <div className="pt-3 border-t border-primary-lightest space-y-2">
+629:                <div className="pt-4 border-t border-primary-lightest">
+630:                  <div className="text-sm text-muted-foreground space-y-2">
+631:                    <div className="flex items-center gap-2">
+650:          <div className="space-y-4 py-4">
+651:            <div className="space-y-2">
+660:            <div className="flex justify-end gap-3">
+675:          <div className="space-y-4">
+676:            <div className="space-y-2">
+686:            <div className="grid grid-cols-2 gap-4">
+687:              <div className="space-y-2">
+703:              <div className="space-y-2">
+715:            <div className="space-y-2">
+724:            <div className="flex gap-2">
