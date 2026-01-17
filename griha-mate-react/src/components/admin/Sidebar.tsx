@@ -7,7 +7,8 @@ import {
     Settings,
     LogOut,
     ShieldCheck,
-    Home
+    Home,
+    Crown
 } from "lucide-react"
 
 const sidebarItems = [
@@ -22,14 +23,14 @@ const sidebarItems = [
         icon: Users,
     },
     {
+        title: "Premium Members",
+        href: "/admin/premium-users",
+        icon: Crown,
+    },
+    {
         title: "Room Inventory",
         href: "/admin/properties",
         icon: Home,
-    },
-    {
-        title: "Room Requests",
-        href: "/admin/requests",
-        icon: MapPin,
     },
     {
         title: "Settings",
@@ -42,14 +43,16 @@ export function AdminSidebar() {
     const location = useLocation()
 
     return (
-        <div className="flex h-full w-64 flex-col border-r border-[#E7F0FA] bg-white text-[#0D2440]">
+        <div className="flex h-full w-64 flex-col border-r border-[#E7F0FA] bg-white text-[#0D2440] shrink-0">
             <div className="p-6">
-                <Link to="/" className="flex items-center gap-2 font-bold text-xl text-[#2E5E99]">
-                    <ShieldCheck className="size-6" />
-                    <span>GrihaMate</span>
+                <Link to="/" className="flex items-center gap-2 transition-all duration-300 hover:opacity-90 hover:scale-105 group">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2E5E99] text-white group-hover:bg-[#0D2440] group-hover:scale-110 transition-all duration-300 shadow-lg shadow-blue-900/10">
+                        <Home className="h-6 w-6" />
+                    </div>
+                    <span className="text-xl font-bold tracking-tight text-[#0D2440] group-hover:text-[#2E5E99] transition-colors duration-300">GrihaMate</span>
                 </Link>
             </div>
-            <div className="flex-1 px-4 py-2 space-y-2">
+            <div className="flex-1 px-4 py-2 space-y-2 overflow-y-auto custom-scrollbar">
                 {sidebarItems.map((item) => (
                     <Link
                         key={item.href}

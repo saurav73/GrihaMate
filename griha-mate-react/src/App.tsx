@@ -30,6 +30,8 @@ import TrustSafetyPage from './pages/public/TrustSafety'
 import AdminDashboardPage from './pages/admin/Dashboard'
 import AdminUsersPage from './pages/admin/Users'
 import AdminRequestsPage from './pages/admin/Requests'
+import PremiumUsersPage from './pages/admin/PremiumUsers'
+import PremiumUserDetailPage from './pages/admin/PremiumUserDetail'
 import FavoritesPage from './pages/seeker/Favorites'
 import RoomRequestPage from './pages/seeker/RoomRequest'
 import ManagePropertiesPage from './pages/landlord/ManageProperties'
@@ -73,6 +75,8 @@ function App() {
         <Route path="/trust-safety" element={<TrustSafetyPage />} />
         <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/admin/users" element={<AdminUsersPage />} />
+        <Route path="/admin/premium-users" element={<PremiumUsersPage />} />
+        <Route path="/admin/premium-users/:id" element={<PremiumUserDetailPage />} />
         <Route path="/admin/requests" element={<AdminRequestsPage />} />
         <Route path="/favorites" element={<FavoritesPage />} />
         <Route path="/room-request" element={<RoomRequestPage />} />

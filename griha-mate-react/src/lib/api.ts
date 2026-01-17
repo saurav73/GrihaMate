@@ -272,10 +272,10 @@ export const paymentAPI = {
       body: JSON.stringify({ amount, request_id: requestId, type }),
     });
   },
-  processStripe: async (transactionId: string, cardDetails: any): Promise<any> => {
+  processStripe: async (transactionId: string, cardDetails: any, type: string, requestId: number): Promise<any> => {
     return apiRequest<any>('/payment/stripe/process', {
       method: 'POST',
-      body: JSON.stringify({ transactionId, ...cardDetails }),
+      body: JSON.stringify({ transactionId, ...cardDetails, type, requestId }),
     });
   },
 };
@@ -284,6 +284,12 @@ export const paymentAPI = {
 export const adminAPI = {
   getAllUsers: async (): Promise<UserDto[]> => {
     return apiRequest<UserDto[]>('/admin/users');
+  },
+  getUserById: async (userId: number): Promise<UserDto> => {
+    return apiRequest<UserDto>(`/admin/users/${userId}`);
+  },
+  getPremiumUsers: async (): Promise<UserDto[]> => {
+    return apiRequest<UserDto[]>('/admin/users/premium');
   },
   verifyUser: async (userId: number): Promise<{ message: string }> => {
     return apiRequest<{ message: string }>(`/admin/users/${userId}/verify`, {
@@ -297,6 +303,9 @@ export const adminAPI = {
   },
   getAllProperties: async (): Promise<PropertyDto[]> => {
     return apiRequest<PropertyDto[]>('/admin/properties');
+  },
+  getLandlordProperties: async (userId: number): Promise<PropertyDto[]> => {
+    return apiRequest<PropertyDto[]>(`/admin/users/${userId}/properties`);
   },
   verifyProperty: async (propertyId: number): Promise<{ message: string }> => {
     return apiRequest<{ message: string }>(`/admin/properties/${propertyId}/verify`, {

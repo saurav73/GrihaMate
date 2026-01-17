@@ -17,7 +17,7 @@ export async function generateSuccessMessage(action: string, context?: string): 
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" })
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
     const prompt = `Generate a short, friendly, and enthusiastic success message (max 10 words) for: ${action}${context ? `. Context: ${context}` : ''}. Use emojis naturally. Be conversational and warm.`
 
     const result = await model.generateContent(prompt)
@@ -42,7 +42,7 @@ export async function generateErrorMessage(error: string, context?: string): Pro
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" })
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
     const prompt = `Generate a short, empathetic, and helpful error message (max 15 words) for: ${error}${context ? `. Context: ${context}` : ''}. Be understanding and suggest what to do next. Use a supportive tone.`
 
     const result = await model.generateContent(prompt)
@@ -67,7 +67,7 @@ export async function generateInfoMessage(info: string, context?: string): Promi
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" })
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
     const prompt = `Generate a short, informative, and friendly message (max 12 words) for: ${info}${context ? `. Context: ${context}` : ''}. Be clear and helpful. Use a conversational tone.`
 
     const result = await model.generateContent(prompt)
@@ -92,7 +92,7 @@ export async function generateWarningMessage(warning: string, context?: string):
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" })
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
     const prompt = `Generate a short, cautionary but friendly warning message (max 12 words) for: ${warning}${context ? `. Context: ${context}` : ''}. Be helpful and guide the user. Use a caring tone.`
 
     const result = await model.generateContent(prompt)
@@ -115,7 +115,7 @@ export async function generateGreeting(userName?: string): Promise<string> {
   const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening'
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" })
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
     const prompt = `Generate a warm, personalized ${timeOfDay} greeting${userName ? ` for ${userName}` : ''} (max 8 words). Be friendly and welcoming. Use appropriate emojis.`
 
     const result = await model.generateContent(prompt)

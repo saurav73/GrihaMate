@@ -71,7 +71,7 @@ export function PaymentModal({ isOpen, onClose, amount, propertyId, requestId, p
         try {
             setLoading(true)
             const initData = await paymentAPI.initiateStripe(amount, requestId || propertyId, type)
-            const data = await paymentAPI.processStripe(initData.transactionId, cardDetails)
+            const data = await paymentAPI.processStripe(initData.transactionId, cardDetails, type, requestId || propertyId)
 
             if (data.status === 'success') {
                 toast.success("Payment successful!")

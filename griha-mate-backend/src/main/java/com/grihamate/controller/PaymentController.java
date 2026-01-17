@@ -234,15 +234,35 @@ public class PaymentController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        // Test card validation (accept any card starting with 4, 5, or 3 for test)
-        if (cardNumber.startsWith("4") || cardNumber.startsWith("5") || cardNumber.startsWith("3")) {
+        // Test card validation (accept any card starting with 4242 or 4, 5, or 3 for
+        // test)
+        if (cardNumber.startsWith("4242") || cardNumber.startsWith("4") || cardNumber.startsWith("5")
+                || cardNumber.startsWith("3")) {
+            // Persistence Logic
+            try {
+                Object requestIdObj = payload.get("requestId");
+                String type = (String) payload.getOrDefault("type", "booking");
+
+                if (requestIdObj != null) {
+                    Long id = Long.parseLong(requestIdObj.toString());
+                    if ("SUBSCRIPTION".equals(type.toUpperCase())) {
+                        userService.upgradeToPremiumById(id);
+                    } else {
+                        propertyRequestService.confirmPayment(id);
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to persist premium status: " + e.getMessage());
+                // For test mode, we might still return success but log the error
+            }
+
             response.put("status", "success");
             response.put("message", "Payment processed successfully");
             response.put("transactionId", transactionId);
             return ResponseEntity.ok(response);
         } else {
             response.put("status", "error");
-            response.put("message", "Card not supported");
+            response.put("message", "Card not supported. Use test card 4242...");
             return ResponseEntity.badRequest().body(response);
         }
     }

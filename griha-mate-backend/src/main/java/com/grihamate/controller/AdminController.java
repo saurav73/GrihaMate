@@ -27,7 +27,6 @@ public class AdminController {
     private final PropertyRepository propertyRepository;
     private final EmailService emailService;
     private final RoomRequestService roomRequestService;
-    private final PropertyService propertyService;
     private final com.grihamate.service.UserService userService;
     private final com.grihamate.repository.PropertyRequestRepository propertyRequestRepository;
     private final com.grihamate.service.AvailabilitySubscriptionService availabilitySubscriptionService;
@@ -111,6 +110,24 @@ public class AdminController {
         return ResponseEntity.ok(userDtos);
     }
 
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(UserDto.fromEntity(user));
+    }
+
+    @GetMapping("/users/premium")
+    public ResponseEntity<List<UserDto>> getPremiumUsers() {
+        List<User> users = userRepository.findAll().stream()
+                .filter(u -> u.getSubscriptionStatus() == User.SubscriptionStatus.PREMIUM)
+                .collect(Collectors.toList());
+        List<UserDto> userDtos = users.stream()
+                .map(UserDto::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(userDtos);
+    }
+
     @PutMapping("/users/{id}/verify")
     public ResponseEntity<?> verifyUser(@PathVariable Long id) {
         userService.verifyUser(id);
@@ -133,6 +150,17 @@ public class AdminController {
     @GetMapping("/properties")
     public ResponseEntity<List<PropertyDto>> getAllProperties() {
         List<Property> properties = propertyRepository.findAll();
+        List<PropertyDto> propertyDtos = properties.stream()
+                .map(PropertyDto::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(propertyDtos);
+    }
+
+    @GetMapping("/users/{id}/properties")
+    public ResponseEntity<List<PropertyDto>> getPropertiesByLandlord(@PathVariable Long id) {
+        List<Property> properties = propertyRepository.findAll().stream()
+                .filter(p -> p.getLandlord().getId().equals(id))
+                .collect(Collectors.toList());
         List<PropertyDto> propertyDtos = properties.stream()
                 .map(PropertyDto::fromEntity)
                 .collect(Collectors.toList());
