@@ -266,14 +266,14 @@ export const paymentAPI = {
       method: 'POST',
     });
   },
-  initiateSprite: async (amount: number, requestId?: number, type: 'booking' | 'subscription' = 'booking'): Promise<any> => {
-    return apiRequest<any>('/payment/sprite/initiate', {
+  initiateStripe: async (amount: number, requestId?: number, type: 'booking' | 'subscription' = 'booking'): Promise<any> => {
+    return apiRequest<any>('/payment/stripe/initiate', {
       method: 'POST',
       body: JSON.stringify({ amount, request_id: requestId, type }),
     });
   },
-  processSprite: async (transactionId: string, cardDetails: any): Promise<any> => {
-    return apiRequest<any>('/payment/sprite/process', {
+  processStripe: async (transactionId: string, cardDetails: any): Promise<any> => {
+    return apiRequest<any>('/payment/stripe/process', {
       method: 'POST',
       body: JSON.stringify({ transactionId, ...cardDetails }),
     });

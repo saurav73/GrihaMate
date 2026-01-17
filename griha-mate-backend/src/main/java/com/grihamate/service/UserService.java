@@ -237,6 +237,7 @@ public class UserService {
         }
 
         user.setSubscriptionStatus(User.SubscriptionStatus.PREMIUM);
+        user.setSubscriptionExpiry(LocalDateTime.now().plusMonths(3));
         User savedUser = userRepository.save(user); // Persist change
         return mapToDto(savedUser);
     }
@@ -246,6 +247,15 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setSubscriptionStatus(User.SubscriptionStatus.PREMIUM);
+        user.setSubscriptionExpiry(LocalDateTime.now().plusMonths(3));
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void downgradeToFree(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setSubscriptionStatus(User.SubscriptionStatus.FREE);
         userRepository.save(user);
     }
 
@@ -262,6 +272,7 @@ public class UserService {
         dto.setCitizenshipNumber(user.getCitizenshipNumber());
         dto.setVerificationStatus(user.getVerificationStatus());
         dto.setSubscriptionStatus(user.getSubscriptionStatus());
+        dto.setSubscriptionExpiry(user.getSubscriptionExpiry());
         dto.setCreatedAt(user.getCreatedAt());
         return dto;
     }

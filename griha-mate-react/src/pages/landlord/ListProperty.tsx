@@ -266,7 +266,7 @@ export default function ListPropertyPage() {
           <h1 className="text-4xl font-extrabold text-[#0D2440] mb-4 tracking-tight">Free Limit Reached!</h1>
           <p className="text-lg text-gray-600 mb-10 max-w-lg mx-auto leading-relaxed">
             You've listed <strong>{propertyCount} properties</strong> on our Free plan.
-            Upgrade to <span className="text-[#2E5E99] font-bold">Premium</span> to unlock unlimited listings and priority support.
+            Upgrade to <span className="text-[#2E5E99] font-bold">Premium (Valid for 3 months)</span> to unlock unlimited listings and priority support.
           </p>
 
           <div className="grid md:grid-cols-2 gap-6 mb-12 text-left">
@@ -305,6 +305,19 @@ export default function ListPropertyPage() {
 
           <p className="mt-8 text-xs text-gray-400">Join 500+ premium landlords on GrihaMate</p>
         </div>
+
+        {user && (
+          <PaymentModal
+            isOpen={paymentModalOpen}
+            onClose={() => setPaymentModalOpen(false)}
+            amount={499}
+            propertyId={user.id}
+            requestId={user.id}
+            propertyTitle="Premium Subscription"
+            onSuccess={handlePaymentSuccess}
+            type="subscription"
+          />
+        )}
       </div>
     )
   }

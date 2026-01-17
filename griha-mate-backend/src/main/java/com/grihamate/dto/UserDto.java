@@ -22,6 +22,7 @@ public class UserDto {
     private String citizenshipNumber;
     private User.VerificationStatus verificationStatus;
     private User.SubscriptionStatus subscriptionStatus;
+    private LocalDateTime subscriptionExpiry;
     private LocalDateTime createdAt;
 
     public static UserDto fromEntity(User user) {
@@ -37,6 +38,7 @@ public class UserDto {
                 user.getCitizenshipNumber(),
                 user.getVerificationStatus(),
                 user.getSubscriptionStatus(),
+                user.getSubscriptionExpiry(),
                 user.getCreatedAt());
     }
 }

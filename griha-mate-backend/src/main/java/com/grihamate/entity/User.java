@@ -84,6 +84,9 @@ public class User {
     @Column(nullable = false)
     private SubscriptionStatus subscriptionStatus = SubscriptionStatus.FREE;
 
+    @Column(nullable = true)
+    private LocalDateTime subscriptionExpiry;
+
     public enum Role {
         SEEKER, LANDLORD, ADMIN
     }

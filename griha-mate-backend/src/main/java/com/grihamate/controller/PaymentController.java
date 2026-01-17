@@ -187,9 +187,9 @@ public class PaymentController {
         return ResponseEntity.ok(response);
     }
 
-    // Sprite Card Payment Integration
-    @PostMapping("/sprite/initiate")
-    public ResponseEntity<Map<String, Object>> initiateSpritePayment(
+    // Stripe Card Payment Integration
+    @PostMapping("/stripe/initiate")
+    public ResponseEntity<Map<String, Object>> initiateStripePayment(
             @RequestBody Map<String, Object> payload) {
 
         // Sprite Test API integration
@@ -203,20 +203,20 @@ public class PaymentController {
 
         Number total = (Number) payload.getOrDefault("amount", 0);
         double totalAmount = total == null ? 0 : total.doubleValue();
-        String transactionId = "SPRITE_" + System.currentTimeMillis();
+        String transactionId = "STRIPE_" + System.currentTimeMillis();
 
         Map<String, Object> response = new HashMap<>();
         response.put("transactionId", transactionId);
         response.put("amount", totalAmount);
         response.put("status", "initiated");
-        response.put("paymentUrl", frontendUrl + "/payment/sprite?transactionId=" + transactionId);
-        response.put("message", "Payment initiated. Redirect to Sprite payment form.");
+        response.put("paymentUrl", frontendUrl + "/payment/stripe?transactionId=" + transactionId);
+        response.put("message", "Payment initiated. Redirect to Stripe payment form.");
 
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/sprite/process")
-    public ResponseEntity<Map<String, String>> processSpritePayment(
+    @PostMapping("/stripe/process")
+    public ResponseEntity<Map<String, String>> processStripePayment(
             @RequestBody Map<String, Object> payload) {
 
         String transactionId = (String) payload.get("transactionId");

@@ -123,6 +123,13 @@ public class AdminController {
         return ResponseEntity.ok(java.util.Map.of("message", "User rejected"));
     }
 
+    @PutMapping("/users/downgrade-subscription")
+    public ResponseEntity<?> downgradeSubscription(@RequestBody java.util.Map<String, String> request) {
+        String email = request.get("email");
+        userService.downgradeToFree(email);
+        return ResponseEntity.ok(java.util.Map.of("message", "Subscription downgraded for user: " + email));
+    }
+
     @GetMapping("/properties")
     public ResponseEntity<List<PropertyDto>> getAllProperties() {
         List<Property> properties = propertyRepository.findAll();

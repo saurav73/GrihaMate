@@ -65,13 +65,13 @@ export function PaymentModal({ isOpen, onClose, amount, propertyId, requestId, p
         }
     }
 
-    // Card Payment (Mock/Sprite)
-    const handleCardPayment = async (e: React.FormEvent) => {
+    // Stripe Payment (Mock)
+    const handleStripePayment = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
             setLoading(true)
-            const initData = await paymentAPI.initiateSprite(amount, requestId || propertyId, type)
-            const data = await paymentAPI.processSprite(initData.transactionId, cardDetails)
+            const initData = await paymentAPI.initiateStripe(amount, requestId || propertyId, type)
+            const data = await paymentAPI.processStripe(initData.transactionId, cardDetails)
 
             if (data.status === 'success') {
                 toast.success("Payment successful!")
@@ -81,7 +81,7 @@ export function PaymentModal({ isOpen, onClose, amount, propertyId, requestId, p
                 toast.error("Payment failed: " + data.message)
             }
         } catch (err: any) {
-            console.error("Card Payment Error", err)
+            console.error("Stripe Error", err)
             toast.error("Payment failed. Please try again.")
         } finally {
             setLoading(false)
@@ -94,17 +94,17 @@ export function PaymentModal({ isOpen, onClose, amount, propertyId, requestId, p
                 <DialogHeader>
                     <DialogTitle>Complete Payment</DialogTitle>
                     <DialogDescription>
-                        Pay <strong>Rs. {amount.toLocaleString()}</strong> {type === 'subscription' ? 'to upgrade to Premium' : `to secure ${propertyTitle}`}.
+                        Pay <strong>Rs. {amount.toLocaleString()}</strong> {type === 'subscription' ? 'to upgrade to Premium (valid for 3 months)' : `to secure ${propertyTitle}`}.
                     </DialogDescription>
                 </DialogHeader>
 
                 <Tabs defaultValue="esewa" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 bg-gray-100">
-                        <TabsTrigger value="esewa" className="data-[state=active]:bg-green-600 data-[state=active]:text-white">
+                    <TabsList className="grid w-full grid-cols-2 bg-gray-100 rounded-xl p-1 mb-6">
+                        <TabsTrigger value="esewa" className="rounded-lg py-2.5 data-[state=active]:bg-[#41A124] data-[state=active]:text-white transition-all">
                             <Wallet className="mr-2 size-4" /> eSewa
                         </TabsTrigger>
-                        <TabsTrigger value="card" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
-                            <CreditCard className="mr-2 size-4" /> Card
+                        <TabsTrigger value="card" className="rounded-lg py-2.5 data-[state=active]:bg-[#635BFF] data-[state=active]:text-white transition-all">
+                            <CreditCard className="mr-2 size-4" /> Stripe
                         </TabsTrigger>
                     </TabsList>
 
@@ -127,8 +127,13 @@ export function PaymentModal({ isOpen, onClose, amount, propertyId, requestId, p
                         </div>
                     </TabsContent>
 
-                    <TabsContent value="card" className="space-y-4 py-4">
-                        <form onSubmit={handleCardPayment} className="space-y-4">
+                    <TabsContent value="card" className="space-y-4 py-0 focus-visible:outline-none">
+                        <form onSubmit={handleStripePayment} className="space-y-4">
+                            <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 mb-2">
+                                <p className="text-xs text-blue-800">
+                                    Safe & Secure card payments via Stripe. We support all major credit and debit cards.
+                                </p>
+                            </div>
                             <div className="space-y-2">
                                 <Label htmlFor="cardholder">Cardholder Name</Label>
                                 <Input
