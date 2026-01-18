@@ -70,7 +70,7 @@ export default function DashboardSeekerPage() {
     const fetchProperties = async () => {
       try {
         const data = await propertiesAPI.getAll()
-        setProperties(data.slice(0, 6)) // Show 6 properties
+        setProperties(data.slice(0, 3)) // Show 3 properties
       } catch (err: any) {
         toast.error("Failed to load properties: " + (err.message || "Unknown error"), {
           position: "top-right",
@@ -175,7 +175,7 @@ export default function DashboardSeekerPage() {
                     <Settings className="size-4 mr-2" /> Settings
                   </Button>
                 </Link>
-                <Button variant="outline" onClick={handleLogout} className="w-full border-red-200 text-red-600 hover:bg-red-50">
+                <Button variant="outline" onClick={handleLogout} className="w-full border-red-200 text-red-600 hover:bg-red-50 hover:!text-red-600">
                   <LogOut className="size-4 mr-2" /> Sign Out
                 </Button>
               </div>
@@ -227,20 +227,6 @@ export default function DashboardSeekerPage() {
             </Card>
           </Link>
 
-          <Link to="/dashboard/seeker/availability-requests">
-            <Card className="hover:shadow-xl transition-all cursor-pointer border-primary-lightest bg-white group">
-              <CardContent className="p-6 flex items-center gap-4">
-                <div className="size-14 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Bell className="text-white size-7" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-lg mb-1">Availability Alerts</h3>
-                  <p className="text-sm text-muted-foreground">Manage your location alerts</p>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
           <Link to="/dashboard/seeker/feedback">
             <Card className="hover:shadow-xl transition-all cursor-pointer border-primary-lightest bg-white group">
               <CardContent className="p-6 flex items-center gap-4">
@@ -254,62 +240,6 @@ export default function DashboardSeekerPage() {
               </CardContent>
             </Card>
           </Link>
-        </div>
-
-        {/* My Applications */}
-        <div className="mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-primary-dark mb-4">My Applications</h2>
-          {requests.length === 0 ? (
-            <Card className="p-8 text-center text-gray-500 bg-white border-primary-lightest">
-              <p>You haven't applied for any properties yet.</p>
-            </Card>
-          ) : (
-            <div className="grid gap-4">
-              {requests.map((request) => (
-                <Card key={request.id} className="border-none shadow-md hover:shadow-lg transition-all bg-white">
-                  <CardContent className="p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="size-16 bg-gray-100 rounded-lg overflow-hidden">
-                        <img
-                          src={request.propertyImage || "/placeholder.svg"}
-                          alt={request.propertyTitle}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#0D2440]">{request.propertyTitle}</h3>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge className={`
-                                                ${request.status === 'ACCEPTED' ? 'bg-green-100 text-green-700' : ''}
-                                                ${request.status === 'REJECTED' ? 'bg-red-100 text-red-700' : ''}
-                                                ${request.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : ''}
-                                                ${request.status === 'PAID' ? 'bg-blue-100 text-blue-700' : ''}
-                                            `}>
-                            {request.status}
-                          </Badge>
-                          <span className="text-xs text-gray-400">{new Date(request.createdAt).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {request.status === 'ACCEPTED' && (
-                      <Button
-                        className="bg-green-600 hover:bg-green-700 text-white w-full md:w-auto"
-                        onClick={() => handlePayClick(request)}
-                      >
-                        Pay Booking Fee
-                      </Button>
-                    )}
-                    {request.status === 'PAID' && (
-                      <Button variant="outline" className="border-green-200 text-green-700 bg-green-50 pointer-events-none">
-                        Booking Confirmed
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Featured Properties */}

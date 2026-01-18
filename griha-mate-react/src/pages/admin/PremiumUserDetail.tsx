@@ -29,6 +29,7 @@ export default function PremiumUserDetailPage() {
     const [properties, setProperties] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [actionLoading, setActionLoading] = useState<number | null>(null)
+    const [downgrading, setDowngrading] = useState(false)
 
     const fetchData = async () => {
         if (!id) return
@@ -77,6 +78,20 @@ export default function PremiumUserDetailPage() {
             toast.error("Failed to reject property")
         } finally {
             setActionLoading(null)
+        }
+    }
+
+    const handleDowngrade = async () => {
+        if (!user || !id) return
+        try {
+            setDowngrading(true)
+            await adminAPI.downgradeSubscription(parseInt(id))
+            toast.success("User downgraded to free subscription")
+            navigate("/admin/premium-users")
+        } catch (err: any) {
+            toast.error("Failed to downgrade subscription")
+        } finally {
+            setDowngrading(false)
         }
     }
 
@@ -186,6 +201,16 @@ export default function PremiumUserDetailPage() {
                                             <div className="bg-amber-400 h-full w-[85%] rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)]"></div>
                                         </div>
                                         <p className="text-[9px] text-slate-400 mt-2 font-medium italic">Active subscription with high priority</p>
+                                    </div>
+                                    <div className="pt-4 border-t border-white/10 mt-4">
+                                        <Button
+                                            onClick={handleDowngrade}
+                                            disabled={downgrading}
+                                            variant="outline"
+                                            className="w-full border-red-500 bg-red-500/10 text-red-600 hover:bg-red-600 hover:text-white hover:border-red-600 rounded-xl h-10 text-[10px] font-black uppercase tracking-widest disabled:opacity-50"
+                                        >
+                                            {downgrading ? 'Downgrading...' : 'Downgrade to Free'}
+                                        </Button>
                                     </div>
                                 </div>
                             </CardContent>
@@ -323,7 +348,7 @@ function PropertyCard({ property, onVerify, onReject, isProcessing }: any) {
                                     onClick={onReject}
                                     disabled={isProcessing}
                                     variant="outline"
-                                    className="border-red-100 text-red-600 hover:bg-red-50 rounded-xl h-10 px-5 text-[10px] font-black uppercase tracking-widest flex items-center gap-2"
+                                    className="border-red-200 text-red-700 bg-red-50/50 hover:bg-red-100 hover:text-red-800 hover:border-red-300 rounded-xl h-10 px-5 text-[10px] font-black uppercase tracking-widest flex items-center gap-2"
                                 >
                                     <XCircle className="size-4" />
                                     {isProcessing ? 'Revoking...' : 'Revoke Verification'}
@@ -334,7 +359,7 @@ function PropertyCard({ property, onVerify, onReject, isProcessing }: any) {
                                     onClick={onReject}
                                     disabled={isProcessing}
                                     variant="ghost"
-                                    className="text-slate-400 hover:bg-slate-50 hover:text-red-500 rounded-xl h-10 px-5 text-[10px] font-black uppercase tracking-widest"
+                                    className="text-slate-500 hover:bg-red-50 hover:text-red-600 rounded-xl h-10 px-5 text-[10px] font-black uppercase tracking-widest"
                                 >
                                     Reject Listing
                                 </Button>

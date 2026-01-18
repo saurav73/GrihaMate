@@ -334,13 +334,13 @@ export default function ManagePropertiesPage() {
                           className="w-full h-40 object-cover"
                         />
                         <div className="absolute top-3 left-3 flex gap-2">
-                          {property.verified && (
+                        {property.verified && (
                             <Badge className="bg-green-500 text-white">
                               ✓ Verified
                             </Badge>
                           )}
                           {getStatusBadge(property.status)}
-                        </div>
+                          </div>
                         <div className="absolute top-3 right-3">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>

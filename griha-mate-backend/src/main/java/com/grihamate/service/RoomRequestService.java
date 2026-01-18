@@ -27,6 +27,12 @@ public class RoomRequestService {
 
     @Transactional
     public RoomRequestDto createRequest(RoomRequestDto dto, User seeker) {
+        // Check if user already has an active request
+        List<RoomRequest> activeRequests = roomRequestRepository.findBySeekerAndActive(seeker, true);
+        if (!activeRequests.isEmpty()) {
+            throw new RuntimeException("You already have an active room request. Please deactivate your existing request before creating a new one.");
+        }
+
         RoomRequest request = new RoomRequest();
         request.setSeeker(seeker);
         request.setCity(dto.getCity());

@@ -18,4 +18,6 @@ public interface PropertyRequestRepository extends JpaRepository<PropertyRequest
     List<PropertyRequest> findByProperty(Property property);
 
     Optional<PropertyRequest> findBySeekerAndProperty(User seeker, Property property);
+    
+    List<PropertyRequest> findBySeekerAndPropertyOrderByCreatedAtDesc(User seeker, Property property);
 }

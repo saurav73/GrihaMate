@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { feedbackAPI } from "@/lib/api"
 import { toast } from "react-toastify"
 import { motion } from "framer-motion"
+import { Navbar } from "@/components/navbar"
+import { Footer } from "@/components/footer"
 
 export default function SeekerFeedbackPage() {
     const [rating, setRating] = useState(0)
@@ -33,7 +35,9 @@ export default function SeekerFeedbackPage() {
 
     if (submitted) {
         return (
-            <div className="min-h-screen bg-primary-lightest/30 flex items-center justify-center p-4">
+            <div className="min-h-screen bg-primary-lightest/30 flex flex-col">
+                <Navbar />
+                <div className="flex-1 flex items-center justify-center p-4">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -55,12 +59,16 @@ export default function SeekerFeedbackPage() {
                         </Button>
                     </Card>
                 </motion.div>
+                </div>
+                <Footer />
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen bg-primary-lightest/30 py-12 px-4">
+        <div className="min-h-screen bg-primary-lightest/30 flex flex-col">
+            <Navbar />
+            <div className="flex-1 py-12 px-4">
             <div className="max-w-2xl mx-auto">
                 <div className="text-center mb-10">
                     <h1 className="text-4xl font-bold text-primary-dark mb-4">We'd Love Your Feedback</h1>
@@ -139,6 +147,8 @@ export default function SeekerFeedbackPage() {
                     Your feedback will be reviewed by our team to improve our services.
                 </p>
             </div>
+            </div>
+            <Footer />
         </div>
     )
 }

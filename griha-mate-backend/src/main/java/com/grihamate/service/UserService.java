@@ -222,6 +222,14 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public void resetUserVerificationStatus(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setVerificationStatus(User.VerificationStatus.PENDING);
+        userRepository.save(user);
+    }
+
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -254,6 +262,14 @@ public class UserService {
     @Transactional
     public void downgradeToFree(String email) {
         User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setSubscriptionStatus(User.SubscriptionStatus.FREE);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void downgradeToFreeById(Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setSubscriptionStatus(User.SubscriptionStatus.FREE);
         userRepository.save(user);

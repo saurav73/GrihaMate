@@ -53,7 +53,7 @@ export function Navbar() {
 
   const navItems = isLoggedIn && user?.role === 'SEEKER' ? [
     { label: "Explore", href: "/explore", icon: Compass, requireAuth: false },
-    { label: "My Requests", href: "/dashboard/seeker", icon: LayoutDashboard, requireAuth: true },
+    { label: "My Requests", href: "/dashboard/seeker/my-requests", icon: LayoutDashboard, requireAuth: true },
     { label: "Search Alerts", href: "/room-request", icon: Bell, requireAuth: true },
     { label: "Feedback", href: "/dashboard/seeker/feedback", icon: MessageSquare, requireAuth: true },
     { label: "How It Works", href: "/how-it-works", icon: HelpCircle, requireAuth: false },

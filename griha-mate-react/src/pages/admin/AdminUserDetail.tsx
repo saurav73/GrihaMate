@@ -39,8 +39,10 @@ export default function AdminUserDetailPage() {
     const [loading, setLoading] = useState(true)
     const [verifying, setVerifying] = useState(false)
     const [rejecting, setRejecting] = useState(false)
+    const [resetting, setResetting] = useState(false)
     const [showVerifyDialog, setShowVerifyDialog] = useState(false)
     const [showRejectDialog, setShowRejectDialog] = useState(false)
+    const [showResetDialog, setShowResetDialog] = useState(false)
 
     const fetchUser = async () => {
         if (!id) return
@@ -87,6 +89,21 @@ export default function AdminUserDetailPage() {
             toast.error("Failed to reject user")
         } finally {
             setRejecting(false)
+        }
+    }
+
+    const handleResetVerification = async () => {
+        setShowResetDialog(false)
+        if (!user) return
+        try {
+            setResetting(true)
+            await adminAPI.resetUserVerificationStatus(user.id)
+            toast.success("User verification status reset to pending")
+            await fetchUser()
+        } catch (err) {
+            toast.error("Failed to reset verification status")
+        } finally {
+            setResetting(false)
         }
     }
 
@@ -242,7 +259,7 @@ export default function AdminUserDetailPage() {
                                     <div className="space-y-3">
                                         <Button
                                             onClick={() => setShowVerifyDialog(true)}
-                                            disabled={verifying || rejecting}
+                                            disabled={verifying || rejecting || resetting}
                                             className="w-full h-12 bg-green-600 hover:bg-green-700 text-white rounded-xl font-black uppercase tracking-widest text-xs shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {verifying ? (
@@ -260,7 +277,7 @@ export default function AdminUserDetailPage() {
                                         <Button
                                             variant="destructive"
                                             onClick={() => setShowRejectDialog(true)}
-                                            disabled={verifying || rejecting}
+                                            disabled={verifying || rejecting || resetting}
                                             className="w-full h-12 rounded-xl font-black uppercase tracking-widest text-xs shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {rejecting ? (
@@ -276,6 +293,32 @@ export default function AdminUserDetailPage() {
                                             )}
                                         </Button>
                                     </div>
+                                </CardContent>
+                            </Card>
+                        )}
+
+                        {/* Reset to Pending Button - Show for Verified or Rejected users */}
+                        {(user.verificationStatus === 'VERIFIED' || user.verificationStatus === 'REJECTED') && (
+                            <Card className="border-none shadow-lg rounded-3xl bg-gradient-to-br from-orange-50 to-white">
+                                <CardContent className="p-6">
+                                    <h3 className="text-lg font-black text-slate-900 mb-4">Reset Verification</h3>
+                                    <Button
+                                        onClick={() => setShowResetDialog(true)}
+                                        disabled={verifying || rejecting || resetting}
+                                        className="w-full h-12 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-black uppercase tracking-widest text-xs shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {resetting ? (
+                                            <>
+                                                <Loader2 className="size-5 mr-2 animate-spin" />
+                                                Processing...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Clock className="size-5 mr-2" />
+                                                Reset to Pending
+                                            </>
+                                        )}
+                                    </Button>
                                 </CardContent>
                             </Card>
                         )}
@@ -380,6 +423,27 @@ export default function AdminUserDetailPage() {
                             className="bg-red-600 hover:bg-red-700"
                         >
                             Decline User
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* Reset to Pending Confirmation Dialog */}
+            <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Reset Verification Status</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to reset <strong>{user?.fullName}</strong>'s verification status to PENDING? This will change their status from {user?.verificationStatus} back to pending review.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleResetVerification}
+                            className="bg-orange-600 hover:bg-orange-700"
+                        >
+                            Reset to Pending
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

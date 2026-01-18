@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { propertiesAPI, authAPI, subscriptionAPI, propertyRequestAPI, type PropertyDto, type PropertyRequestDto } from "@/lib/api"
 import { toast } from "react-toastify"
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { Home, Users, Wallet, Clock, Plus, Crown, MessageSquare } from "lucide-react"
+import { Home, Users, Wallet, Clock, Plus, Crown, MessageSquare, Eye, TrendingUp } from "lucide-react"
 import { Link } from "react-router-dom"
 import { PaymentModal } from "@/components/payment/PaymentModal"
 import { cn } from "@/lib/utils"
@@ -122,10 +122,10 @@ export default function DashboardLandlordPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <StatsCard title="Active Listings" value={activeListings} icon={Home} color="text-blue-600" />
-        <StatsCard title="Total Views" value={totalViews.toLocaleString()} icon={Users} color="text-purple-600" />
-        <StatsCard title="Total Earnings" value={`Rs. ${totalEarnings.toLocaleString()}`} icon={Wallet} color="text-green-600" />
-        <StatsCard title="Pending Applications" value={pendingApplications} icon={Clock} color="text-orange-600" />
+        <StatsCard title="Active Listings" value={activeListings} icon={Home} color="text-blue-600" bgColor="bg-blue-50" />
+        <StatsCard title="Total Views" value={totalViews.toLocaleString()} icon={Eye} color="text-purple-600" bgColor="bg-purple-50" />
+        <StatsCard title="Total Earnings" value={`Rs. ${totalEarnings.toLocaleString()}`} icon={Wallet} color="text-green-600" bgColor="bg-green-50" />
+        <StatsCard title="Pending Applications" value={pendingApplications} icon={Clock} color="text-orange-600" bgColor="bg-orange-50" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -232,17 +232,17 @@ export default function DashboardLandlordPage() {
   )
 }
 
-function StatsCard({ title, value, icon: Icon, color }: any) {
+function StatsCard({ title, value, icon: Icon, color, bgColor }: any) {
   return (
     <Card className="border-none shadow-md hover:shadow-lg transition-all rounded-2xl">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
-          <div>
+          <div className="flex-1">
             <p className="text-sm font-medium text-gray-500">{title}</p>
             <h3 className="text-2xl font-bold mt-1 text-[#0D2440]">{value}</h3>
           </div>
-          <div className={`p-3 rounded-xl bg-opacity-10 ${color.replace('text-', 'bg-')}`}>
-            <Icon className={`size-6 ${color}`} />
+          <div className={`p-4 rounded-2xl ${bgColor || 'bg-gray-50'}`}>
+            <Icon className={`size-7 ${color}`} />
           </div>
         </div>
       </CardContent>

@@ -19,7 +19,9 @@ import ProfilePage from './pages/user/Profile'
 import PropertyDetailPage from './pages/property/PropertyDetail'
 import DashboardLandlordPage from './pages/landlord/DashboardLandlord'
 import LandlordRequestsPage from './pages/landlord/LandlordRequests'
+import LandlordProfilePage from './pages/landlord/Profile'
 import DashboardSeekerPage from './pages/seeker/DashboardSeeker'
+import MyRequestsPage from './pages/seeker/MyRequests'
 import FeedbackPage from './pages/seeker/Feedback'
 import AvailabilitySubscriptionsPage from './pages/seeker/AvailabilitySubscriptions'
 import ContactPage from './pages/public/Contact'
@@ -35,6 +37,7 @@ import AdminPropertiesPage from './pages/admin/Properties'
 import AdminPropertyDetailPage from './pages/admin/AdminPropertyDetail'
 import PremiumUsersPage from './pages/admin/PremiumUsers'
 import PremiumUserDetailPage from './pages/admin/PremiumUserDetail'
+import AdminSettingsPage from './pages/admin/Settings'
 import FavoritesPage from './pages/seeker/Favorites'
 import RoomRequestPage from './pages/seeker/RoomRequest'
 import ManagePropertiesPage from './pages/landlord/ManageProperties'
@@ -62,6 +65,7 @@ function App() {
         <Route path="/dashboard/landlord" element={<LandlordLayout />}>
           <Route index element={<DashboardLandlordPage />} />
           <Route path="requests" element={<LandlordRequestsPage />} />
+          <Route path="profile" element={<LandlordProfilePage />} />
           <Route path="manage-properties" element={<ManagePropertiesPage />} />
           <Route path="edit-property/:id" element={<EditPropertyPage />} />
           <Route path="properties/:id" element={<PropertyDetailPage isDashboard={true} />} />
@@ -69,6 +73,7 @@ function App() {
         </Route>
 
         <Route path="/dashboard/seeker" element={<DashboardSeekerPage />} />
+        <Route path="/dashboard/seeker/my-requests" element={<MyRequestsPage />} />
         <Route path="/dashboard/seeker/feedback" element={<FeedbackPage />} />
         <Route path="/dashboard/seeker/availability-requests" element={<AvailabilitySubscriptionsPage />} />
         <Route path="/contact" element={<ContactPage />} />
@@ -84,6 +89,7 @@ function App() {
         <Route path="/admin/premium-users" element={<PremiumUsersPage />} />
         <Route path="/admin/premium-users/:id" element={<PremiumUserDetailPage />} />
         <Route path="/admin/requests" element={<AdminRequestsPage />} />
+        <Route path="/admin/settings" element={<AdminSettingsPage />} />
         <Route path="/favorites" element={<FavoritesPage />} />
         <Route path="/room-request" element={<RoomRequestPage />} />
         <Route path="/payment/success" element={<PaymentSuccessPage />} />

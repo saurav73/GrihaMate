@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { availabilitySubscriptionAPI } from "@/lib/api"
 import { toast } from "react-toastify"
 import { motion, AnimatePresence } from "framer-motion"
+import { Navbar } from "@/components/navbar"
+import { Footer } from "@/components/footer"
 
 export default function AvailabilitySubscriptionsPage() {
     const [subscriptions, setSubscriptions] = useState<any[]>([])
@@ -23,9 +25,11 @@ export default function AvailabilitySubscriptionsPage() {
         try {
             setLoading(true)
             const data = await availabilitySubscriptionAPI.getMySubscriptions()
-            setSubscriptions(data)
+            console.log("Fetched subscriptions:", data) // Debug log
+            setSubscriptions(data || [])
         } catch (error: any) {
-            toast.error("Failed to load your subscriptions")
+            console.error("Error fetching subscriptions:", error) // Debug log
+            toast.error(error.message || "Failed to load your subscriptions")
         } finally {
             setLoading(false)
         }
@@ -39,12 +43,17 @@ export default function AvailabilitySubscriptionsPage() {
         }
         setSubmitting(true)
         try {
-            await availabilitySubscriptionAPI.subscribe(city, district)
+            const result = await availabilitySubscriptionAPI.subscribe(city, district)
+            console.log("Subscribe result:", result) // Debug log
             toast.success(`Subscribed to ${city}! We'll notify you when a room becomes available.`)
             setCity("")
             setDistrict("")
-            fetchSubscriptions()
+            // Refetch after a small delay to ensure backend has saved
+            setTimeout(() => {
+                fetchSubscriptions()
+            }, 500)
         } catch (error: any) {
+            console.error("Error subscribing:", error) // Debug log
             toast.error(error.message || "Failed to subscribe")
         } finally {
             setSubmitting(false)
@@ -62,8 +71,10 @@ export default function AvailabilitySubscriptionsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-primary-lightest/30 py-12 px-4">
-            <div className="max-w-4xl mx-auto">
+        <div className="min-h-screen bg-primary-lightest/30 flex flex-col">
+            <Navbar />
+            <div className="flex-1 py-12 px-4">
+                <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-10">
                     <motion.div
                         initial={{ scale: 0.5, opacity: 0 }}
@@ -168,7 +179,7 @@ export default function AvailabilitySubscriptionsPage() {
                                                         <div>
                                                             <h3 className="text-lg font-bold text-primary-dark">{sub.preferredCity}</h3>
                                                             <p className="text-sm text-gray-500">
-                                                                {sub.preferredDistrict ? sub.preferredDistrict : "All districts"} • Requested on {new Date(sub.createdAt).toLocaleDateString()}
+                                                                {sub.preferredDistrict ? sub.preferredDistrict : "All districts"} • Requested on {sub.createdAt ? new Date(sub.createdAt).toLocaleDateString() : 'N/A'}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -206,7 +217,9 @@ export default function AvailabilitySubscriptionsPage() {
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
+            <Footer />
         </div>
     )
 }

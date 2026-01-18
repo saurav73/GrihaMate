@@ -35,9 +35,16 @@ public class PropertyRequestService {
             throw new RuntimeException("You cannot request your own property");
         }
 
-        // Check if already requested
-        if (requestRepository.findBySeekerAndProperty(seeker, property).isPresent()) {
-            throw new RuntimeException("You have already requested this property");
+        // Check if already requested (get most recent if multiple exist)
+        List<PropertyRequest> existingRequests = requestRepository.findBySeekerAndPropertyOrderByCreatedAtDesc(seeker, property);
+        if (!existingRequests.isEmpty()) {
+            // Check if any existing request is still pending or accepted
+            boolean hasActiveRequest = existingRequests.stream()
+                    .anyMatch(req -> req.getStatus() == PropertyRequest.RequestStatus.PENDING 
+                            || req.getStatus() == PropertyRequest.RequestStatus.ACCEPTED);
+            if (hasActiveRequest) {
+                throw new RuntimeException("You have already requested this property");
+            }
         }
 
         PropertyRequest request = new PropertyRequest();
@@ -119,9 +126,44 @@ public class PropertyRequestService {
         Property property = propertyRepository.findById(propertyId)
                 .orElseThrow(() -> new RuntimeException("Property not found"));
 
-        return requestRepository.findBySeekerAndProperty(seeker, property)
-                .map(this::mapToDto)
-                .orElse(null);
+        // Handle multiple requests by getting the most recent one
+        List<PropertyRequest> requests = requestRepository.findBySeekerAndPropertyOrderByCreatedAtDesc(seeker, property);
+        if (requests.isEmpty()) {
+            return null;
+        }
+        // Return the most recent request (first in the list since we order by createdAt DESC)
+        return mapToDto(requests.get(0));
+    }
+
+    @Transactional
+    public void deleteRequest(Long requestId, Long userId) {
+        PropertyRequest request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+
+        // Only the seeker who made the request can delete it
+        if (!request.getSeeker().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized: You can only delete your own requests");
+        }
+
+        // Only allow deleting rejected requests
+        if (request.getStatus() != PropertyRequest.RequestStatus.REJECTED) {
+            throw new RuntimeException("You can only delete rejected requests");
+        }
+
+        requestRepository.delete(request);
+    }
+
+    @Transactional
+    public int deleteAllRejectedRequests(Long userId) {
+        User seeker = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<PropertyRequest> rejectedRequests = requestRepository.findBySeeker(seeker).stream()
+                .filter(req -> req.getStatus() == PropertyRequest.RequestStatus.REJECTED)
+                .collect(Collectors.toList());
+
+        requestRepository.deleteAll(rejectedRequests);
+        return rejectedRequests.size();
     }
 
     private PropertyRequestDto mapToDto(PropertyRequest request) {

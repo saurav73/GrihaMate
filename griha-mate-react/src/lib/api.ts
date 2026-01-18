@@ -306,6 +306,16 @@ export const adminAPI = {
       method: 'PUT',
     });
   },
+  resetUserVerificationStatus: async (userId: number): Promise<{ message: string }> => {
+    return apiRequest<{ message: string }>(`/admin/users/${userId}/reset-verification`, {
+      method: 'PUT',
+    });
+  },
+  downgradeSubscription: async (userId: number): Promise<{ message: string }> => {
+    return apiRequest<{ message: string }>(`/admin/users/${userId}/downgrade-subscription`, {
+      method: 'PUT',
+    });
+  },
   getAllProperties: async (): Promise<PropertyDto[]> => {
     return apiRequest<PropertyDto[]>('/admin/properties');
   },
@@ -406,6 +416,16 @@ export const propertyRequestAPI = {
   checkStatus: async (propertyId: number): Promise<PropertyRequestDto | null> => {
     return apiRequest<PropertyRequestDto | null>(`/property-requests/check?propertyId=${propertyId}`);
   },
+  delete: async (id: number): Promise<{ message: string }> => {
+    return apiRequest<{ message: string }>(`/property-requests/${id}`, {
+      method: 'DELETE',
+    });
+  },
+  deleteAllRejected: async (): Promise<{ message: string; count: string }> => {
+    return apiRequest<{ message: string; count: string }>('/property-requests/rejected', {
+      method: 'DELETE',
+    });
+  },
 };
 
 export const roomRequestAPI = {
@@ -498,7 +518,7 @@ export const imageAPI = {
     } catch (error: any) {
       // Handle network errors
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        throw new Error('Cannot connect to server. Please ensure the backend is running on http://localhost:8080');
+        throw new Error('Cannot connect to server. Please ensure the backend is running on http://localhost:8081');
       }
       // Re-throw with more context
       throw new Error(error.message || 'Failed to upload image');

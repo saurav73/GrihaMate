@@ -31,8 +31,8 @@ export default function AdminUsers() {
     }, [])
 
     const filteredUsers = users.filter(u =>
-        (u.fullName.toLowerCase().includes(search.toLowerCase()) ||
-            u.email.toLowerCase().includes(search.toLowerCase()))
+    (u.fullName.toLowerCase().includes(search.toLowerCase()) ||
+        u.email.toLowerCase().includes(search.toLowerCase()))
     )
 
     const landlords = filteredUsers.filter(u => u.role === 'LANDLORD')

@@ -141,7 +141,7 @@ export default function LandlordRequestsPage() {
                                         <div className="flex flex-col gap-3 justify-center min-w-[200px]">
                                             <Dialog>
                                                 <DialogTrigger asChild>
-                                                    <Button variant="outline" className="w-full border-primary/20 text-primary hover:bg-primary/5 hover:border-primary/40 font-bold shadow-sm transition-all group">
+                                                    <Button variant="outline" className="w-full border-primary/20 text-primary hover:bg-primary/5 hover:border-primary/40 hover:!text-primary font-bold shadow-sm transition-all group">
                                                         View Seeker Profile
                                                         <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
                                                     </Button>
@@ -208,7 +208,7 @@ export default function LandlordRequestsPage() {
                                                                 </Button>
                                                                 <Button
                                                                     variant="outline"
-                                                                    className="flex-1 border-red-100 text-red-600 hover:bg-red-50 font-bold h-12"
+                                                                    className="flex-1 border-red-100 text-red-600 hover:bg-red-50 hover:!text-red-600 font-bold h-12"
                                                                     onClick={() => handleStatusUpdate(request.id, 'REJECTED')}
                                                                 >
                                                                     <X className="mr-2 size-4" /> Reject
@@ -229,7 +229,7 @@ export default function LandlordRequestsPage() {
                                                     </Button>
                                                     <Button
                                                         variant="outline"
-                                                        className="border-red-100 text-red-500 hover:bg-red-50 font-black transition-all hover:-translate-y-1 active:translate-y-0"
+                                                        className="border-red-100 text-red-500 hover:bg-red-50 hover:!text-red-600 font-black transition-all hover:-translate-y-1 active:translate-y-0"
                                                         onClick={() => handleStatusUpdate(request.id, 'REJECTED')}
                                                     >
                                                         <X className="size-4" />

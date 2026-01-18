@@ -65,4 +65,20 @@ public class PropertyRequestController {
 
         return ResponseEntity.ok(requestService.updateStatus(id, currentUser.getId(), status));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteRequest(@PathVariable Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userService.getUserByEmail(auth.getName());
+        requestService.deleteRequest(id, currentUser.getId());
+        return ResponseEntity.ok(Map.of("message", "Request deleted successfully"));
+    }
+
+    @DeleteMapping("/rejected")
+    public ResponseEntity<Map<String, String>> deleteAllRejected() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userService.getUserByEmail(auth.getName());
+        int deletedCount = requestService.deleteAllRejectedRequests(currentUser.getId());
+        return ResponseEntity.ok(Map.of("message", "Deleted " + deletedCount + " rejected request(s) successfully", "count", String.valueOf(deletedCount)));
+    }
 }

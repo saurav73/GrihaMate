@@ -246,7 +246,7 @@ export default function ExplorePage() {
 
                   <Sheet open={showMobileFilters} onOpenChange={setShowMobileFilters}>
                     <SheetTrigger asChild>
-                      <Button variant="outline" size="sm" className="lg:hidden h-11 rounded-full px-5 border-gray-200 hover:bg-gray-50">
+                      <Button variant="outline" size="sm" className="lg:hidden h-11 rounded-full px-5 border-gray-200 hover:bg-gray-50 hover:!text-gray-900">
                         <SlidersHorizontal className="size-4 mr-2" /> Filters
                       </Button>
                     </SheetTrigger>

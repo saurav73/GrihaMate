@@ -140,11 +140,23 @@ public class AdminController {
         return ResponseEntity.ok(java.util.Map.of("message", "User rejected"));
     }
 
+    @PutMapping("/users/{id}/reset-verification")
+    public ResponseEntity<?> resetUserVerificationStatus(@PathVariable Long id) {
+        userService.resetUserVerificationStatus(id);
+        return ResponseEntity.ok(java.util.Map.of("message", "User verification status reset to pending"));
+    }
+
     @PutMapping("/users/downgrade-subscription")
     public ResponseEntity<?> downgradeSubscription(@RequestBody java.util.Map<String, String> request) {
         String email = request.get("email");
         userService.downgradeToFree(email);
         return ResponseEntity.ok(java.util.Map.of("message", "Subscription downgraded for user: " + email));
+    }
+
+    @PutMapping("/users/{id}/downgrade-subscription")
+    public ResponseEntity<?> downgradeSubscriptionById(@PathVariable Long id) {
+        userService.downgradeToFreeById(id);
+        return ResponseEntity.ok(java.util.Map.of("message", "Subscription downgraded successfully"));
     }
 
     @GetMapping("/properties")

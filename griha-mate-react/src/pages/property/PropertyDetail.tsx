@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { MapPin, Bed, Bath, Square, Phone, CreditCard, Wallet, Share2, Heart, Maximize2, Navigation as NavigationIcon, ExternalLink, CheckCircle2 } from "lucide-react"
+import { MapPin, Bed, Bath, Square, Phone, CreditCard, Wallet, Share2, Heart, Maximize2, Navigation as NavigationIcon, ExternalLink, CheckCircle2, Loader2, ChevronLeft, ChevronRight, X } from "lucide-react"
 import { toast } from "react-toastify"
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet'
 import L from 'leaflet'
@@ -52,6 +52,9 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
   const [routeInfo, setRouteInfo] = useState<{ distance: number, duration: number } | null>(null)
   const [requestStatus, setRequestStatus] = useState<'PENDING' | 'ACCEPTED' | 'REJECTED' | 'PAID' | null>(null)
   const [isOwner, setIsOwner] = useState(false)
+  const [requestLoading, setRequestLoading] = useState(false)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [isImageLightboxOpen, setIsImageLightboxOpen] = useState(false)
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -127,8 +130,12 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
             if (request) {
               setRequestStatus(request.status)
             }
-          } catch (err) {
-            console.error("Failed to check request status", err)
+          } catch (err: any) {
+            // Silently handle error - user may not have a request yet
+            // This prevents error notifications for expected scenarios
+            if (!err.message?.includes("Query did not return")) {
+              console.error("Failed to check request status", err)
+            }
           }
         }
 
@@ -209,7 +216,8 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
   }
 
   const submitRequest = async () => {
-    if (!property) return
+    if (!property || requestLoading) return
+    setRequestLoading(true)
     try {
       await propertiesAPI.requestProperty(property.id, requestMessage)
 
@@ -228,6 +236,8 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
         position: "top-right",
         autoClose: 5000,
       })
+    } finally {
+      setRequestLoading(false)
     }
   }
 
@@ -304,28 +314,146 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
           <div className="lg:col-span-2 space-y-6">
             {/* Images */}
             <div className="space-y-4">
-              <div className="relative h-[480px] rounded-2xl overflow-hidden shadow-2xl">
+              <div className="relative h-[480px] rounded-2xl overflow-hidden shadow-2xl group cursor-pointer" onClick={() => setIsImageLightboxOpen(true)}>
                 <img
-                  src={property.imageUrls?.[0] || "/placeholder.svg"}
+                  src={property.imageUrls?.[selectedImageIndex] || property.imageUrls?.[0] || "/placeholder.svg"}
                   alt={property.title}
                   className="object-cover w-full h-full hover:scale-105 transition-transform duration-700"
                 />
                 {property.verified && (
-                  <Badge className="absolute top-4 left-4 bg-green-500 text-white">
+                  <Badge className="absolute top-4 left-4 bg-green-500 text-white z-10">
                     Verified Property
                   </Badge>
                 )}
+                {property.imageUrls && property.imageUrls.length > 1 && (
+                  <>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSelectedImageIndex((prev) => (prev - 1 + property.imageUrls.length) % property.imageUrls.length)
+                      }}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft className="size-6" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSelectedImageIndex((prev) => (prev + 1) % property.imageUrls.length)
+                      }}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                      aria-label="Next image"
+                    >
+                      <ChevronRight className="size-6" />
+                    </button>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      {property.imageUrls.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setSelectedImageIndex(idx)
+                          }}
+                          className={`size-2 rounded-full transition-all ${
+                            idx === selectedImageIndex ? 'bg-white w-8' : 'bg-white/50 hover:bg-white/75'
+                          }`}
+                          aria-label={`Go to image ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
               </div>
               {property.imageUrls && property.imageUrls.length > 1 && (
                 <div className="grid grid-cols-4 gap-2">
-                  {property.imageUrls.slice(1, 5).map((url, idx) => (
-                    <div key={idx} className="relative aspect-square rounded-lg overflow-hidden">
-                      <img src={url} alt={`${property.title} ${idx + 2}`} className="object-cover w-full h-full" />
+                  {property.imageUrls.slice(0, 4).map((url, idx) => (
+                    <div
+                      key={idx}
+                      className={`relative aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
+                        idx === selectedImageIndex ? 'border-primary ring-2 ring-primary/20' : 'border-transparent hover:border-primary/50'
+                      }`}
+                      onClick={() => setSelectedImageIndex(idx)}
+                    >
+                      <img 
+                        src={url} 
+                        alt={`${property.title} ${idx + 1}`} 
+                        className="object-cover w-full h-full hover:scale-110 transition-transform duration-300" 
+                      />
+                      {idx === selectedImageIndex && (
+                        <div className="absolute inset-0 bg-primary/10" />
+                      )}
                     </div>
                   ))}
+                  {property.imageUrls.length > 4 && (
+                    <div
+                      className="relative aspect-square rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-primary/50 transition-all bg-gray-100 flex items-center justify-center"
+                      onClick={() => setIsImageLightboxOpen(true)}
+                    >
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-gray-600">+{property.imageUrls.length - 4}</p>
+                        <p className="text-xs text-gray-500">More</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
+
+            {/* Image Lightbox Modal */}
+            {isImageLightboxOpen && property.imageUrls && (
+              <Dialog open={isImageLightboxOpen} onOpenChange={setIsImageLightboxOpen}>
+                <DialogContent className="max-w-7xl w-full h-[90vh] p-0 bg-black/95 border-none">
+                  <div className="relative w-full h-full flex items-center">
+                    <button
+                      onClick={() => setIsImageLightboxOpen(false)}
+                      className="absolute top-4 right-4 z-50 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors"
+                      aria-label="Close"
+                    >
+                      <X className="size-6" />
+                    </button>
+                    {property.imageUrls.length > 1 && (
+                      <>
+                        <button
+                          onClick={() => setSelectedImageIndex((prev) => (prev - 1 + property.imageUrls.length) % property.imageUrls.length)}
+                          className="absolute left-4 z-50 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors"
+                          aria-label="Previous image"
+                        >
+                          <ChevronLeft className="size-8" />
+                        </button>
+                        <button
+                          onClick={() => setSelectedImageIndex((prev) => (prev + 1) % property.imageUrls.length)}
+                          className="absolute right-4 z-50 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors"
+                          aria-label="Next image"
+                        >
+                          <ChevronRight className="size-8" />
+                        </button>
+                      </>
+                    )}
+                    <img
+                      src={property.imageUrls[selectedImageIndex] || "/placeholder.svg"}
+                      alt={`${property.title} - Image ${selectedImageIndex + 1}`}
+                      className="max-w-full max-h-full object-contain mx-auto"
+                    />
+                    {property.imageUrls.length > 1 && (
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/50 px-4 py-2 rounded-full backdrop-blur-sm">
+                        {property.imageUrls.map((_, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setSelectedImageIndex(idx)}
+                            className={`size-2 rounded-full transition-all ${
+                              idx === selectedImageIndex ? 'bg-white w-8' : 'bg-white/50 hover:bg-white/75'
+                            }`}
+                            aria-label={`Go to image ${idx + 1}`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
 
             {/* Property Details */}
             <Card className="border-primary-lightest">
@@ -602,9 +730,9 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
           <div className="space-y-6">
             {/* Price Card */}
             <Card className="border-primary-light shadow-lg sticky top-24 overflow-hidden">
-              <div className="bg-gradient-to-br from-primary to-primary-dark p-4 text-white">
+              <div className="bg-primary p-4 text-white">
                 <div className="text-3xl font-bold">Rs. {property.price.toLocaleString()}</div>
-                <div className="text-primary-lightest text-sm">per month</div>
+                <div className="text-white/80 text-sm">per month</div>
               </div>
               <CardContent className="p-6 space-y-4">
                 <div className="hidden">
@@ -615,22 +743,31 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
                 <div className="space-y-3">
                   {!isOwner && (
                     <Button
-                      className={`w-full ${requestStatus === 'PENDING' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-primary hover:bg-primary-dark'} text-white shadow-md hover:shadow-lg transition-all`}
+                      className={`w-full ${requestStatus === 'PENDING' ? 'bg-orange-700 hover:bg-orange-800' : 'bg-primary hover:bg-primary-dark'} text-white shadow-md hover:shadow-lg transition-all`}
                       size="lg"
                       onClick={handleRequestClick}
-                      disabled={requestStatus === 'PENDING' || requestStatus === 'ACCEPTED' || requestStatus === 'PAID'}
+                      disabled={requestStatus === 'PENDING' || requestStatus === 'ACCEPTED' || requestStatus === 'PAID' || requestLoading}
                     >
-                      <Phone className="mr-2 size-5" />
-                      {requestStatus === 'PENDING' ? 'Request Sent (Pending)' :
-                        requestStatus === 'ACCEPTED' || requestStatus === 'PAID' ? 'Request Approved' :
-                          'Request to Book / Contact'}
+                      {requestLoading ? (
+                        <>
+                          <Loader2 className="mr-2 size-5 animate-spin" />
+                          Sending Request...
+                        </>
+                      ) : (
+                        <>
+                          <Phone className="mr-2 size-5" />
+                          {requestStatus === 'PENDING' ? 'Request Sent (Pending)' :
+                            requestStatus === 'ACCEPTED' || requestStatus === 'PAID' ? 'Request Approved' :
+                              'Request to Book / Contact'}
+                        </>
+                      )}
                     </Button>
                   )}
                   <Button
                     variant="outline"
                     className={`w-full ${isFavorite
                       ? "bg-red-500 hover:bg-red-600 text-white border-red-500"
-                      : "border-red-200 text-red-500 hover:bg-red-50 hover:border-red-500"
+                      : "border-red-200 text-red-500 hover:bg-red-50 hover:border-red-500 hover:!text-red-500"
                       }`}
                     onClick={toggleFavorite}
                   >
@@ -708,7 +845,16 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
             </div>
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsRequestModalOpen(false)}>Cancel</Button>
-              <Button onClick={submitRequest}>Send Request</Button>
+              <Button onClick={submitRequest} disabled={requestLoading}>
+                {requestLoading ? (
+                  <>
+                    <Loader2 className="mr-2 size-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  'Send Request'
+                )}
+              </Button>
             </div>
           </div>
         </DialogContent>

@@ -6,7 +6,6 @@ import {
     PlusCircle,
     User,
     LogOut,
-    ShieldCheck,
     MessageSquare
 } from "lucide-react"
 
@@ -33,7 +32,7 @@ const sidebarItems = [
     },
     {
         title: "Profile",
-        href: "/profile",
+        href: "/dashboard/landlord/profile",
         icon: User,
     },
 ]
@@ -44,9 +43,11 @@ export function LandlordSidebar() {
     return (
         <div className="flex h-full w-64 flex-col border-r border-[#E7F0FA] bg-white text-[#0D2440]">
             <div className="p-6">
-                <Link to="/" className="flex items-center gap-2 font-bold text-xl text-[#2E5E99]">
-                    <ShieldCheck className="size-6" />
-                    <span>GrihaMate</span>
+                <Link to="/" className="flex items-center gap-2 transition-all duration-300 hover:opacity-90 hover:scale-105 group">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white group-hover:bg-primary-dark group-hover:scale-110 transition-all duration-300">
+                        <Home className="h-6 w-6" />
+                    </div>
+                    <span className="text-xl font-bold tracking-tight text-primary-dark group-hover:text-primary transition-colors duration-300">GrihaMate</span>
                 </Link>
             </div>
             <div className="flex-1 px-4 py-2 space-y-2">
