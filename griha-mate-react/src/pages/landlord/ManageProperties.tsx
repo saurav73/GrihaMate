@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import {
   Home, Plus, Edit, Trash2, Eye, EyeOff, MapPin,
-  Bed, Bath, Square, Calendar, TrendingUp, AlertCircle, CheckCircle
+  Bed, Bath, Square, Calendar, TrendingUp, AlertCircle, CheckCircle, MoreVertical
 } from "lucide-react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
@@ -24,6 +24,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { propertiesAPI } from "@/lib/api"
 import type { PropertyDto } from "@/lib/api"
 import { toast } from "react-toastify"
@@ -326,16 +333,67 @@ export default function ManagePropertiesPage() {
                           alt={property.title}
                           className="w-full h-40 object-cover"
                         />
-                        <div className="absolute top-3 right-3">
-                          {getStatusBadge(property.status)}
-                        </div>
-                        {property.verified && (
-                          <div className="absolute top-3 left-3">
+                        <div className="absolute top-3 left-3 flex gap-2">
+                          {property.verified && (
                             <Badge className="bg-green-500 text-white">
                               ✓ Verified
                             </Badge>
-                          </div>
-                        )}
+                          )}
+                          {getStatusBadge(property.status)}
+                        </div>
+                        <div className="absolute top-3 right-3">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 bg-primary hover:bg-primary-dark text-white"
+                              >
+                                <span className="sr-only">Open menu</span>
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48 shadow-lg">
+                              <DropdownMenuItem asChild className="py-2.5">
+                                <Link to={`/dashboard/landlord/properties/${property.id}`} className="flex items-center w-full">
+                                  <Eye className="w-4 h-4 mr-3 text-gray-600" />
+                                  <span>View</span>
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => navigate(`/dashboard/landlord/edit-property/${property.id}`)}
+                                className="py-2.5 cursor-pointer"
+                              >
+                                <Edit className="w-4 h-4 mr-3 text-gray-600" />
+                                <span>Edit</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => togglePropertyStatus(property)}
+                                className="py-2.5 cursor-pointer"
+                              >
+                                {property.status === "AVAILABLE" ? (
+                                  <>
+                                    <EyeOff className="w-4 h-4 mr-3 text-gray-600" />
+                                    <span>Mark Unavailable</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Eye className="w-4 h-4 mr-3 text-gray-600" />
+                                    <span>Mark Available</span>
+                                  </>
+                                )}
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator className="my-1" />
+                              <DropdownMenuItem
+                                onClick={() => handleDeleteClick(property)}
+                                className="py-2.5 cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                              >
+                                <Trash2 className="w-4 h-4 mr-3" />
+                                <span>Delete</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </div>
 
                       <CardContent className="p-4">
@@ -385,55 +443,6 @@ export default function ManagePropertiesPage() {
                               {new Date(property.createdAt).toLocaleDateString()}
                             </p>
                           </div>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="grid grid-cols-2 gap-2">
-                          <Link to={`/dashboard/landlord/properties/${property.id}`} className="flex-1">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="w-full"
-                            >
-                              <Eye className="w-4 h-4 mr-1" />
-                              View
-                            </Button>
-                          </Link>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => togglePropertyStatus(property)}
-                          >
-                            {property.status === "AVAILABLE" ? (
-                              <>
-                                <EyeOff className="w-4 h-4 mr-1" />
-                                Mark Unavailable
-                              </>
-                            ) : (
-                              <>
-                                <Eye className="w-4 h-4 mr-1" />
-                                Mark Available
-                              </>
-                            )}
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="border-red-500 text-red-500 hover:bg-red-50"
-                            onClick={() => handleDeleteClick(property)}
-                          >
-                            <Trash2 className="w-4 h-4 mr-1" />
-                            Delete
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="border-primary text-primary-dark hover:bg-primary-lightest hover:text-primary-dark"
-                            onClick={() => navigate(`/dashboard/landlord/edit-property/${property.id}`)}
-                          >
-                            <Edit className="w-4 h-4 mr-1" />
-                            Edit
-                          </Button>
                         </div>
                       </CardContent>
                     </Card>

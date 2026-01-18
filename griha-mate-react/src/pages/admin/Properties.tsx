@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { AdminLayout } from "@/components/admin/AdminLayout"
-import { adminAPI, PropertyDto } from "@/lib/api"
+import { adminAPI, type PropertyDto } from "@/lib/api"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -26,15 +27,17 @@ import {
 import { toast } from "react-toastify"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Pagination } from "@/components/Pagination"
 import { cn } from "@/lib/utils"
 
 export default function AdminProperties() {
+    const navigate = useNavigate()
     const [properties, setProperties] = useState<PropertyDto[]>([])
     const [search, setSearch] = useState("")
-    const [selectedProperty, setSelectedProperty] = useState<PropertyDto | null>(null)
-    const [isDetailOpen, setIsDetailOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
+    const [pendingPage, setPendingPage] = useState(1)
+    const [verifiedPage, setVerifiedPage] = useState(1)
+    const itemsPerPage = 6
 
     const fetchProperties = async () => {
         try {
@@ -52,27 +55,11 @@ export default function AdminProperties() {
         fetchProperties()
     }, [])
 
-    const handleVerify = async (propertyId: number) => {
-        try {
-            await adminAPI.verifyProperty(propertyId)
-            toast.success("Property verified successfully")
-            fetchProperties()
-            setIsDetailOpen(false)
-        } catch (err) {
-            toast.error("Failed to verify property")
-        }
-    }
-
-    const handleReject = async (propertyId: number) => {
-        try {
-            await adminAPI.rejectProperty(propertyId)
-            toast.success("Property rejected")
-            fetchProperties()
-            setIsDetailOpen(false)
-        } catch (err) {
-            toast.error("Failed to reject property")
-        }
-    }
+    // Reset pagination when search changes
+    useEffect(() => {
+        setPendingPage(1)
+        setVerifiedPage(1)
+    }, [search])
 
     const filteredProperties = properties.filter(p =>
         p.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -83,9 +70,21 @@ export default function AdminProperties() {
     const pendingProperties = filteredProperties.filter(p => !p.verified)
     const verifiedProperties = filteredProperties.filter(p => p.verified)
 
+    // Pagination calculations
+    const pendingTotalPages = Math.ceil(pendingProperties.length / itemsPerPage)
+    const pendingPaginated = pendingProperties.slice(
+        (pendingPage - 1) * itemsPerPage,
+        pendingPage * itemsPerPage
+    )
+
+    const verifiedTotalPages = Math.ceil(verifiedProperties.length / itemsPerPage)
+    const verifiedPaginated = verifiedProperties.slice(
+        (verifiedPage - 1) * itemsPerPage,
+        verifiedPage * itemsPerPage
+    )
+
     const openDetails = (property: PropertyDto) => {
-        setSelectedProperty(property)
-        setIsDetailOpen(true)
+        navigate(`/admin/properties/${property.id}`)
     }
 
     return (
@@ -128,51 +127,65 @@ export default function AdminProperties() {
                     </TabsList>
 
                     <TabsContent value="pending" className="mt-0 focus-visible:outline-none">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {pendingProperties.map((property, index) => (
-                                <PropertyReviewCard
-                                    key={property.id}
-                                    property={property}
-                                    onClick={() => openDetails(property)}
-                                    style={{ animationDelay: `${index * 50}ms` }}
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {pendingPaginated.map((property, index) => (
+                                    <PropertyReviewCard
+                                        key={property.id}
+                                        property={property}
+                                        onClick={() => openDetails(property)}
+                                        style={{ animationDelay: `${index * 50}ms` }}
+                                    />
+                                ))}
+                                {pendingProperties.length === 0 && !isLoading && (
+                                    <div className="col-span-full py-40 flex flex-col items-center opacity-20">
+                                        <Building2 className="size-20 mb-4" />
+                                        <p className="font-black uppercase tracking-[0.3em]">No Pending Properties</p>
+                                    </div>
+                                )}
+                            </div>
+                            {pendingProperties.length > 0 && (
+                                <Pagination
+                                    currentPage={pendingPage}
+                                    totalPages={pendingTotalPages}
+                                    totalItems={pendingProperties.length}
+                                    pageSize={itemsPerPage}
+                                    onPageChange={setPendingPage}
                                 />
-                            ))}
-                            {pendingProperties.length === 0 && !isLoading && (
-                                <div className="col-span-full py-40 flex flex-col items-center opacity-20">
-                                    <Building2 className="size-20 mb-4" />
-                                    <p className="font-black uppercase tracking-[0.3em]">No Pending Properties</p>
-                                </div>
                             )}
                         </div>
                     </TabsContent>
 
                     <TabsContent value="verified" className="mt-0 focus-visible:outline-none">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {verifiedProperties.map((property, index) => (
-                                <PropertyReviewCard
-                                    key={property.id}
-                                    property={property}
-                                    onClick={() => openDetails(property)}
-                                    style={{ animationDelay: `${index * 50}ms` }}
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {verifiedPaginated.map((property, index) => (
+                                    <PropertyReviewCard
+                                        key={property.id}
+                                        property={property}
+                                        onClick={() => openDetails(property)}
+                                        style={{ animationDelay: `${index * 50}ms` }}
+                                    />
+                                ))}
+                                {verifiedProperties.length === 0 && !isLoading && (
+                                    <div className="col-span-full py-40 flex flex-col items-center opacity-20">
+                                        <Home className="size-20 mb-4" />
+                                        <p className="font-black uppercase tracking-[0.3em]">No Verified Properties</p>
+                                    </div>
+                                )}
+                            </div>
+                            {verifiedProperties.length > 0 && (
+                                <Pagination
+                                    currentPage={verifiedPage}
+                                    totalPages={verifiedTotalPages}
+                                    totalItems={verifiedProperties.length}
+                                    pageSize={itemsPerPage}
+                                    onPageChange={setVerifiedPage}
                                 />
-                            ))}
-                            {verifiedProperties.length === 0 && !isLoading && (
-                                <div className="col-span-full py-40 flex flex-col items-center opacity-20">
-                                    <Home className="size-20 mb-4" />
-                                    <p className="font-black uppercase tracking-[0.3em]">No Verified Properties</p>
-                                </div>
                             )}
                         </div>
                     </TabsContent>
                 </Tabs>
-
-                <PropertyDetailModal
-                    isOpen={isDetailOpen}
-                    onClose={() => setIsDetailOpen(false)}
-                    property={selectedProperty}
-                    onVerify={handleVerify}
-                    onReject={handleReject}
-                />
             </div>
         </AdminLayout>
     )
@@ -244,183 +257,5 @@ export default function AdminProperties() {
                     </div>
                 </CardContent>
             </Card>
-            )
-}
-
-            function PropertyDetailModal({isOpen, onClose, property, onVerify, onReject}: any) {
-    if (!property) return null
-
-            return (
-            <Dialog open={isOpen} onOpenChange={onClose}>
-                <DialogContent className="max-w-6xl p-0 overflow-hidden border-none rounded-[40px] shadow-3xl bg-white">
-                    <div className="flex flex-col lg:flex-row h-full max-h-[92vh]">
-                        {/* Sidebar / Info Pane */}
-                        <div className="lg:w-[350px] bg-gradient-to-b from-[#F1F7FE] to-white p-8 flex flex-col border-r border-blue-50/50 overflow-y-auto custom-scrollbar shrink-0">
-                            <div className="mb-8">
-                                <Badge className="bg-[#2E5E99]/10 text-[#2E5E99] border-none rounded-full px-4 py-1.5 text-[10px] font-black tracking-widest uppercase mb-4">
-                                    Asset Intelligence
-                                </Badge>
-                                <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">{property.title}</h2>
-                                <p className="text-slate-500 text-xs font-bold flex items-center gap-2 mt-2">
-                                    <MapPin className="size-3.5" />
-                                    {property.address}, {property.city}
-                                </p>
-                            </div>
-
-                            <div className="space-y-4 flex-1">
-                                <div className="p-6 bg-white/50 backdrop-blur-sm rounded-[28px] border border-blue-50 shadow-sm">
-                                    <h5 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.3em] mb-4 border-b border-blue-50/50 pb-3 opacity-70">Valuation & Metrics</h5>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-1">
-                                            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Rate</p>
-                                            <p className="text-sm font-black text-[#2E5E99]">NPR {property.price.toLocaleString()}</p>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Footprint</p>
-                                            <p className="text-sm font-black text-slate-900">{property.area} sq.ft</p>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Bedrooms</p>
-                                            <p className="text-sm font-black text-slate-900">{property.bedrooms}</p>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Bathrooms</p>
-                                            <p className="text-sm font-black text-slate-900">{property.bathrooms}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="p-6 bg-[#0D2440] text-white rounded-[28px] shadow-2xl shadow-blue-900/20">
-                                    <h5 className="text-[9px] font-black text-white/60 uppercase tracking-[0.3em] mb-4">Ownership Context</h5>
-                                    <div className="flex items-center gap-4">
-                                        <div className="size-12 rounded-2xl bg-white/10 flex items-center justify-center">
-                                            <User className="size-6 text-white" />
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest">Landlord</p>
-                                            <p className="text-sm font-black text-white">{property.landlordName}</p>
-                                            <p className="text-[11px] font-bold text-white/40">{property.landlordEmail}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="p-6 bg-white/50 backdrop-blur-sm rounded-[28px] border border-blue-50">
-                                    <h5 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.3em] mb-4">Registry Timeline</h5>
-                                    <div className="space-y-3">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-[10px] text-slate-500 font-bold uppercase">Submitted</span>
-                                            <span className="text-[11px] font-black text-slate-900">{new Date(property.createdAt).toLocaleDateString()}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-[10px] text-slate-500 font-bold uppercase">Last Update</span>
-                                            <span className="text-[11px] font-black text-slate-900">{new Date(property.updatedAt).toLocaleDateString()}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mt-8">
-                                <Button
-                                    variant="ghost"
-                                    onClick={onClose}
-                                    className="w-full h-12 rounded-xl text-slate-600 hover:text-[#0D2440] font-black uppercase tracking-widest text-[10px] hover:bg-gray-50/50 transition-all"
-                                >
-                                    Close Inspection
-                                </Button>
-                            </div>
-                        </div>
-
-                        {/* Content / Document Pane */}
-                        <div className="flex-1 p-10 flex flex-col h-full bg-white overflow-y-auto min-w-0">
-                            <div className="flex items-center justify-between mb-10">
-                                <div>
-                                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">Visual Reconnaissance</h2>
-                                    <p className="text-slate-500 font-bold text-[10px] uppercase tracking-[0.2em] mt-1">Full resolution image catalog</p>
-                                </div>
-                                <div className="size-14 bg-blue-50 rounded-2xl flex items-center justify-center">
-                                    <Building2 className="size-7 text-[#2E5E99]" />
-                                </div>
-                            </div>
-
-                            <div className="space-y-10 flex-1">
-                                {/* Description Field */}
-                                <div className="space-y-4">
-                                    <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-4">
-                                        <span className="shrink-0">Description Brief</span>
-                                        <div className="h-px w-full bg-gray-50" />
-                                    </h5>
-                                    <p className="text-sm leading-relaxed text-slate-700 font-medium">
-                                        {property.description}
-                                    </p>
-                                </div>
-
-                                {/* Features Component */}
-                                <div className="space-y-4">
-                                    <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-4">
-                                        <span className="shrink-0">Feature Matrix</span>
-                                        <div className="h-px w-full bg-gray-50" />
-                                    </h5>
-                                    <div className="flex flex-wrap gap-2">
-                                        {property.features?.map((feature: string, idx: number) => (
-                                            <Badge key={idx} variant="secondary" className="bg-slate-50 text-slate-900 border-none rounded-lg px-3 py-1 text-[10px] font-bold">
-                                                {feature}
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Image Grid */}
-                                <div className="space-y-6">
-                                    <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-4">
-                                        <span className="shrink-0">Image Repository</span>
-                                        <div className="h-px w-full bg-gray-50" />
-                                    </h5>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {property.imageUrls?.map((url: string, idx: number) => (
-                                            <div key={idx} className="group relative rounded-3xl overflow-hidden aspect-[16/10] bg-slate-50 ring-1 ring-slate-100">
-                                                <img src={url} alt={`Property ${idx}`} className="size-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                    <a href={url} target="_blank" rel="noopener noreferrer" className="size-10 rounded-xl bg-white flex items-center justify-center text-[#2E5E99] hover:scale-110 transition-transform">
-                                                        <ExternalLink className="size-5" />
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-
-                            {!property.verified && (
-                                <div className="mt-10 p-6 bg-[#F8FAFC] rounded-[32px] flex gap-4 border border-blue-50/50">
-                                    <Button
-                                        className="flex-1 h-16 bg-green-600 hover:bg-green-700 shadow-xl shadow-green-900/10 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all active:scale-95"
-                                        onClick={() => onVerify(property.id)}
-                                    >
-                                        <CheckCircle2 className="mr-3 size-5" />
-                                        Verify Listing
-                                    </Button>
-                                    <Button
-                                        variant="destructive"
-                                        className="flex-1 h-16 shadow-xl shadow-red-900/10 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all active:scale-95"
-                                        onClick={() => onReject(property.id)}
-                                    >
-                                        <XCircle className="mr-3 size-5" />
-                                        Reject Listing
-                                    </Button>
-                                </div>
-                            )}
-
-                            {property.verified && (
-                                <div className="mt-10 p-6 bg-green-50 rounded-[32px] flex items-center justify-center border border-green-100">
-                                    <div className="flex items-center gap-3 text-green-700">
-                                        <ShieldCheck className="size-6" />
-                                        <span className="font-black uppercase tracking-widest text-xs">Property Fully Verified</span>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </DialogContent>
-            </Dialog>
             )
 }

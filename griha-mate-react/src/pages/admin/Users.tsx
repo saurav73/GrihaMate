@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { AdminLayout } from "@/components/admin/AdminLayout"
 import { adminAPI } from "@/lib/api"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle2, Search, Users, Clock, Mail, Phone } from "lucide-react"
+import { CheckCircle2, Search, Users, Clock } from "lucide-react"
 import { toast } from "react-toastify"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { FileText, ExternalLink, ShieldAlert, ShieldCheck as ShieldCheckIcon } from "lucide-react"
+import { ShieldAlert, ShieldCheck as ShieldCheckIcon, ExternalLink } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export default function AdminUsers() {
+    const navigate = useNavigate()
     const [users, setUsers] = useState<any[]>([])
     const [search, setSearch] = useState("")
-    const [selectedUser, setSelectedUser] = useState<any>(null)
-    const [isDetailOpen, setIsDetailOpen] = useState(false)
 
     const fetchUsers = async () => {
         try {
@@ -30,37 +30,16 @@ export default function AdminUsers() {
         fetchUsers()
     }, [])
 
-    const handleVerify = async (userId: number) => {
-        try {
-            await adminAPI.verifyUser(userId)
-            toast.success("User verified")
-            fetchUsers()
-        } catch (err) {
-            toast.error("Failed to verify user")
-        }
-    }
-
-    const handleReject = async (userId: number) => {
-        try {
-            await adminAPI.rejectUser(userId)
-            toast.success("User rejected")
-            fetchUsers()
-        } catch (err) {
-            toast.error("Failed to reject user")
-        }
-    }
-
     const filteredUsers = users.filter(u =>
-    (u.fullName.toLowerCase().includes(search.toLowerCase()) ||
-        u.email.toLowerCase().includes(search.toLowerCase()))
+        (u.fullName.toLowerCase().includes(search.toLowerCase()) ||
+            u.email.toLowerCase().includes(search.toLowerCase()))
     )
 
     const landlords = filteredUsers.filter(u => u.role === 'LANDLORD')
     const seekers = filteredUsers.filter(u => u.role === 'SEEKER')
 
     const openDetails = (user: any) => {
-        setSelectedUser(user)
-        setIsDetailOpen(true)
+        navigate(`/admin/users/${user.id}`)
     }
 
     return (
@@ -140,14 +119,6 @@ export default function AdminUsers() {
                         </div>
                     </TabsContent>
                 </Tabs>
-
-                <UserDetailModal
-                    isOpen={isDetailOpen}
-                    onClose={() => setIsDetailOpen(false)}
-                    user={selectedUser}
-                    onVerify={handleVerify}
-                    onReject={handleReject}
-                />
             </div>
         </AdminLayout>
     )
@@ -219,199 +190,4 @@ export default function AdminUsers() {
                 </CardContent>
             </Card>
             )
-}
-
-            function UserDetailModal({isOpen, onClose, user, onVerify, onReject}: any) {
-    if (!user) return null
-
-            return (
-            <Dialog open={isOpen} onOpenChange={onClose}>
-                <DialogContent className="max-w-6xl p-0 overflow-hidden border-none rounded-[40px] shadow-3xl bg-white">
-                    <div className="flex flex-col lg:flex-row h-full max-h-[92vh]">
-                        {/* Sidebar / Info Pane */}
-                        <div className="lg:w-[320px] bg-gradient-to-b from-[#F1F7FE] to-white p-8 flex flex-col items-center border-r border-blue-50/50 overflow-y-auto custom-scrollbar shrink-0">
-                            <div className="size-28 rounded-[40px] bg-white p-2 shadow-2xl shadow-blue-900/10 mb-6 border-4 border-blue-50/30">
-                                {user.profileImageUrl ? (
-                                    <img src={user.profileImageUrl} alt="" className="size-full rounded-[32px] object-cover" />
-                                ) : (
-                                    <div className="size-full rounded-[44px] bg-[#2E5E99]/5 flex items-center justify-center text-[#2E5E99] text-5xl font-black">
-                                        {user.fullName[0].toUpperCase()}
-                                    </div>
-                                )}
-                            </div>
-
-                            <h3 className="text-xl font-black text-[#0D2440] mb-1 text-center leading-tight">{user.fullName}</h3>
-                            <Badge className={cn(
-                                "mb-8 rounded-full px-5 py-1.5 text-[10px] font-black tracking-[0.2em] uppercase border-none shadow-sm",
-                                user.role === 'LANDLORD' ? "bg-[#2E5E99] text-white" : "bg-orange-500 text-white"
-                            )}>
-                                {user.role}
-                            </Badge>
-
-                            <div className="w-full space-y-4">
-                                <div className="p-6 bg-white/50 backdrop-blur-sm rounded-[28px] border border-blue-50 shadow-sm">
-                                    <h5 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.3em] mb-4 border-b border-blue-50/50 pb-3 opacity-70">Personnel Intel</h5>
-                                    <div className="space-y-4">
-                                        <div className="flex items-start gap-3">
-                                            <div className="size-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-[#2E5E99] shrink-0">
-                                                <Mail className="size-3.5" />
-                                            </div>
-                                            <div className="min-w-0">
-                                                <p className="text-[9px] text-slate-700 font-black uppercase tracking-widest mb-0.5">Electronic Mail</p>
-                                                <p className="text-xs font-black text-[#0D2440] truncate max-w-full" title={user.email}>{user.email}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-3">
-                                            <div className="size-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-[#2E5E99] shrink-0">
-                                                <Phone className="size-3.5" />
-                                            </div>
-                                            <div>
-                                                <p className="text-[9px] text-slate-700 font-black uppercase tracking-widest mb-0.5">Contact String</p>
-                                                <p className="text-xs font-black text-[#0D2440]">{user.phoneNumber || 'NOT PROVIDED'}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {user.citizenshipNumber && (
-                                    <div className="p-6 bg-[#0D2440] text-white rounded-[28px] shadow-2xl shadow-blue-900/20 relative overflow-hidden group">
-                                        <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                                            <ShieldCheckIcon className="size-10" />
-                                        </div>
-                                        <h5 className="text-[9px] font-black text-white/60 uppercase tracking-[0.3em] mb-3">Registry Key</h5>
-                                        <div>
-                                            <p className="text-[9px] text-white/70 font-black uppercase tracking-widest mb-0.5">Citizen ID</p>
-                                            <p className="text-xl font-black tracking-[0.15em] font-mono">{user.citizenshipNumber}</p>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="mt-8 w-full pt-6 border-t border-blue-50/50">
-                                <Button
-                                    variant="ghost"
-                                    onClick={onClose}
-                                    className="w-full h-12 rounded-xl text-slate-600 hover:text-[#0D2440] font-black uppercase tracking-widest text-[10px] hover:bg-gray-50/50 transition-all"
-                                >
-                                    Dismiss Profile
-                                </Button>
-                            </div>
-                        </div>
-
-                        {/* Content / Document Pane */}
-                        <div className="flex-1 p-8 flex flex-col h-full bg-white overflow-y-auto min-w-0">
-                            <div className="flex items-center justify-between mb-8">
-                                <div>
-                                    <h2 className="text-xl font-black text-[#0D2440] tracking-tighter">Verification Assets</h2>
-                                    <p className="text-slate-800 font-black text-[9px] uppercase tracking-[0.2em] mt-1 opacity-70">Authenticated System Registry Documents</p>
-                                </div>
-                                <div className="size-12 bg-blue-50 rounded-2xl flex items-center justify-center shadow-inner">
-                                    <ShieldCheckIcon className="size-6 text-[#2E5E99]" />
-                                </div>
-                            </div>
-
-                            <div className="flex-1 space-y-8">
-                                {user.role === 'LANDLORD' ? (
-                                    <div className="space-y-4">
-                                        <div className="flex items-center gap-4">
-                                            <div className="h-px flex-1 bg-gray-100" />
-                                            <h5 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] shrink-0">KYC CORE SUBMISSION</h5>
-                                            <div className="h-px flex-1 bg-gray-100" />
-                                        </div>
-                                        <DocumentCard title={`${user.kycDocumentType || 'Business'} ID`} url={user.kycDocumentUrl} />
-                                    </div>
-                                ) : (
-                                    <div className="grid grid-cols-1 gap-8">
-                                        {user.citizenshipFrontUrl && (
-                                            <div className="space-y-4">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="h-px flex-1 bg-gray-100" />
-                                                    <h5 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.3em] shrink-0 opacity-60">GOVERNMENT ID • FRONT</h5>
-                                                    <div className="h-px flex-1 bg-gray-100" />
-                                                </div>
-                                                <DocumentCard title="Citizenship Front" url={user.citizenshipFrontUrl} />
-                                            </div>
-                                        )}
-                                        {user.citizenshipBackUrl && (
-                                            <div className="space-y-4">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="h-px flex-1 bg-gray-100" />
-                                                    <h5 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] shrink-0">GOVERNMENT ID • BACK</h5>
-                                                    <div className="h-px flex-1 bg-gray-100" />
-                                                </div>
-                                                <DocumentCard title="Citizenship Back" url={user.citizenshipBackUrl} />
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-
-                                {(!user.kycDocumentUrl && !user.citizenshipFrontUrl) && (
-                                    <div className="flex flex-col items-center justify-center py-20 bg-gray-50/30 rounded-[32px] border-2 border-dashed border-gray-100 text-gray-200">
-                                        <FileText className="size-12 opacity-20 mb-4" />
-                                        <p className="font-black uppercase tracking-[0.3em] text-[10px]">AWAITING CLOUD ASSETS</p>
-                                        <p className="text-[9px] font-bold mt-1 opacity-50">DOCUMENT REPOSITORY IS EMPTY</p>
-                                    </div>
-                                )}
-                            </div>
-
-                            {user.verificationStatus === 'PENDING' && (
-                                <div className="mt-8 p-6 bg-[#F8FAFC] rounded-[32px] flex gap-4 border border-blue-50/50 shadow-inner">
-                                    <Button
-                                        className="flex-1 h-12 bg-green-600 hover:bg-green-700 shadow-xl shadow-green-900/10 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95"
-                                        onClick={() => { onVerify(user.id); onClose(); }}
-                                    >
-                                        <CheckCircle2 className="mr-2 size-4" />
-                                        Authorize
-                                    </Button>
-                                    <Button
-                                        variant="destructive"
-                                        className="flex-1 h-12 shadow-xl shadow-red-900/10 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95"
-                                        onClick={() => { onReject(user.id); onClose(); }}
-                                    >
-                                        <ShieldAlert className="mr-2 size-4" />
-                                        Decline
-                                    </Button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </DialogContent>
-            </Dialog>
-            )
-}
-
-            function DocumentCard({title, url}: {title: string, url?: string }) {
-    if (!url) return null
-
-            return (
-            <div className="group relative rounded-[32px] overflow-hidden bg-[#F8FAFC] shadow-inner ring-1 ring-black/5 hover:ring-[#2E5E99]/20 transition-all duration-500">
-                <div className="aspect-[16/10] flex items-center justify-center p-4 bg-gray-900/5">
-                    <img
-                        src={url}
-                        alt={title}
-                        className="max-h-full max-w-full object-contain group-hover:scale-[1.02] transition-transform duration-700 ease-out shadow-2xl rounded-xl"
-                    />
-                </div>
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-6 flex items-end opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <div className="w-full flex items-center justify-between">
-                        <div>
-                            <p className="text-white text-[9px] font-black uppercase tracking-[0.2em] mb-1">{title}</p>
-                            <h6 className="text-white/60 text-[10px] font-bold tracking-tight">Full resolution verification asset</h6>
-                        </div>
-                        <a
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="size-10 rounded-xl bg-white flex items-center justify-center text-[#2E5E99] hover:bg-[#2E5E99] hover:text-white transition-all duration-300"
-                        >
-                            <ExternalLink className="size-4" />
-                        </a>
-                    </div>
-                </div>
-            </div>
-            )
-}
-
-            function cn(...classes: any[]) {
-    return classes.filter(Boolean).join(' ')
 }

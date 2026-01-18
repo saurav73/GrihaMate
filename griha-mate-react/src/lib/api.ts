@@ -11,10 +11,15 @@ export interface UserDto {
   fullName: string;
   email: string;
   phoneNumber: string;
+  profileImageUrl?: string;
   role: 'SEEKER' | 'LANDLORD' | 'ADMIN';
   active: boolean;
   emailVerified: boolean;
   citizenshipNumber?: string;
+  citizenshipFrontUrl?: string;
+  citizenshipBackUrl?: string;
+  kycDocumentType?: 'CITIZENSHIP' | 'PASSPORT' | 'DRIVING_LICENSE';
+  kycDocumentUrl?: string;
   verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
   subscriptionStatus?: 'FREE' | 'PREMIUM';
   createdAt: string;

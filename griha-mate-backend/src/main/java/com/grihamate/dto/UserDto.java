@@ -20,6 +20,10 @@ public class UserDto {
     private Boolean active;
     private Boolean emailVerified;
     private String citizenshipNumber;
+    private String citizenshipFrontUrl;
+    private String citizenshipBackUrl;
+    private User.KycDocumentType kycDocumentType;
+    private String kycDocumentUrl;
     private User.VerificationStatus verificationStatus;
     private User.SubscriptionStatus subscriptionStatus;
     private LocalDateTime subscriptionExpiry;
@@ -36,6 +40,10 @@ public class UserDto {
                 user.getActive(),
                 user.getEmailVerified(),
                 user.getCitizenshipNumber(),
+                user.getCitizenshipFrontUrl(),
+                user.getCitizenshipBackUrl(),
+                user.getKycDocumentType(),
+                user.getKycDocumentUrl(),
                 user.getVerificationStatus(),
                 user.getSubscriptionStatus(),
                 user.getSubscriptionExpiry(),

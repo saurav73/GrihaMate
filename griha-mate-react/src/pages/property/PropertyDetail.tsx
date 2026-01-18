@@ -51,6 +51,7 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
   const [routeCoordinates, setRouteCoordinates] = useState<[number, number][]>([])
   const [routeInfo, setRouteInfo] = useState<{ distance: number, duration: number } | null>(null)
   const [requestStatus, setRequestStatus] = useState<'PENDING' | 'ACCEPTED' | 'REJECTED' | 'PAID' | null>(null)
+  const [isOwner, setIsOwner] = useState(false)
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -106,14 +107,29 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
         const data = await propertiesAPI.getById(Number(params.id))
         setProperty(data)
 
-        // Check request status
-        try {
-          const request = await propertyRequestAPI.checkStatus(data.id)
-          if (request) {
-            setRequestStatus(request.status)
+        // Check if current user is the owner
+        const userData = localStorage.getItem('user')
+        let userIsOwner = false
+        if (userData) {
+          try {
+            const user = JSON.parse(userData)
+            userIsOwner = user.role === 'LANDLORD' && user.id === data.landlordId
+            setIsOwner(userIsOwner)
+          } catch (e) {
+            setIsOwner(false)
           }
-        } catch (err) {
-          console.error("Failed to check request status", err)
+        }
+
+        // Check request status (only for non-owners)
+        if (!userIsOwner) {
+          try {
+            const request = await propertyRequestAPI.checkStatus(data.id)
+            if (request) {
+              setRequestStatus(request.status)
+            }
+          } catch (err) {
+            console.error("Failed to check request status", err)
+          }
         }
 
         // Check if property is in favorites
@@ -597,17 +613,19 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
                 </div>
 
                 <div className="space-y-3">
-                  <Button
-                    className={`w-full ${requestStatus === 'PENDING' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-primary hover:bg-primary-dark'} text-white shadow-md hover:shadow-lg transition-all`}
-                    size="lg"
-                    onClick={handleRequestClick}
-                    disabled={requestStatus === 'PENDING' || requestStatus === 'ACCEPTED' || requestStatus === 'PAID'}
-                  >
-                    <Phone className="mr-2 size-5" />
-                    {requestStatus === 'PENDING' ? 'Request Sent (Pending)' :
-                      requestStatus === 'ACCEPTED' || requestStatus === 'PAID' ? 'Request Approved' :
-                        'Request to Book / Contact'}
-                  </Button>
+                  {!isOwner && (
+                    <Button
+                      className={`w-full ${requestStatus === 'PENDING' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-primary hover:bg-primary-dark'} text-white shadow-md hover:shadow-lg transition-all`}
+                      size="lg"
+                      onClick={handleRequestClick}
+                      disabled={requestStatus === 'PENDING' || requestStatus === 'ACCEPTED' || requestStatus === 'PAID'}
+                    >
+                      <Phone className="mr-2 size-5" />
+                      {requestStatus === 'PENDING' ? 'Request Sent (Pending)' :
+                        requestStatus === 'ACCEPTED' || requestStatus === 'PAID' ? 'Request Approved' :
+                          'Request to Book / Contact'}
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     className={`w-full ${isFavorite
@@ -620,39 +638,41 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
                     {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
                   </Button>
 
-                  <div className="pt-3 border-t border-primary-lightest space-y-2 relative">
-                    <p className="text-xs text-muted-foreground font-medium mb-2">Payment Options</p>
+                  {!isOwner && (
+                    <div className="pt-3 border-t border-primary-lightest space-y-2 relative">
+                      <p className="text-xs text-muted-foreground font-medium mb-2">Payment Options</p>
 
-                    <div className="space-y-2 relative">
-                      <Button
-                        variant="outline"
-                        className="w-full border-primary-light text-primary hover:bg-primary-lightest"
-                        onClick={() => handlePayment('esewa')}
-                      >
-                        <Wallet className="mr-2 size-4" />
-                        Pay with eSewa
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full border-primary-light text-primary hover:bg-primary-lightest"
-                        onClick={() => handlePayment('card')}
-                      >
-                        <CreditCard className="mr-2 size-4" />
-                        Pay with Card
-                      </Button>
+                      <div className="space-y-2 relative">
+                        <Button
+                          variant="outline"
+                          className="w-full border-primary-light text-primary hover:bg-primary-lightest"
+                          onClick={() => handlePayment('esewa')}
+                        >
+                          <Wallet className="mr-2 size-4" />
+                          Pay with eSewa
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="w-full border-primary-light text-primary hover:bg-primary-lightest"
+                          onClick={() => handlePayment('card')}
+                        >
+                          <CreditCard className="mr-2 size-4" />
+                          Pay with Card
+                        </Button>
 
-                      {(requestStatus !== 'ACCEPTED' && requestStatus !== 'PAID') && (
-                        <div className="absolute inset-0 z-10 bg-white/80 backdrop-blur-[2px] rounded-xl flex items-center justify-center p-4 text-center border border-dashed border-amber-300 shadow-inner group">
-                          <div className="space-y-1 transform group-hover:scale-105 transition-transform">
-                            <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest bg-amber-100/50 px-2 py-0.5 rounded-full inline-block mb-1">Feature Locked</p>
-                            <p className="text-[11px] font-bold text-[#0D2440] leading-tight max-w-[180px]">
-                              Send request and get approved to unlock the payment feature
-                            </p>
+                        {(requestStatus !== 'ACCEPTED' && requestStatus !== 'PAID') && (
+                          <div className="absolute inset-0 z-10 bg-white/80 backdrop-blur-[2px] rounded-xl flex items-center justify-center p-4 text-center border border-dashed border-amber-300 shadow-inner group">
+                            <div className="space-y-1 transform group-hover:scale-105 transition-transform">
+                              <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest bg-amber-100/50 px-2 py-0.5 rounded-full inline-block mb-1">Feature Locked</p>
+                              <p className="text-[11px] font-bold text-[#0D2440] leading-tight max-w-[180px]">
+                                Send request and get approved to unlock the payment feature
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 <div className="pt-4 border-t border-primary-lightest">
