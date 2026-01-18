@@ -4,7 +4,7 @@ import {
     LayoutDashboard,
     Users,
     MapPin,
-    Settings,
+    MessageSquare,
     LogOut,
     ShieldCheck,
     Home,
@@ -33,9 +33,9 @@ const sidebarItems = [
         icon: Home,
     },
     {
-        title: "Settings",
-        href: "/admin/settings",
-        icon: Settings,
+        title: "User Feedback",
+        href: "/admin/user-feedback",
+        icon: MessageSquare,
     },
 ]
 

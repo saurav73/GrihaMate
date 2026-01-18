@@ -28,6 +28,11 @@ public class PropertyRequestService {
         User seeker = userRepository.findById(seekerId)
                 .orElseThrow(() -> new RuntimeException("Seeker not found"));
 
+        // Check if seeker is verified
+        if (seeker.getVerificationStatus() != User.VerificationStatus.VERIFIED) {
+            throw new RuntimeException("Your account must be verified by an admin before you can send property requests. Please wait for verification.");
+        }
+
         Property property = propertyRepository.findById(propertyId)
                 .orElseThrow(() -> new RuntimeException("Property not found"));
 

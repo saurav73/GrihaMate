@@ -614,9 +614,9 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
                       >
                         <Button
                           size="sm"
-                          className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                          className="bg-white text-primary hover:bg-blue-50 border-none shadow-lg hover:shadow-xl transition-all font-semibold"
                         >
-                          <NavigationIcon className="size-4 mr-1" />
+                          <NavigationIcon className="size-4 mr-1.5" />
                           Get Directions
                         </Button>
                       </a>
@@ -639,12 +639,52 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
                       <Marker
                         position={[property.latitude, property.longitude]}
                         icon={L.divIcon({
-                          className: 'bg-transparent',
-                          html: `<div class="bg-primary text-white p-2 rounded-full shadow-xl border-2 border-white transform hover:scale-110 transition-transform">
-                                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                                 </div>`,
-                          iconSize: [40, 40],
-                          iconAnchor: [20, 40]
+                          className: 'bg-transparent property-marker',
+                          html: `
+                            <div style="position: relative;">
+                              <div style="
+                                background: linear-gradient(135deg, #2E5E99 0%, #1C3860 100%);
+                                width: 48px;
+                                height: 48px;
+                                border-radius: 50% 50% 50% 0;
+                                transform: rotate(-45deg);
+                                border: 3px solid white;
+                                box-shadow: 0 4px 15px rgba(46, 94, 153, 0.5), 0 0 0 4px rgba(46, 94, 153, 0.1);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                position: relative;
+                                z-index: 2;
+                              ">
+                                <div style="
+                                  transform: rotate(45deg);
+                                  color: white;
+                                  font-size: 20px;
+                                  font-weight: bold;
+                                ">🏠</div>
+                              </div>
+                              <div style="
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+                                transform: translate(-50%, -50%);
+                                width: 64px;
+                                height: 64px;
+                                border-radius: 50%;
+                                background: rgba(46, 94, 153, 0.15);
+                                z-index: 1;
+                                animation: pulse-ring 2s infinite;
+                              "></div>
+                            </div>
+                            <style>
+                              @keyframes pulse-ring {
+                                0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+                                100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
+                              }
+                            </style>
+                          `,
+                          iconSize: [48, 48],
+                          iconAnchor: [24, 48]
                         })}
                       >
                         <Popup>{property.title}</Popup>
@@ -656,36 +696,114 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
                           <Marker
                             position={[userLocation.lat, userLocation.lng]}
                             icon={L.divIcon({
-                              className: 'bg-transparent',
-                              html: `<div class="bg-blue-500 text-white p-1.5 rounded-full shadow-lg border-2 border-white ring-2 ring-blue-200">
-                                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
-                                     </div>`,
-                              iconSize: [32, 32],
-                              iconAnchor: [16, 16]
+                              className: 'bg-transparent user-location-marker',
+                              html: `
+                                <div style="position: relative;">
+                                  <div style="
+                                    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                                    width: 40px;
+                                    height: 40px;
+                                    border-radius: 50%;
+                                    border: 3px solid white;
+                                    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4), 0 0 0 3px rgba(16, 185, 129, 0.1);
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    position: relative;
+                                    z-index: 2;
+                                  ">
+                                    <div style="
+                                      width: 12px;
+                                      height: 12px;
+                                      background: white;
+                                      border-radius: 50%;
+                                      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                                    "></div>
+                                  </div>
+                                  <div style="
+                                    position: absolute;
+                                    top: 50%;
+                                    left: 50%;
+                                    transform: translate(-50%, -50%);
+                                    width: 60px;
+                                    height: 60px;
+                                    border-radius: 50%;
+                                    background: rgba(16, 185, 129, 0.2);
+                                    z-index: 1;
+                                    animation: location-pulse 2s infinite;
+                                  "></div>
+                                </div>
+                                <style>
+                                  @keyframes location-pulse {
+                                    0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; }
+                                    100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+                                  }
+                                </style>
+                              `,
+                              iconSize: [40, 40],
+                              iconAnchor: [20, 20]
                             })}
                           >
-                            <Popup>You are here</Popup>
+                            <Popup>📍 You are here</Popup>
                           </Marker>
 
                           {routeCoordinates.length > 0 ? (
-                            <Polyline
-                              positions={routeCoordinates}
-                              color="#8b5cf6"
-                              weight={5}
-                              opacity={0.8}
-                              dashArray="10, 10"
-                            />
+                            <>
+                              {/* Shadow/outline layer for depth */}
+                              <Polyline
+                                positions={routeCoordinates}
+                                color="#1C3860"
+                                weight={8}
+                                opacity={0.3}
+                              />
+                              {/* Main route line */}
+                              <Polyline
+                                positions={routeCoordinates}
+                                color="#2E5E99"
+                                weight={6}
+                                opacity={0.9}
+                              />
+                              {/* Highlight line */}
+                              <Polyline
+                                positions={routeCoordinates}
+                                color="#7BA4D0"
+                                weight={4}
+                                opacity={0.7}
+                              />
+                            </>
                           ) : (
-                            <Polyline
-                              positions={[
-                                [userLocation.lat, userLocation.lng],
-                                [property.latitude, property.longitude]
-                              ]}
-                              color="#8b5cf6"
-                              weight={4}
-                              opacity={0.5}
-                              dashArray="5, 5"
-                            />
+                            <>
+                              {/* Shadow/outline layer for straight line */}
+                              <Polyline
+                                positions={[
+                                  [userLocation.lat, userLocation.lng],
+                                  [property.latitude, property.longitude]
+                                ]}
+                                color="#1C3860"
+                                weight={7}
+                                opacity={0.3}
+                              />
+                              {/* Main line */}
+                              <Polyline
+                                positions={[
+                                  [userLocation.lat, userLocation.lng],
+                                  [property.latitude, property.longitude]
+                                ]}
+                                color="#2E5E99"
+                                weight={5}
+                                opacity={0.8}
+                              />
+                              {/* Highlight line */}
+                              <Polyline
+                                positions={[
+                                  [userLocation.lat, userLocation.lng],
+                                  [property.latitude, property.longitude]
+                                ]}
+                                color="#7BA4D0"
+                                weight={3}
+                                opacity={0.6}
+                              />
+                            </>
                           )}
 
                           <MapBoundsController bounds={L.latLngBounds([

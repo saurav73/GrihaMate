@@ -15,6 +15,8 @@ import ListPropertyPage from './pages/landlord/ListProperty'
 import LoginPage from './pages/auth/Login'
 import RegisterPage from './pages/auth/Register'
 import AdminLoginPage from './pages/auth/AdminLogin'
+import ForgotPasswordPage from './pages/auth/ForgotPassword'
+import ResetPasswordPage from './pages/auth/ResetPassword'
 import ProfilePage from './pages/user/Profile'
 import PropertyDetailPage from './pages/property/PropertyDetail'
 import DashboardLandlordPage from './pages/landlord/DashboardLandlord'
@@ -57,6 +59,8 @@ function App() {
         <Route path="/how-it-works" element={<HowItWorksPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/property/:id" element={<PropertyDetailPage />} />
@@ -89,7 +93,7 @@ function App() {
         <Route path="/admin/premium-users" element={<PremiumUsersPage />} />
         <Route path="/admin/premium-users/:id" element={<PremiumUserDetailPage />} />
         <Route path="/admin/requests" element={<AdminRequestsPage />} />
-        <Route path="/admin/settings" element={<AdminSettingsPage />} />
+        <Route path="/admin/user-feedback" element={<AdminSettingsPage />} />
         <Route path="/favorites" element={<FavoritesPage />} />
         <Route path="/room-request" element={<RoomRequestPage />} />
         <Route path="/payment/success" element={<PaymentSuccessPage />} />

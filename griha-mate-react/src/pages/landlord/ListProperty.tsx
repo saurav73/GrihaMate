@@ -1,4 +1,4 @@
-import { MapPin, DollarSign, Camera, Video, CheckCircle2, AlertTriangle, Crown, Lock } from "lucide-react"
+import { MapPin, DollarSign, Camera, Video, CheckCircle2, AlertTriangle, Crown, Lock, Clock } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -50,6 +50,37 @@ export default function ListPropertyPage() {
     }
     checkLimit()
   }, [])
+
+  // Check verification status early - must be checked after user is loaded
+  if (!loading && !checkingLimit && user && user.verificationStatus !== 'VERIFIED') {
+    return (
+      <div className="min-h-full flex items-center justify-center py-12">
+        <Card className="max-w-2xl w-full border-none shadow-xl rounded-3xl overflow-hidden">
+          <CardContent className="p-12 text-center">
+            <div className="size-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Clock className="size-10 text-orange-600" />
+            </div>
+            <h2 className="text-3xl font-bold text-[#0D2440] mb-4">
+              {user.verificationStatus === 'PENDING' ? 'Account Verification Pending' : 'Account Not Verified'}
+            </h2>
+            <p className="text-lg text-gray-600 mb-8">
+              {user.verificationStatus === 'PENDING' 
+                ? 'Your account is currently pending admin verification. You cannot add properties until your account has been verified by an administrator.'
+                : 'Your account must be verified by an administrator before you can add properties. Please contact support if you need assistance.'}
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button
+                onClick={() => navigate('/dashboard/landlord')}
+                className="w-full sm:w-auto bg-[#2E5E99] hover:bg-[#1C3860] text-white h-12 px-8 rounded-2xl font-bold"
+              >
+                Back to Dashboard
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   const handleUpgrade = async () => {
     setPaymentModalOpen(true)

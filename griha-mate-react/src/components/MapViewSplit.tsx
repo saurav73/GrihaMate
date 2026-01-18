@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMap, Circle } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -87,6 +87,7 @@ const createUserIcon = () => {
 interface MapViewSplitProps {
   properties: PropertyDto[]
   userLocation?: { lat: number; lng: number } | null
+  searchNearby?: boolean
   onPropertySelect?: (property: PropertyDto | null) => void
   onRequestLocation?: () => void
 }
@@ -99,11 +100,19 @@ function MapController({ center, zoom }: { center: [number, number]; zoom: numbe
   return null
 }
 
-export function MapViewSplit({ properties, userLocation, onPropertySelect, onRequestLocation }: MapViewSplitProps) {
+export function MapViewSplit({ properties, userLocation, searchNearby = false, onPropertySelect, onRequestLocation }: MapViewSplitProps) {
   const [mapCenter, setMapCenter] = useState<[number, number]>([27.7172, 85.3240])
   const [mapZoom, setMapZoom] = useState(12)
   const [selectedProperty, setSelectedProperty] = useState<PropertyDto | null>(null)
   const [hoveredProperty, setHoveredProperty] = useState<number | null>(null)
+
+  // Center map on user location when available
+  useEffect(() => {
+    if (userLocation) {
+      setMapCenter([userLocation.lat, userLocation.lng])
+      setMapZoom(13) // Zoom level that shows ~5km radius nicely
+    }
+  }, [userLocation])
 
   // Calculate distance between two points (Haversine formula)
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -118,20 +127,35 @@ export function MapViewSplit({ properties, userLocation, onPropertySelect, onReq
     return R * c
   }
 
-  // Use properties directly, but calculate distance if needed
-  const mapProperties = properties.map((p) => {
-    // Calculate distance if user location is available
-    if (userLocation && p.latitude && p.longitude) {
-      const distance = calculateDistance(
-        userLocation.lat,
-        userLocation.lng,
-        p.latitude,
-        p.longitude
-      )
-      return { ...p, distance }
-    }
-    return p
-  });
+  // Filter and calculate distance for properties
+  const mapProperties = properties
+    .filter((p) => {
+      // Filter to only show properties within 5km if user location is available
+      if (userLocation && p.latitude && p.longitude) {
+        const distance = calculateDistance(
+          userLocation.lat,
+          userLocation.lng,
+          p.latitude,
+          p.longitude
+        )
+        return distance <= 5 // 5km radius
+      }
+      // If no user location, show all properties with valid coordinates
+      return p.latitude && p.longitude
+    })
+    .map((p) => {
+      // Calculate distance if user location is available
+      if (userLocation && p.latitude && p.longitude) {
+        const distance = calculateDistance(
+          userLocation.lat,
+          userLocation.lng,
+          p.latitude,
+          p.longitude
+        )
+        return { ...p, distance }
+      }
+      return p
+    });
 
   const navigate = useNavigate();
 
@@ -158,15 +182,30 @@ export function MapViewSplit({ properties, userLocation, onPropertySelect, onReq
         />
         <MapController center={mapCenter} zoom={mapZoom} />
 
-        {/* User Location */}
-        {userLocation && (
-          <Marker position={[userLocation.lat, userLocation.lng]} icon={createUserIcon()}>
-            <Popup>
-              <div className="text-center p-1">
-                <p className="font-bold text-primary-dark">📍 Your Location</p>
-              </div>
-            </Popup>
-          </Marker>
+        {/* User Location & Radius Circle - Only show if searchNearby is enabled */}
+        {searchNearby && userLocation && (
+          <>
+            {/* 5km Radius Circle */}
+            <Circle
+              center={[userLocation.lat, userLocation.lng]}
+              radius={5000} // 5km in meters
+              pathOptions={{
+                color: '#2E5E99',
+                fillColor: '#2E5E99',
+                fillOpacity: 0.1,
+                weight: 2,
+                dashArray: '10, 5'
+              }}
+            />
+            <Marker position={[userLocation.lat, userLocation.lng]} icon={createUserIcon()}>
+              <Popup>
+                <div className="text-center p-1">
+                  <p className="font-bold text-primary-dark">📍 Your Location</p>
+                  <p className="text-xs text-gray-600 mt-1">Showing properties within 5km</p>
+                </div>
+              </Popup>
+            </Marker>
+          </>
         )}
 
         {/* Property Markers */}
@@ -256,27 +295,35 @@ export function MapViewSplit({ properties, userLocation, onPropertySelect, onReq
           <CardContent className="p-3 flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm">
               <Home className="size-4 text-primary-dark" />
-              <span className="font-semibold">{mapProperties.length} Found</span>
-            </div>
-            <div className="h-4 w-px bg-gray-300" />
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Navigation className="size-4 text-blue-500" />
-              <span className="cursor-pointer hover:text-blue-600" onClick={() => {
-                // Trigger radar animation manually
-                const radar = document.getElementById('radar-overlay');
-                if (radar) {
-                  radar.style.display = 'block';
-                  setTimeout(() => { radar.style.display = 'none'; }, 3000);
-                }
-                if (onRequestLocation) {
-                  onRequestLocation();
-                } else {
-                  toast.info("Scanning for properties nearby...");
-                }
-              }}>
-                Search Nearby
+              <span className="font-semibold">
+                {searchNearby && userLocation
+                  ? `${mapProperties.length} Found (within 5km)`
+                  : `${mapProperties.length} Found`}
               </span>
             </div>
+            {searchNearby && userLocation && (
+              <>
+                <div className="h-4 w-px bg-gray-300" />
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Navigation className="size-4 text-blue-500" />
+                  <span className="cursor-pointer hover:text-blue-600" onClick={() => {
+                    // Trigger radar animation manually
+                    const radar = document.getElementById('radar-overlay');
+                    if (radar) {
+                      radar.style.display = 'block';
+                      setTimeout(() => { radar.style.display = 'none'; }, 3000);
+                    }
+                    if (onRequestLocation) {
+                      onRequestLocation();
+                    } else {
+                      toast.info("Scanning for properties nearby...");
+                    }
+                  }}>
+                    {userLocation ? 'Update Location' : 'Search Nearby (5km)'}
+                  </span>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>

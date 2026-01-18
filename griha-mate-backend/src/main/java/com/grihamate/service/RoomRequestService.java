@@ -27,6 +27,11 @@ public class RoomRequestService {
 
     @Transactional
     public RoomRequestDto createRequest(RoomRequestDto dto, User seeker) {
+        // Check if seeker is verified
+        if (seeker.getVerificationStatus() != User.VerificationStatus.VERIFIED) {
+            throw new RuntimeException("Your account must be verified by an admin before you can create room requests. Please wait for verification.");
+        }
+
         // Check if user already has an active request
         List<RoomRequest> activeRequests = roomRequestRepository.findBySeekerAndActive(seeker, true);
         if (!activeRequests.isEmpty()) {

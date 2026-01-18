@@ -88,12 +88,49 @@ export default function DashboardLandlordPage() {
           <h1 className="text-3xl font-bold text-[#0D2440]">Landlord Dashboard</h1>
           <p className="text-[#2E5E99]">Welcome back, {user.fullName.split(' ')[0]}</p>
         </div>
-        <Link to="/dashboard/landlord/list-property">
-          <Button className="bg-[#2E5E99] hover:bg-[#1C3860] text-white rounded-full">
+        {user.verificationStatus === 'VERIFIED' ? (
+          <Link to="/dashboard/landlord/list-property">
+            <Button className="bg-[#2E5E99] hover:bg-[#1C3860] text-white rounded-full">
+              <Plus className="mr-2 size-4" /> Add New Property
+            </Button>
+          </Link>
+        ) : (
+          <Button 
+            disabled
+            className="bg-gray-400 cursor-not-allowed text-white rounded-full"
+            title={user.verificationStatus === 'PENDING' 
+              ? "Your account verification is pending. Please wait for admin approval." 
+              : "Your account must be verified to add properties."}
+          >
             <Plus className="mr-2 size-4" /> Add New Property
           </Button>
-        </Link>
+        )}
       </div>
+
+      {/* Verification Status Banner */}
+      {user.verificationStatus !== 'VERIFIED' && (
+        <Card className="mb-8 bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="size-12 rounded-full bg-orange-100 flex items-center justify-center">
+                  <Clock className="size-6 text-orange-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-gray-900">
+                    {user.verificationStatus === 'PENDING' ? 'Account Verification Pending' : 'Account Not Verified'}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {user.verificationStatus === 'PENDING' 
+                      ? 'Your account is pending admin verification. You cannot add properties until verified.'
+                      : 'Your account must be verified by an admin before you can add properties.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Upgrade Banner for FREE users */}
       {user.subscriptionStatus === 'FREE' && (

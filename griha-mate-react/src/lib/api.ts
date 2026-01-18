@@ -161,6 +161,27 @@ export const authAPI = {
       body: JSON.stringify({ email, otp }),
     });
   },
+
+  forgotPassword: async (email: string): Promise<{ message: string }> => {
+    return apiRequest<{ message: string }>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  validateResetToken: async (token: string): Promise<{ valid: boolean }> => {
+    return apiRequest<{ valid: boolean }>('/auth/validate-reset-token', {
+      method: 'POST',
+      body: JSON.stringify({ token }),
+    });
+  },
+
+  resetPassword: async (token: string, newPassword: string): Promise<{ message: string }> => {
+    return apiRequest<{ message: string }>('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, newPassword }),
+    });
+  },
 };
 
 // Properties API
@@ -227,6 +248,14 @@ export const feedbackAPI = {
   },
   getAll: async (): Promise<any[]> => {
     return apiRequest<any[]>('/feedbacks');
+  },
+  delete: async (id: number): Promise<{ message: string }> => {
+    return apiRequest<{ message: string }>(`/feedbacks/${id}`, {
+      method: 'DELETE',
+    });
+  },
+  checkStatus: async (): Promise<{ hasSubmitted: boolean }> => {
+    return apiRequest<{ hasSubmitted: boolean }>('/feedbacks/check');
   }
 };
 

@@ -179,5 +179,63 @@ public class AuthController {
             return ResponseEntity.badRequest().body(java.util.Map.of("message", e.getMessage()));
         }
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody java.util.Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            
+            if (email == null || email.isEmpty()) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("message", "Email is required"));
+            }
+
+            userService.requestPasswordReset(email);
+            return ResponseEntity.ok(java.util.Map.of("message", "Password reset link has been sent to your email"));
+        } catch (Exception e) {
+            // Don't reveal if email exists or not for security reasons
+            return ResponseEntity.ok(java.util.Map.of("message", "If the email exists, a password reset link has been sent"));
+        }
+    }
+
+    @PostMapping("/validate-reset-token")
+    public ResponseEntity<?> validateResetToken(@RequestBody java.util.Map<String, String> request) {
+        try {
+            String token = request.get("token");
+            
+            if (token == null || token.isEmpty()) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("message", "Token is required", "valid", false));
+            }
+
+            boolean valid = userService.validatePasswordResetToken(token);
+            return ResponseEntity.ok(java.util.Map.of("valid", valid));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", e.getMessage(), "valid", false));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody java.util.Map<String, String> request) {
+        try {
+            String token = request.get("token");
+            String newPassword = request.get("newPassword");
+            
+            if (token == null || token.isEmpty()) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("message", "Token is required"));
+            }
+            
+            if (newPassword == null || newPassword.isEmpty()) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("message", "New password is required"));
+            }
+
+            if (newPassword.length() < 6) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("message", "Password must be at least 6 characters long"));
+            }
+
+            userService.resetPassword(token, newPassword);
+            return ResponseEntity.ok(java.util.Map.of("message", "Password has been reset successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", e.getMessage()));
+        }
+    }
 }
 

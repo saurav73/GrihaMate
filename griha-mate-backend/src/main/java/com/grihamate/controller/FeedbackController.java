@@ -31,4 +31,22 @@ public class FeedbackController {
     public ResponseEntity<List<FeedbackDto>> getAllFeedbacks() {
         return ResponseEntity.ok(feedbackService.getAllFeedback());
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, String>> deleteFeedback(@PathVariable Long id) {
+        try {
+            feedbackService.deleteFeedback(id);
+            return ResponseEntity.ok(Map.of("message", "Feedback deleted successfully"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/check")
+    @PreAuthorize("hasRole('SEEKER')")
+    public ResponseEntity<Map<String, Boolean>> checkFeedbackStatus(Principal principal) {
+        boolean hasSubmitted = feedbackService.hasUserSubmittedFeedback(principal.getName());
+        return ResponseEntity.ok(Map.of("hasSubmitted", hasSubmitted));
+    }
 }

@@ -445,6 +445,50 @@ public class EmailService {
         }
     }
 
+    /**
+     * Sends a password reset email to the user with a reset link.
+     * 
+     * @param toEmail  The recipient's email address
+     * @param token    The password reset token
+     * @param userName The user's full name
+     */
+    public void sendPasswordResetEmail(String toEmail, String token, String userName) {
+        if (toEmail == null || toEmail.isEmpty()) {
+            log.warn("Cannot send password reset email: email address is null or empty");
+            throw new RuntimeException("Email address is required");
+        }
+
+        if (token == null || token.isEmpty()) {
+            log.warn("Cannot send password reset email: token is null or empty");
+            throw new RuntimeException("Reset token is required");
+        }
+
+        try {
+            String resetLink = frontendUrl + "/reset-password?token=" + token;
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(toEmail);
+            message.setSubject("Reset Your GrihaMate Password");
+
+            message.setText(
+                    "Dear " + userName + ",\n\n" +
+                            "We received a request to reset your password for your GrihaMate account.\n\n" +
+                            "Click the link below to reset your password:\n" +
+                            resetLink + "\n\n" +
+                            "This link will expire in 1 hour.\n\n" +
+                            "If you did not request a password reset, please ignore this email. Your password will remain unchanged.\n\n" +
+                            "For security reasons, never share this link with anyone.\n\n" +
+                            "Best regards,\n" +
+                            "GrihaMate Team");
+            mailSender.send(message);
+            log.info("Password reset email sent successfully to: {}", toEmail);
+        } catch (Exception e) {
+            log.error("Failed to send password reset email to: {}", toEmail, e);
+            throw new RuntimeException("Failed to send password reset email: " + e.getMessage(), e);
+        }
+    }
+
     public void sendHtmlEmail(String to, String subject, String htmlBody) {
         try {
             MimeMessage message = mailSender.createMimeMessage();

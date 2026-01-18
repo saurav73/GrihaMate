@@ -4,10 +4,12 @@ import com.grihamate.dto.RegisterRequest;
 import com.grihamate.dto.UserDto;
 import com.grihamate.entity.EmailOtp;
 import com.grihamate.entity.EmailVerificationToken;
+import com.grihamate.entity.PasswordResetToken;
 import com.grihamate.entity.PropertyVerification;
 import com.grihamate.entity.User;
 import com.grihamate.repository.EmailOtpRepository;
 import com.grihamate.repository.EmailVerificationTokenRepository;
+import com.grihamate.repository.PasswordResetTokenRepository;
 import com.grihamate.repository.PropertyVerificationRepository;
 import com.grihamate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class UserService {
     private final PropertyVerificationRepository propertyVerificationRepository;
     private final EmailVerificationTokenRepository tokenRepository;
     private final EmailOtpRepository otpRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final EmailService emailService;
 
     @Transactional
@@ -273,6 +276,68 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setSubscriptionStatus(User.SubscriptionStatus.FREE);
         userRepository.save(user);
+    }
+
+    /**
+     * Generate password reset token and send reset email
+     */
+    @Transactional
+    public void requestPasswordReset(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with this email"));
+
+        // Delete any existing unused tokens for this user
+        passwordResetTokenRepository.findByUserAndUsedFalse(user)
+                .ifPresent(token -> passwordResetTokenRepository.delete(token));
+
+        // Create new password reset token
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setUser(user);
+        resetToken.setExpiryDate(LocalDateTime.now().plusHours(1)); // Token expires in 1 hour
+        resetToken.setUsed(false);
+        passwordResetTokenRepository.save(resetToken);
+
+        // Send password reset email
+        emailService.sendPasswordResetEmail(user.getEmail(), resetToken.getToken(), user.getFullName());
+    }
+
+    /**
+     * Validate password reset token
+     */
+    public boolean validatePasswordResetToken(String token) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
+                .orElse(null);
+
+        if (resetToken == null || resetToken.getUsed() || resetToken.isExpired()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Reset password using token
+     */
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid or expired reset token"));
+
+        if (resetToken.getUsed()) {
+            throw new RuntimeException("This reset token has already been used");
+        }
+
+        if (resetToken.isExpired()) {
+            throw new RuntimeException("Reset token has expired. Please request a new one.");
+        }
+
+        User user = resetToken.getUser();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        // Mark token as used
+        resetToken.setUsed(true);
+        passwordResetTokenRepository.save(resetToken);
     }
 
     private UserDto mapToDto(User user) {

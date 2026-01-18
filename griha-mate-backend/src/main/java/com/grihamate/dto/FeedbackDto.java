@@ -19,7 +19,7 @@ public class FeedbackDto {
     public static FeedbackDto fromEntity(Feedback feedback) {
         FeedbackDto dto = new FeedbackDto();
         dto.setId(feedback.getId());
-        dto.setSeekerName(feedback.getSeeker().getFullName());
+        dto.setSeekerName(feedback.getSeeker() != null ? feedback.getSeeker().getFullName() : "Anonymous");
         dto.setComment(feedback.getComment());
         dto.setRating(feedback.getRating());
         dto.setCreatedAt(feedback.getCreatedAt());

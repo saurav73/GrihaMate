@@ -1,4 +1,4 @@
-import { Search, SlidersHorizontal, Grid, MapIcon } from "lucide-react"
+import { Search, SlidersHorizontal, Grid, MapIcon, Navigation } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Navbar } from "@/components/navbar"
@@ -60,26 +60,30 @@ export default function ExplorePage() {
     // ... more mock data if needed for fallback
   ];
 
-  const fetchProperties = async () => {
+  const fetchProperties = async (customFilters?: typeof filters, customSearchQuery?: string) => {
     setLoading(true)
     try {
+      // Use custom filters if provided, otherwise use state filters
+      const activeFilters = customFilters || filters
+      const activeQuery = customSearchQuery !== undefined ? customSearchQuery : searchQuery
+
       // Build API params
       const apiParams: any = {}
-      if (filters.city) apiParams.city = filters.city
-      if (filters.propertyType) apiParams.propertyType = filters.propertyType
-      if (filters.minPrice) apiParams.minPrice = filters.minPrice
-      if (filters.maxPrice) apiParams.maxPrice = filters.maxPrice
-      if (filters.minBedrooms) apiParams.minBedrooms = filters.minBedrooms
+      if (activeFilters.city) apiParams.city = activeFilters.city
+      if (activeFilters.propertyType) apiParams.propertyType = activeFilters.propertyType
+      if (activeFilters.minPrice) apiParams.minPrice = activeFilters.minPrice
+      if (activeFilters.maxPrice) apiParams.maxPrice = activeFilters.maxPrice
+      if (activeFilters.minBedrooms) apiParams.minBedrooms = activeFilters.minBedrooms
 
       // Call Search API
       const data = await propertiesAPI.search(apiParams)
 
       // Client-side filtering for text search (if API doesn't support generic text search yet)
       let finalData = data || []
-      if (searchQuery) {
+      if (activeQuery) {
         finalData = finalData.filter(p =>
-          p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.address.toLowerCase().includes(searchQuery.toLowerCase())
+          p.title.toLowerCase().includes(activeQuery.toLowerCase()) ||
+          p.address.toLowerCase().includes(activeQuery.toLowerCase())
         )
       }
 
@@ -98,8 +102,39 @@ export default function ExplorePage() {
   }, []) // Initial load
 
   const handleApplyFilters = () => {
+    // Disable location-based filtering when applying filters manually
+    // User is searching by city/filters, not by location
+    setSearchNearby(false)
     fetchProperties()
     setShowMobileFilters(false)
+  }
+
+  const handleSearchNearby = () => {
+    if (!userLocation) {
+      // Get location first if not available
+      getUserLocation()
+      // Wait a bit for location to be set, then enable searchNearby
+      setTimeout(() => {
+        setSearchNearby(true)
+        fetchProperties()
+      }, 1000)
+    } else {
+      // Toggle searchNearby mode
+      const newSearchNearby = !searchNearby
+      setSearchNearby(newSearchNearby)
+      if (newSearchNearby) {
+        toast.success("Showing properties within 5km of your location", {
+          position: "top-right",
+          autoClose: 3000,
+        })
+      } else {
+        toast.info("Showing all properties matching filters", {
+          position: "top-right",
+          autoClose: 2000,
+        })
+      }
+      fetchProperties()
+    }
   }
 
   const handleResetFilters = () => {
@@ -115,6 +150,8 @@ export default function ExplorePage() {
   }
 
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
+  const [locationPermissionRequested, setLocationPermissionRequested] = useState(false)
+  const [searchNearby, setSearchNearby] = useState(false) // Toggle for location-based filtering
 
   const getUserLocation = () => {
     if (navigator.geolocation) {
@@ -124,18 +161,42 @@ export default function ExplorePage() {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           })
-
-          // Optionally sort by distance here if not handled by API
-          // For now, MapViewSplit handles the distance calculation for display
+          toast.success("Location detected! Showing properties within 5km radius", {
+            position: "top-right",
+            autoClose: 3000,
+          })
         },
         (error) => {
           console.error("Error getting location:", error)
+          toast.error("Could not access your location. Please enable location permissions.", {
+            position: "top-right",
+            autoClose: 5000,
+          })
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
         }
       )
     } else {
       console.error("Geolocation is not supported by this browser.")
+      toast.error("Geolocation is not supported by your browser.", {
+        position: "top-right",
+        autoClose: 5000,
+      })
     }
   }
+
+  // Auto-get location when map view is enabled and location hasn't been requested
+  // But don't auto-enable searchNearby - let user choose
+  useEffect(() => {
+    if (viewMode === 'split' && !userLocation && !locationPermissionRequested) {
+      getUserLocation()
+      setLocationPermissionRequested(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewMode])
 
   const handleVoiceSearch = (query: string) => {
     // Use NLP parser
@@ -143,29 +204,54 @@ export default function ExplorePage() {
 
     console.log('Voice Search - Parsed:', parsed)
 
-    // Apply parsed filters
+    // Apply parsed filters (parser already returns correct format)
     const newFilters = { ...filters }
     if (parsed.city) newFilters.city = parsed.city
-    if (parsed.propertyType) newFilters.propertyType = parsed.propertyType
+    if (parsed.propertyType) newFilters.propertyType = parsed.propertyType // Already in correct format (ROOM, FLAT, etc.)
     if (parsed.minPrice) newFilters.minPrice = parsed.minPrice
     if (parsed.maxPrice) newFilters.maxPrice = parsed.maxPrice
     if (parsed.minBedrooms) newFilters.minBedrooms = parsed.minBedrooms
 
+    // Update state
     setFilters(newFilters)
-    setSearchQuery(query)
-
-    // Trigger search after a brief delay to ensure state updates
-    setTimeout(() => {
-      fetchProperties()
-    }, 100)
-
-    // If nearby intent, get location
-    if (parsed.nearby) {
-      getUserLocation()
+    
+    // If structured filters were parsed (city, type, price, etc.), don't use the full query as text search
+    // The full query would filter out results that don't contain those exact words
+    // Also, don't populate the search input field - just apply filters silently
+    // Only use text search if no structured filters were parsed
+    const hasStructuredFilters = parsed.city || parsed.propertyType || parsed.minPrice || parsed.maxPrice || parsed.minBedrooms
+    const textQueryForSearch = hasStructuredFilters ? "" : query
+    
+    // Only update searchQuery if we're using text search (no structured filters)
+    // This keeps the search input field clean when using voice search with structured filters
+    if (!hasStructuredFilters) {
+      setSearchQuery(textQueryForSearch)
     }
+    // If structured filters exist, leave searchQuery unchanged (don't populate the input field)
+
+    // Enable/disable location-based search based on voice query
+    // Only enable GPS-based filtering if "near me" or "my location" is explicitly mentioned
+    // If a city is mentioned, always search by city (not GPS location)
+    if (parsed.useUserLocation && !parsed.city) {
+      // Enable location-based search ONLY if user explicitly said "near me" AND no city was mentioned
+      setSearchNearby(true)
+      getUserLocation()
+    } else {
+      // Disable location-based search for city/filter-based searches
+      // "nearby lalitpur" means "in/near lalitpur area", not "near my GPS location"
+      setSearchNearby(false)
+    }
+
+    // Immediately execute search with new filters (don't wait for state update)
+    // Pass empty text query if structured filters are used to avoid text filtering
+    fetchProperties(newFilters, textQueryForSearch)
 
     // Show what was understood
     const summary = summarizeParsedQuery(parsed)
+    toast.success(`🎤 Filters applied: ${summary}`, {
+      position: "top-right",
+      autoClose: 3000,
+    })
     console.log(`Voice Search understood: ${summary}`)
   }
 
@@ -186,8 +272,17 @@ export default function ExplorePage() {
     return R * c;
   }
 
+  // Filter properties within 5km radius ONLY when searchNearby is enabled
+  // When searchNearby is false, show all properties matching filters (city, type, price, etc.)
+  const filteredProperties = (searchNearby && userLocation)
+    ? properties.filter(p => {
+        const distance = getDistance(p)
+        return distance <= 5 // 5km radius
+      })
+    : properties
+
   // Sort and Paginate
-  const sortedProperties = [...properties].sort((a, b) => {
+  const sortedProperties = [...filteredProperties].sort((a, b) => {
     // Prioritize distance if user location is known
     const distA = getDistance(a)
     const distB = getDistance(b)
@@ -243,6 +338,18 @@ export default function ExplorePage() {
                 {/* Right Side Controls */}
                 <div className="flex gap-3 w-full md:w-auto items-center justify-between md:justify-end shrink-0">
                   <AISearchDialog onSearch={handleVoiceSearch} />
+
+                  {/* Search Around My Location Button */}
+                  <Button
+                    variant={searchNearby ? "default" : "outline"}
+                    size="sm"
+                    onClick={handleSearchNearby}
+                    className={`h-11 rounded-full px-4 ${searchNearby ? 'bg-primary text-white' : 'border-gray-200 hover:bg-gray-50 hover:!text-gray-900'}`}
+                    title={searchNearby ? "Showing properties within 5km. Click to disable." : "Click to show properties within 5km of your location"}
+                  >
+                    <Navigation className="size-4 mr-2" />
+                    {searchNearby ? 'Nearby Active' : 'Search Nearby'}
+                  </Button>
 
                   <Sheet open={showMobileFilters} onOpenChange={setShowMobileFilters}>
                     <SheetTrigger asChild>
@@ -366,15 +473,8 @@ export default function ExplorePage() {
                   <MapViewSplit
                     properties={sortedProperties}
                     userLocation={userLocation}
-                    onRequestLocation={() => {
-                      if (navigator.geolocation) {
-                        toast.info("Updating location...")
-                        navigator.geolocation.getCurrentPosition(
-                          (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-                          () => toast.error("Could not access location")
-                        )
-                      }
-                    }}
+                    searchNearby={searchNearby}
+                    onRequestLocation={handleSearchNearby}
                   />
                 </div>
               )}
@@ -390,3 +490,4 @@ export default function ExplorePage() {
     </div>
   )
 }
+

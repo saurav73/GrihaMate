@@ -43,6 +43,7 @@ export default function ManagePropertiesPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [propertyToDelete, setPropertyToDelete] = useState<PropertyDto | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [user, setUser] = useState<any>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function ManagePropertiesPage() {
 
     try {
       const user = JSON.parse(userData)
+      setUser(user)
       if (user.role !== "LANDLORD") {
         toast.error("Access denied. Landlords only.", {
           position: "top-center",
@@ -189,15 +191,29 @@ export default function ManagePropertiesPage() {
                     View and manage all your listed properties
                   </p>
                 </div>
-                <Link to="/dashboard/landlord/list-property">
+                {user?.verificationStatus === 'VERIFIED' ? (
+                  <Link to="/dashboard/landlord/list-property">
+                    <Button
+                      size="lg"
+                      className="bg-white text-primary-dark hover:bg-gray-100"
+                    >
+                      <Plus className="w-5 h-5 mr-2" />
+                      Add New Property
+                    </Button>
+                  </Link>
+                ) : (
                   <Button
                     size="lg"
-                    className="bg-white text-primary-dark hover:bg-gray-100"
+                    disabled
+                    className="bg-gray-400 cursor-not-allowed text-white"
+                    title={user?.verificationStatus === 'PENDING' 
+                      ? "Your account verification is pending. Please wait for admin approval." 
+                      : "Your account must be verified to add properties."}
                   >
                     <Plus className="w-5 h-5 mr-2" />
                     Add New Property
                   </Button>
-                </Link>
+                )}
               </div>
             </div>
           </div>

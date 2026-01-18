@@ -4,6 +4,7 @@ import com.grihamate.dto.PropertyDto;
 import com.grihamate.entity.Property;
 import com.grihamate.entity.User;
 import com.grihamate.repository.PropertyRepository;
+import com.grihamate.repository.PropertyRequestRepository;
 import com.grihamate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PropertyService {
     private final PropertyRepository propertyRepository;
+    private final PropertyRequestRepository propertyRequestRepository;
     private final UserRepository userRepository;
 
     public List<PropertyDto> getAllAvailableProperties() {
@@ -144,6 +146,12 @@ public class PropertyService {
 
         if (!property.getLandlord().getEmail().equals(landlordEmail)) {
             throw new RuntimeException("You can only delete your own properties");
+        }
+
+        // Delete all related property requests first to avoid foreign key constraint violation
+        List<com.grihamate.entity.PropertyRequest> requests = propertyRequestRepository.findByProperty(property);
+        if (!requests.isEmpty()) {
+            propertyRequestRepository.deleteAll(requests);
         }
 
         propertyRepository.delete(property);

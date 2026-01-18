@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Star, Send, CheckCircle2 } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Star, Send, CheckCircle2, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -11,9 +11,32 @@ import { Footer } from "@/components/footer"
 
 export default function SeekerFeedbackPage() {
     const [rating, setRating] = useState(0)
+    const [hoverRating, setHoverRating] = useState(0)
     const [comment, setComment] = useState("")
     const [loading, setLoading] = useState(false)
     const [submitted, setSubmitted] = useState(false)
+    const [checking, setChecking] = useState(true)
+    const [alreadySubmitted, setAlreadySubmitted] = useState(false)
+
+    useEffect(() => {
+        checkFeedbackStatus()
+    }, [])
+
+    const checkFeedbackStatus = async () => {
+        try {
+            setChecking(true)
+            const response = await feedbackAPI.checkStatus()
+            if (response.hasSubmitted) {
+                setAlreadySubmitted(true)
+                setSubmitted(true)
+            }
+        } catch (error: any) {
+            // If check fails, allow user to try submitting
+            console.warn("Could not check feedback status:", error)
+        } finally {
+            setChecking(false)
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -27,13 +50,33 @@ export default function SeekerFeedbackPage() {
             setSubmitted(true)
             toast.success("Thank you for your feedback!")
         } catch (error: any) {
-            toast.error(error.message || "Failed to submit feedback")
+            const errorMessage = error.message || "Failed to submit feedback"
+            if (errorMessage.includes("already submitted") || errorMessage.includes("already submitted feedback")) {
+                setAlreadySubmitted(true)
+                setSubmitted(true)
+            }
+            toast.error(errorMessage)
         } finally {
             setLoading(false)
         }
     }
 
-    if (submitted) {
+    if (checking) {
+        return (
+            <div className="min-h-screen bg-primary-lightest/30 flex flex-col">
+                <Navbar />
+                <div className="flex-1 flex items-center justify-center p-4">
+                    <div className="max-w-md w-full text-center">
+                        <div className="size-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-4" />
+                        <p className="text-gray-600">Checking feedback status...</p>
+                    </div>
+                </div>
+                <Footer />
+            </div>
+        )
+    }
+
+    if (submitted || alreadySubmitted) {
         return (
             <div className="min-h-screen bg-primary-lightest/30 flex flex-col">
                 <Navbar />
@@ -47,9 +90,14 @@ export default function SeekerFeedbackPage() {
                         <div className="size-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                             <CheckCircle2 className="size-10 text-green-600" />
                         </div>
-                        <h2 className="text-3xl font-bold text-primary-dark mb-4">Feedback Received!</h2>
+                        <h2 className="text-3xl font-bold text-primary-dark mb-4">
+                            {alreadySubmitted ? "Feedback Already Submitted" : "Feedback Received!"}
+                        </h2>
                         <p className="text-gray-600 mb-8">
-                            We appreciate you taking the time to share your experience. Your feedback helps us make GrihaMate better for everyone.
+                            {alreadySubmitted 
+                                ? "You have already submitted your feedback. Each user can only submit feedback once. Thank you for your input!"
+                                : "We appreciate you taking the time to share your experience. Your feedback helps us make GrihaMate better for everyone."
+                            }
                         </p>
                         <Button
                             onClick={() => window.history.back()}
@@ -87,6 +135,29 @@ export default function SeekerFeedbackPage() {
                     <CardContent className="p-8">
                         <form onSubmit={handleSubmit} className="space-y-8">
                             <div className="space-y-4">
+                                {/* Interactive Icon that changes with rating */}
+                                <div className="flex justify-center mb-2">
+                                    <motion.div
+                                        key={hoverRating || rating}
+                                        initial={{ scale: 0.8, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="text-6xl"
+                                    >
+                                        {(() => {
+                                            const activeRating = hoverRating || rating
+                                            switch (activeRating) {
+                                                case 5: return "😄"
+                                                case 4: return "😊"
+                                                case 3: return "🙂"
+                                                case 2: return "😐"
+                                                case 1: return "😟"
+                                                default: return "😊"
+                                            }
+                                        })()}
+                                    </motion.div>
+                                </div>
+                                
                                 <label className="text-sm font-semibold text-gray-700 block text-center">
                                     Your Overall Rating
                                 </label>
@@ -96,10 +167,12 @@ export default function SeekerFeedbackPage() {
                                             key={star}
                                             type="button"
                                             onClick={() => setRating(star)}
+                                            onMouseEnter={() => setHoverRating(star)}
+                                            onMouseLeave={() => setHoverRating(0)}
                                             className="transition-all hover:scale-110 active:scale-95 p-1"
                                         >
                                             <Star
-                                                className={`size-10 ${star <= rating
+                                                className={`size-10 ${star <= (hoverRating || rating)
                                                         ? "fill-yellow-400 text-yellow-400"
                                                         : "text-gray-300"
                                                     }`}
