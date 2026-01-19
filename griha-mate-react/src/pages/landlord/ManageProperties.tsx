@@ -129,15 +129,27 @@ export default function ManagePropertiesPage() {
   }
 
   const togglePropertyStatus = async (property: PropertyDto) => {
-    const newStatus = property.status === "AVAILABLE" ? "UNAVAILABLE" : "AVAILABLE"
+    // Determine new status based on current status
+    let newStatus: string
+    if (property.status === "AVAILABLE") {
+      newStatus = "UNAVAILABLE"
+    } else if (property.status === "UNAVAILABLE") {
+      newStatus = "AVAILABLE"
+    } else if (property.status === "RENTED") {
+      // Allow changing from RENTED to AVAILABLE (backend will check 3-month restriction)
+      newStatus = "AVAILABLE"
+    } else {
+      newStatus = "AVAILABLE"
+    }
+
     try {
       // Call API to update status
-      // await propertiesAPI.updateStatus(property.id, newStatus)
+      const updatedProperty = await propertiesAPI.updateStatus(property.id, newStatus)
 
       // Update local state
       setProperties(
         properties.map((p) =>
-          p.id === property.id ? { ...p, status: newStatus } : p
+          p.id === property.id ? updatedProperty : p
         )
       )
 
@@ -149,8 +161,9 @@ export default function ManagePropertiesPage() {
         }
       )
     } catch (err: any) {
-      toast.error("Failed to update status", {
+      toast.error(err.message || "Failed to update status", {
         position: "top-center",
+        autoClose: 5000,
       })
     }
   }
@@ -192,15 +205,15 @@ export default function ManagePropertiesPage() {
                   </p>
                 </div>
                 {user?.verificationStatus === 'VERIFIED' ? (
-                  <Link to="/dashboard/landlord/list-property">
-                    <Button
-                      size="lg"
-                      className="bg-white text-primary-dark hover:bg-gray-100"
-                    >
-                      <Plus className="w-5 h-5 mr-2" />
-                      Add New Property
-                    </Button>
-                  </Link>
+                <Link to="/dashboard/landlord/list-property">
+                  <Button
+                    size="lg"
+                    className="bg-white text-primary-dark hover:bg-gray-100"
+                  >
+                    <Plus className="w-5 h-5 mr-2" />
+                    Add New Property
+                  </Button>
+                </Link>
                 ) : (
                   <Button
                     size="lg"
@@ -383,22 +396,33 @@ export default function ManagePropertiesPage() {
                                 <Edit className="w-4 h-4 mr-3 text-gray-600" />
                                 <span>Edit</span>
                               </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => togglePropertyStatus(property)}
-                                className="py-2.5 cursor-pointer"
-                              >
-                                {property.status === "AVAILABLE" ? (
-                                  <>
-                                    <EyeOff className="w-4 h-4 mr-3 text-gray-600" />
-                                    <span>Mark Unavailable</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Eye className="w-4 h-4 mr-3 text-gray-600" />
-                                    <span>Mark Available</span>
-                                  </>
-                                )}
-                              </DropdownMenuItem>
+                              {property.status === "RENTED" ? (
+                                <DropdownMenuItem
+                                  onClick={() => togglePropertyStatus(property)}
+                                  className="py-2.5 cursor-pointer text-orange-600 focus:text-orange-600 focus:bg-orange-50"
+                                  title="Note: Can only change to Available after 3 months from booking date"
+                                >
+                                  <Eye className="w-4 h-4 mr-3" />
+                                  <span>Mark Available (3-month restriction applies)</span>
+                                </DropdownMenuItem>
+                              ) : (
+                                <DropdownMenuItem
+                                  onClick={() => togglePropertyStatus(property)}
+                                  className="py-2.5 cursor-pointer"
+                                >
+                                  {property.status === "AVAILABLE" ? (
+                                    <>
+                                      <EyeOff className="w-4 h-4 mr-3 text-gray-600" />
+                                      <span>Mark Unavailable</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Eye className="w-4 h-4 mr-3 text-gray-600" />
+                                      <span>Mark Available</span>
+                                    </>
+                                  )}
+                                </DropdownMenuItem>
+                              )}
                               <DropdownMenuSeparator className="my-1" />
                               <DropdownMenuItem
                                 onClick={() => handleDeleteClick(property)}

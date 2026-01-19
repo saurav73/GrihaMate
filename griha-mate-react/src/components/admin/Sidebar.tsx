@@ -45,11 +45,13 @@ export function AdminSidebar() {
     return (
         <div className="flex h-full w-64 flex-col border-r border-[#E7F0FA] bg-white text-[#0D2440] shrink-0">
             <div className="p-6">
-                <Link to="/" className="flex items-center gap-2 transition-all duration-300 hover:opacity-90 hover:scale-105 group">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2E5E99] text-white group-hover:bg-[#0D2440] group-hover:scale-110 transition-all duration-300 shadow-lg shadow-blue-900/10">
-                        <Home className="h-6 w-6" />
-                    </div>
-                    <span className="text-xl font-bold tracking-tight text-[#0D2440] group-hover:text-[#2E5E99] transition-colors duration-300">GrihaMate</span>
+                <Link to="/" className="flex items-center gap-3 transition-all duration-300 hover:opacity-90 hover:scale-105 group">
+                    <img 
+                        src="/logo.png" 
+                        alt="GrihaMate Logo" 
+                        className="h-14 w-14 object-contain transition-all duration-300 group-hover:scale-110"
+                    />
+                    <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-[#2E5E99] via-[#1E4A7E] to-[#2E5E99] bg-clip-text text-transparent group-hover:from-[#3D6BA8] group-hover:via-[#2E5E99] group-hover:to-[#3D6BA8] transition-all duration-300">GrihaMate</span>
                 </Link>
             </div>
             <div className="flex-1 px-4 py-2 space-y-2 overflow-y-auto custom-scrollbar">

@@ -89,6 +89,9 @@ public class Property {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(nullable = true)
+    private LocalDateTime rentedDate; // Date when property was rented/booked
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

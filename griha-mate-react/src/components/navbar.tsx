@@ -71,11 +71,13 @@ export function Navbar() {
     <nav className="sticky top-0 z-[9999] w-full border-b bg-white/95 backdrop-blur-md shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 transition-all duration-300 hover:opacity-90 hover:scale-105 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white group-hover:bg-primary-dark group-hover:scale-110 transition-all duration-300">
-            <Home className="h-6 w-6" />
-          </div>
-          <span className="text-xl font-bold tracking-tight text-primary-dark group-hover:text-primary transition-colors duration-300">GrihaMate</span>
+        <Link to="/" className="flex items-center gap-3 transition-all duration-300 hover:opacity-90 hover:scale-105 group">
+          <img 
+            src="/logo.png" 
+            alt="GrihaMate Logo" 
+            className="h-16 w-16 object-contain transition-all duration-300 group-hover:scale-110"
+          />
+          <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-[#2E5E99] via-[#1E4A7E] to-[#2E5E99] bg-clip-text text-transparent group-hover:from-[#3D6BA8] group-hover:via-[#2E5E99] group-hover:to-[#3D6BA8] transition-all duration-300">GrihaMate</span>
         </Link>
 
         {/* Desktop Navigation - Centered */}

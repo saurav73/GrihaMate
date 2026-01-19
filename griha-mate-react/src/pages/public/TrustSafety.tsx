@@ -150,23 +150,25 @@ export default function TrustSafetyPage() {
 
         {/* CTA Section */}
         <section className="px-6 py-16 md:px-12 max-w-4xl mx-auto mb-12 text-center">
-          <Card className="border-primary-lightest bg-primary-dark text-white rounded-3xl overflow-hidden">
+          <Card className="border-2 border-primary-lightest bg-gradient-to-br from-primary-lightest to-white rounded-3xl overflow-hidden shadow-lg">
             <CardContent className="p-12">
-              <ShieldCheck className="size-16 mx-auto mb-6 text-white" />
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
-              <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
+              <div className="size-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center">
+                <ShieldCheck className="size-10 text-primary" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-[#2E5E99] via-[#1E4A7E] to-[#2E5E99] bg-clip-text text-transparent">Ready to Get Started?</h2>
+              <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto leading-relaxed">
                 Join thousands of verified users in Nepal's most trusted rental platform.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/explore">
-                  <Button className="bg-primary hover:bg-primary-dark text-white rounded-full px-8 h-12 font-bold shadow-lg hover:shadow-xl transition-all">
+                  <Button className="bg-gradient-to-r from-[#2E5E99] to-[#1E4A7E] hover:from-[#3D6BA8] hover:to-[#2E5E99] text-white rounded-full px-8 h-12 font-bold shadow-lg hover:shadow-xl transition-all">
                     Find a Room
                   </Button>
                 </Link>
                 <Link to="/list-property">
                   <Button
                     variant="outline"
-                    className="border-2 border-white text-white hover:bg-white hover:text-primary-dark rounded-full px-8 h-12 font-bold transition-all"
+                    className="border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-full px-8 h-12 font-bold transition-all"
                   >
                     List Property
                   </Button>

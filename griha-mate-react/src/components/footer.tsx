@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Home, Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react"
+import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react"
 
 export function Footer() {
   return (
@@ -8,11 +8,13 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
-                <Home className="h-5 w-5" />
-              </div>
-              <span className="text-xl font-bold text-primary-dark">GrihaMate</span>
+            <div className="flex items-center gap-3">
+              <img 
+                src="/logo.png" 
+                alt="GrihaMate Logo" 
+                className="h-14 w-14 object-contain"
+              />
+              <span className="text-xl font-bold bg-gradient-to-r from-[#2E5E99] via-[#1E4A7E] to-[#2E5E99] bg-clip-text text-transparent">GrihaMate</span>
             </div>
             <p className="text-sm text-gray-700 leading-relaxed">
               Nepal's most trusted platform for finding rooms, flats, and roommates. We make renting safer and easier.

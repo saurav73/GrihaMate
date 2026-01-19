@@ -233,6 +233,13 @@ export const propertiesAPI = {
     return apiRequest<PropertyDto[]>(`/properties/search?${queryParams.toString()}`);
   },
 
+  updateStatus: async (id: number, status: string): Promise<PropertyDto> => {
+    return apiRequest<PropertyDto>(`/properties/${id}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    });
+  },
+
   requestProperty: async (propertyId: number, message: string): Promise<PropertyRequestDto> => {
     return propertyRequestAPI.create(propertyId, message);
   },
@@ -295,8 +302,11 @@ export const paymentAPI = {
       body: JSON.stringify({ amount, request_id: requestId, type }),
     });
   },
-  verifyEsewa: async (data: string, signature: string): Promise<any> => {
-    return apiRequest<any>(`/payment/verify?data=${encodeURIComponent(data)}&signature=${encodeURIComponent(signature)}`, {
+  verifyEsewa: async (data: string, signature: string = ''): Promise<any> => {
+    const url = signature 
+      ? `/payment/verify?data=${encodeURIComponent(data)}&signature=${encodeURIComponent(signature)}`
+      : `/payment/verify?data=${encodeURIComponent(data)}`
+    return apiRequest<any>(url, {
       method: 'POST',
     });
   },

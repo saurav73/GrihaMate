@@ -80,6 +80,10 @@ export default function ExplorePage() {
 
       // Client-side filtering for text search (if API doesn't support generic text search yet)
       let finalData = data || []
+      
+      // Filter out RENTED properties (should already be filtered by backend, but double-check)
+      finalData = finalData.filter(p => p.status !== 'RENTED')
+      
       if (activeQuery) {
         finalData = finalData.filter(p =>
           p.title.toLowerCase().includes(activeQuery.toLowerCase()) ||
@@ -111,8 +115,8 @@ export default function ExplorePage() {
 
   const handleSearchNearby = () => {
     if (!userLocation) {
-      // Get location first if not available
-      getUserLocation()
+      // Get location first if not available, show toast only once
+      getUserLocation(true)
       // Wait a bit for location to be set, then enable searchNearby
       setTimeout(() => {
         setSearchNearby(true)
@@ -153,7 +157,7 @@ export default function ExplorePage() {
   const [locationPermissionRequested, setLocationPermissionRequested] = useState(false)
   const [searchNearby, setSearchNearby] = useState(false) // Toggle for location-based filtering
 
-  const getUserLocation = () => {
+  const getUserLocation = (showToast = true) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -161,10 +165,13 @@ export default function ExplorePage() {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           })
-          toast.success("Location detected! Showing properties within 5km radius", {
-            position: "top-right",
-            autoClose: 3000,
-          })
+          // Only show toast if explicitly requested
+          if (showToast) {
+            toast.success("Location detected! Showing properties within 5km radius", {
+              position: "top-right",
+              autoClose: 3000,
+            })
+          }
         },
         (error) => {
           console.error("Error getting location:", error)
@@ -190,9 +197,10 @@ export default function ExplorePage() {
 
   // Auto-get location when map view is enabled and location hasn't been requested
   // But don't auto-enable searchNearby - let user choose
+  // Don't show toast for auto-detection - only show when user explicitly requests it
   useEffect(() => {
     if (viewMode === 'split' && !userLocation && !locationPermissionRequested) {
-      getUserLocation()
+      getUserLocation(false) // Don't show toast for auto-detection
       setLocationPermissionRequested(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -235,7 +243,10 @@ export default function ExplorePage() {
     if (parsed.useUserLocation && !parsed.city) {
       // Enable location-based search ONLY if user explicitly said "near me" AND no city was mentioned
       setSearchNearby(true)
-      getUserLocation()
+      // Only get location if we don't have it yet - avoid duplicate toasts
+      if (!userLocation) {
+        getUserLocation(true) // Show toast for voice search location detection
+      }
     } else {
       // Disable location-based search for city/filter-based searches
       // "nearby lalitpur" means "in/near lalitpur area", not "near my GPS location"

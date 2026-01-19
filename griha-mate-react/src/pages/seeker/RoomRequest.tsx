@@ -280,9 +280,9 @@ export default function RoomRequestPage() {
                         </p>
                       ) : null}
                       {existingRequest.createdAt && (
-                        <p className="text-xs text-gray-500 mt-2">
-                          Created on {new Date(existingRequest.createdAt).toLocaleDateString()}
-                        </p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Created on {new Date(existingRequest.createdAt).toLocaleDateString()}
+                      </p>
                       )}
                     </div>
                   </div>

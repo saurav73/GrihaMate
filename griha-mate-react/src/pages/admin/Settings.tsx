@@ -147,57 +147,57 @@ export default function AdminSettingsPage() {
                     </Card>
                 ) : (
                     <>
-                        <div className="space-y-4">
+                    <div className="space-y-4">
                             {paginatedFeedbacks.map((feedback) => (
-                                <Card key={feedback.id} className="border-none shadow-md rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-all">
-                                    <CardContent className="p-6">
-                                        <div className="flex items-start justify-between gap-4">
-                                            <div className="flex-1 space-y-3">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="size-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                                                        <User className="size-5 text-primary" />
-                                                    </div>
-                                                    <div>
-                                                        <h3 className="font-bold text-slate-900">{feedback.seekerName || 'Anonymous'}</h3>
-                                                        <div className="flex items-center gap-2 mt-1">
-                                                            <Calendar className="size-3 text-gray-400" />
-                                                            <span className="text-xs text-gray-500">
-                                                                {new Date(feedback.createdAt).toLocaleDateString('en-US', {
-                                                                    year: 'numeric',
-                                                                    month: 'long',
-                                                                    day: 'numeric'
-                                                                })}
-                                                            </span>
-                                                        </div>
+                            <Card key={feedback.id} className="border-none shadow-md rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-all">
+                                <CardContent className="p-6">
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div className="flex-1 space-y-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="size-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                                                    <User className="size-5 text-primary" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="font-bold text-slate-900">{feedback.seekerName || 'Anonymous'}</h3>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <Calendar className="size-3 text-gray-400" />
+                                                        <span className="text-xs text-gray-500">
+                                                            {new Date(feedback.createdAt).toLocaleDateString('en-US', {
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: 'numeric'
+                                                            })}
+                                                        </span>
                                                     </div>
                                                 </div>
-
-                                                {feedback.comment && (
-                                                    <div className="pl-12">
-                                                        <p className="text-slate-700 leading-relaxed">{feedback.comment}</p>
-                                                    </div>
-                                                )}
                                             </div>
 
+                                            {feedback.comment && (
+                                                <div className="pl-12">
+                                                    <p className="text-slate-700 leading-relaxed">{feedback.comment}</p>
+                                                </div>
+                                            )}
+                                        </div>
+
                                             <div className="flex flex-col items-end gap-3">
-                                                <div className="flex flex-col items-end gap-2">
-                                                    <Badge className={`${getRatingColor(feedback.rating)} border-none px-3 py-1 font-bold`}>
-                                                        <div className="flex items-center gap-1.5">
-                                                            <Star className="size-3 fill-current" />
-                                                            <span>{feedback.rating}/5</span>
-                                                        </div>
-                                                    </Badge>
-                                                    <div className="flex gap-0.5">
-                                                        {[1, 2, 3, 4, 5].map((star) => (
-                                                            <Star
-                                                                key={star}
-                                                                className={`size-4 ${star <= feedback.rating
-                                                                    ? "fill-yellow-400 text-yellow-400"
-                                                                    : "text-gray-300"
-                                                                    }`}
-                                                            />
-                                                        ))}
-                                                    </div>
+                                        <div className="flex flex-col items-end gap-2">
+                                            <Badge className={`${getRatingColor(feedback.rating)} border-none px-3 py-1 font-bold`}>
+                                                <div className="flex items-center gap-1.5">
+                                                    <Star className="size-3 fill-current" />
+                                                    <span>{feedback.rating}/5</span>
+                                                </div>
+                                            </Badge>
+                                            <div className="flex gap-0.5">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <Star
+                                                        key={star}
+                                                        className={`size-4 ${star <= feedback.rating
+                                                            ? "fill-yellow-400 text-yellow-400"
+                                                            : "text-gray-300"
+                                                            }`}
+                                                    />
+                                                ))}
+                                            </div>
                                                 </div>
                                                 <Button
                                                     variant="outline"
@@ -208,12 +208,12 @@ export default function AdminSettingsPage() {
                                                     <Trash2 className="size-4 mr-2" />
                                                     Delete
                                                 </Button>
-                                            </div>
                                         </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
 
                         {/* Pagination */}
                         {feedbacks.length > 0 && (

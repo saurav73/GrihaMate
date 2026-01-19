@@ -144,18 +144,18 @@ export function MapViewSplit({ properties, userLocation, searchNearby = false, o
       return p.latitude && p.longitude
     })
     .map((p) => {
-      // Calculate distance if user location is available
-      if (userLocation && p.latitude && p.longitude) {
-        const distance = calculateDistance(
-          userLocation.lat,
-          userLocation.lng,
-          p.latitude,
-          p.longitude
-        )
-        return { ...p, distance }
-      }
-      return p
-    });
+    // Calculate distance if user location is available
+    if (userLocation && p.latitude && p.longitude) {
+      const distance = calculateDistance(
+        userLocation.lat,
+        userLocation.lng,
+        p.latitude,
+        p.longitude
+      )
+      return { ...p, distance }
+    }
+    return p
+  });
 
   const navigate = useNavigate();
 
@@ -197,14 +197,14 @@ export function MapViewSplit({ properties, userLocation, searchNearby = false, o
                 dashArray: '10, 5'
               }}
             />
-            <Marker position={[userLocation.lat, userLocation.lng]} icon={createUserIcon()}>
-              <Popup>
-                <div className="text-center p-1">
-                  <p className="font-bold text-primary-dark">📍 Your Location</p>
+          <Marker position={[userLocation.lat, userLocation.lng]} icon={createUserIcon()}>
+            <Popup>
+              <div className="text-center p-1">
+                <p className="font-bold text-primary-dark">📍 Your Location</p>
                   <p className="text-xs text-gray-600 mt-1">Showing properties within 5km</p>
-                </div>
-              </Popup>
-            </Marker>
+              </div>
+            </Popup>
+          </Marker>
           </>
         )}
 
@@ -303,25 +303,25 @@ export function MapViewSplit({ properties, userLocation, searchNearby = false, o
             </div>
             {searchNearby && userLocation && (
               <>
-                <div className="h-4 w-px bg-gray-300" />
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Navigation className="size-4 text-blue-500" />
-                  <span className="cursor-pointer hover:text-blue-600" onClick={() => {
-                    // Trigger radar animation manually
-                    const radar = document.getElementById('radar-overlay');
-                    if (radar) {
-                      radar.style.display = 'block';
-                      setTimeout(() => { radar.style.display = 'none'; }, 3000);
-                    }
-                    if (onRequestLocation) {
-                      onRequestLocation();
-                    } else {
-                      toast.info("Scanning for properties nearby...");
-                    }
-                  }}>
+            <div className="h-4 w-px bg-gray-300" />
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Navigation className="size-4 text-blue-500" />
+              <span className="cursor-pointer hover:text-blue-600" onClick={() => {
+                // Trigger radar animation manually
+                const radar = document.getElementById('radar-overlay');
+                if (radar) {
+                  radar.style.display = 'block';
+                  setTimeout(() => { radar.style.display = 'none'; }, 3000);
+                }
+                if (onRequestLocation) {
+                  onRequestLocation();
+                } else {
+                  toast.info("Scanning for properties nearby...");
+                }
+              }}>
                     {userLocation ? 'Update Location' : 'Search Nearby (5km)'}
-                  </span>
-                </div>
+              </span>
+            </div>
               </>
             )}
           </CardContent>

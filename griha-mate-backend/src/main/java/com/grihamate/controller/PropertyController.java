@@ -91,4 +91,21 @@ public class PropertyController {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
+
+    @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('LANDLORD')")
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody Map<String, String> request,
+            Principal principal) {
+        try {
+            String statusStr = request.get("status");
+            com.grihamate.entity.Property.PropertyStatus status = 
+                com.grihamate.entity.Property.PropertyStatus.valueOf(statusStr.toUpperCase());
+            PropertyDto updatedProperty = propertyService.updateStatus(id, status, principal.getName());
+            return ResponseEntity.ok(updatedProperty);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Invalid status: " + e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
 }

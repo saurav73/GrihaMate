@@ -89,11 +89,11 @@ export default function DashboardLandlordPage() {
           <p className="text-[#2E5E99]">Welcome back, {user.fullName.split(' ')[0]}</p>
         </div>
         {user.verificationStatus === 'VERIFIED' ? (
-          <Link to="/dashboard/landlord/list-property">
-            <Button className="bg-[#2E5E99] hover:bg-[#1C3860] text-white rounded-full">
-              <Plus className="mr-2 size-4" /> Add New Property
-            </Button>
-          </Link>
+        <Link to="/dashboard/landlord/list-property">
+          <Button className="bg-[#2E5E99] hover:bg-[#1C3860] text-white rounded-full">
+            <Plus className="mr-2 size-4" /> Add New Property
+          </Button>
+        </Link>
         ) : (
           <Button 
             disabled

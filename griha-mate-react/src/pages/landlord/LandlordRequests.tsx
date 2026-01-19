@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { propertyRequestAPI, type PropertyRequestDto } from "@/lib/api"
 import { toast } from "react-toastify"
-import { Check, X, MessageSquare, Calendar, User, Home, Phone, Mail, ArrowRight, ExternalLink } from "lucide-react"
+import { Check, X, MessageSquare, Calendar, User, Home, Phone, Mail, ArrowRight, ExternalLink, Loader2 } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 
 export default function LandlordRequestsPage() {
     const [requests, setRequests] = useState<PropertyRequestDto[]>([])
     const [loading, setLoading] = useState(true)
+    const [updatingId, setUpdatingId] = useState<number | null>(null)
 
     const fetchRequests = async () => {
         try {
@@ -30,6 +31,7 @@ export default function LandlordRequestsPage() {
     }, [])
 
     const handleStatusUpdate = async (id: number, status: 'ACCEPTED' | 'REJECTED') => {
+        setUpdatingId(id)
         try {
             await propertyRequestAPI.updateStatus(id, status)
             toast.success(`Request ${status.toLowerCase()} successfully`)
@@ -37,6 +39,8 @@ export default function LandlordRequestsPage() {
         } catch (err) {
             console.error("Failed to update status", err)
             toast.error("Failed to update request status")
+        } finally {
+            setUpdatingId(null)
         }
     }
 
@@ -201,17 +205,35 @@ export default function LandlordRequestsPage() {
                                                         {request.status === 'PENDING' && (
                                                             <div className="flex gap-3">
                                                                 <Button
-                                                                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold h-12 shadow-md shadow-green-100"
+                                                                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold h-12 shadow-md shadow-green-100 disabled:opacity-50 disabled:cursor-not-allowed"
                                                                     onClick={() => handleStatusUpdate(request.id, 'ACCEPTED')}
+                                                                    disabled={updatingId === request.id}
                                                                 >
-                                                                    <Check className="mr-2 size-4" /> Accept Seeker
+                                                                    {updatingId === request.id ? (
+                                                                        <>
+                                                                            <Loader2 className="mr-2 size-4 animate-spin" /> Accepting...
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <Check className="mr-2 size-4" /> Accept Seeker
+                                                                        </>
+                                                                    )}
                                                                 </Button>
                                                                 <Button
                                                                     variant="outline"
-                                                                    className="flex-1 border-red-100 text-red-600 hover:bg-red-50 hover:!text-red-600 font-bold h-12"
+                                                                    className="flex-1 border-red-100 text-red-600 hover:bg-red-50 hover:!text-red-600 font-bold h-12 disabled:opacity-50 disabled:cursor-not-allowed"
                                                                     onClick={() => handleStatusUpdate(request.id, 'REJECTED')}
+                                                                    disabled={updatingId === request.id}
                                                                 >
-                                                                    <X className="mr-2 size-4" /> Reject
+                                                                    {updatingId === request.id ? (
+                                                                        <>
+                                                                            <Loader2 className="mr-2 size-4 animate-spin" /> Rejecting...
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <X className="mr-2 size-4" /> Reject
+                                                                        </>
+                                                                    )}
                                                                 </Button>
                                                             </div>
                                                         )}
@@ -222,17 +244,27 @@ export default function LandlordRequestsPage() {
                                             {request.status === 'PENDING' && (
                                                 <div className="grid grid-cols-2 gap-3">
                                                     <Button
-                                                        className="bg-green-600 hover:bg-green-700 text-white font-black shadow-lg shadow-green-100 transition-all hover:-translate-y-1 active:translate-y-0"
+                                                        className="bg-green-600 hover:bg-green-700 text-white font-black shadow-lg shadow-green-100 transition-all hover:-translate-y-1 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                                                         onClick={() => handleStatusUpdate(request.id, 'ACCEPTED')}
+                                                        disabled={updatingId === request.id}
                                                     >
-                                                        <Check className="size-4" />
+                                                        {updatingId === request.id ? (
+                                                            <Loader2 className="size-4 animate-spin" />
+                                                        ) : (
+                                                            <Check className="size-4" />
+                                                        )}
                                                     </Button>
                                                     <Button
                                                         variant="outline"
-                                                        className="border-red-100 text-red-500 hover:bg-red-50 hover:!text-red-600 font-black transition-all hover:-translate-y-1 active:translate-y-0"
+                                                        className="border-red-100 text-red-500 hover:bg-red-50 hover:!text-red-600 font-black transition-all hover:-translate-y-1 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                                                         onClick={() => handleStatusUpdate(request.id, 'REJECTED')}
+                                                        disabled={updatingId === request.id}
                                                     >
-                                                        <X className="size-4" />
+                                                        {updatingId === request.id ? (
+                                                            <Loader2 className="size-4 animate-spin" />
+                                                        ) : (
+                                                            <X className="size-4" />
+                                                        )}
                                                     </Button>
                                                 </div>
                                             )}

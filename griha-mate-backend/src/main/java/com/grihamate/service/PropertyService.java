@@ -38,7 +38,36 @@ public class PropertyService {
 
     public List<PropertyDto> searchProperties(String city, java.math.BigDecimal minPrice, java.math.BigDecimal maxPrice,
             Property.PropertyType propertyType, Integer minBedrooms) {
-        return propertyRepository.searchProperties(city, minPrice, maxPrice, propertyType, minBedrooms).stream()
+        // Pass AVAILABLE status as parameter to ensure only available properties are returned
+        List<Property> properties = propertyRepository.searchProperties(
+                city, minPrice, maxPrice, propertyType, minBedrooms, Property.PropertyStatus.AVAILABLE);
+        
+        // Additional safety check: Also check if property has any ACCEPTED or PAID requests
+        // If it does, it should be RENTED and not shown (fixes any properties that weren't updated)
+        return properties.stream()
+                .filter(p -> {
+                    // Must be AVAILABLE and verified
+                    if (p.getStatus() != Property.PropertyStatus.AVAILABLE || !p.getVerified()) {
+                        return false;
+                    }
+                    // Check if property has any ACCEPTED or PAID requests - if so, it should be RENTED
+                    List<com.grihamate.entity.PropertyRequest> activeRequests = propertyRequestRepository.findByProperty(p);
+                    boolean hasActiveRequest = activeRequests.stream()
+                            .anyMatch(req -> req.getStatus() == com.grihamate.entity.PropertyRequest.RequestStatus.ACCEPTED ||
+                                           req.getStatus() == com.grihamate.entity.PropertyRequest.RequestStatus.PAID);
+                    
+                    // If property has active requests but status is still AVAILABLE, update it
+                    if (hasActiveRequest && p.getStatus() == Property.PropertyStatus.AVAILABLE) {
+                        p.setStatus(Property.PropertyStatus.RENTED);
+                        if (p.getRentedDate() == null) {
+                            p.setRentedDate(java.time.LocalDateTime.now());
+                        }
+                        propertyRepository.save(p);
+                        return false; // Don't show it
+                    }
+                    
+                    return true; // Show only if truly AVAILABLE with no active requests
+                })
                 .map(PropertyDto::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -155,5 +184,47 @@ public class PropertyService {
         }
 
         propertyRepository.delete(property);
+    }
+
+    @Transactional
+    public PropertyDto updateStatus(Long id, Property.PropertyStatus newStatus, String landlordEmail) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+
+        if (!property.getLandlord().getEmail().equals(landlordEmail)) {
+            throw new RuntimeException("You can only update your own properties");
+        }
+
+        // If trying to change from RENTED to AVAILABLE, check 3-month restriction
+        if (property.getStatus() == Property.PropertyStatus.RENTED 
+                && newStatus == Property.PropertyStatus.AVAILABLE) {
+            if (property.getRentedDate() == null) {
+                throw new RuntimeException("Cannot change status: Property rental date is not set");
+            }
+            
+            java.time.LocalDateTime threeMonthsLater = property.getRentedDate().plusMonths(3);
+            java.time.LocalDateTime now = java.time.LocalDateTime.now();
+            
+            if (now.isBefore(threeMonthsLater)) {
+                long daysRemaining = java.time.temporal.ChronoUnit.DAYS.between(now, threeMonthsLater);
+                throw new RuntimeException(
+                    String.format("Cannot change status to AVAILABLE. Property was rented and must remain RENTED for 3 months. %d days remaining.", 
+                    daysRemaining));
+            }
+        }
+
+        // If changing to RENTED, set the rented date
+        if (newStatus == Property.PropertyStatus.RENTED && property.getRentedDate() == null) {
+            property.setRentedDate(java.time.LocalDateTime.now());
+        }
+
+        // If changing from RENTED to something else (after 3 months), clear rented date
+        if (property.getStatus() == Property.PropertyStatus.RENTED && newStatus != Property.PropertyStatus.RENTED) {
+            property.setRentedDate(null);
+        }
+
+        property.setStatus(newStatus);
+        Property savedProperty = propertyRepository.save(property);
+        return PropertyDto.fromEntity(savedProperty);
     }
 }

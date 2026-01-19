@@ -25,13 +25,14 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
                         "(:maxPrice IS NULL OR p.price <= :maxPrice) AND " +
                         "(:propertyType IS NULL OR p.propertyType = :propertyType) AND " +
                         "(:minBedrooms IS NULL OR p.bedrooms >= :minBedrooms) AND " +
-                        "p.verified = true AND p.status = 'AVAILABLE'")
+                        "p.verified = true AND p.status = :status")
         List<Property> searchProperties(
                         String city,
                         java.math.BigDecimal minPrice,
                         java.math.BigDecimal maxPrice,
                         Property.PropertyType propertyType,
-                        Integer minBedrooms);
+                        Integer minBedrooms,
+                        Property.PropertyStatus status);
 
         int countByLandlord(User landlord);
 }

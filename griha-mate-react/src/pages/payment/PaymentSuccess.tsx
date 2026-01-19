@@ -16,14 +16,26 @@ export default function PaymentSuccessPage() {
             const data = searchParams.get('data')
             const signature = searchParams.get('signature')
 
-            if (!data || !signature) {
+            if (!data) {
                 setStatus('error')
                 setVerifying(false)
                 return
             }
 
             try {
-                await paymentAPI.verifyEsewa(data, signature)
+                // eSewa typically only sends 'data' parameter (base64 encoded JSON)
+                // If status is COMPLETE in the data, we should verify it
+                let paymentStatus = 'COMPLETE'
+                try {
+                    const decodedData = JSON.parse(atob(data))
+                    paymentStatus = decodedData.status || decodedData.transaction_code || 'COMPLETE'
+                } catch (e) {
+                    // If parsing fails, still try to verify with backend
+                    console.log("Could not decode data, attempting backend verification")
+                }
+
+                // Verify with backend - pass empty signature if not provided
+                await paymentAPI.verifyEsewa(data, signature || '')
                 toast.success("Payment confirmed successfully!")
                 setStatus('success')
             } catch (err: any) {

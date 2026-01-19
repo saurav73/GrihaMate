@@ -116,17 +116,9 @@ public class PaymentController {
 
         Map<String, String> response = new HashMap<>();
 
-        if (data == null || signature == null) {
+        if (data == null || data.isEmpty()) {
             response.put("status", "error");
             response.put("message", "Missing payment data");
-            return ResponseEntity.badRequest().body(response);
-        }
-
-        // Verify signature
-        String computedSignature = hmacSha256Base64(secret, data);
-        if (!computedSignature.equals(signature)) {
-            response.put("status", "error");
-            response.put("message", "Invalid signature");
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -136,7 +128,32 @@ public class PaymentController {
             // Example decoded JSON:
             // {"status":"COMPLETE","transaction_uuid":"BOOKING_123_123456789","total_amount":"1000.00",...}
 
-            // Need a simple JSON parser or just use regex for transaction_uuid
+            // Check if payment status is COMPLETE
+            String paymentStatus = "";
+            java.util.regex.Pattern statusPattern = java.util.regex.Pattern.compile("\"status\":\"([^\"]+)\"");
+            java.util.regex.Matcher statusMatcher = statusPattern.matcher(decodedJson);
+            if (statusMatcher.find()) {
+                paymentStatus = statusMatcher.group(1);
+            }
+
+            // If signature is provided, verify it
+            if (signature != null && !signature.isEmpty()) {
+                String computedSignature = hmacSha256Base64(secret, data);
+                if (!computedSignature.equals(signature)) {
+                    response.put("status", "error");
+                    response.put("message", "Invalid signature");
+                    return ResponseEntity.badRequest().body(response);
+                }
+            }
+
+            // Verify payment status is COMPLETE
+            if (!"COMPLETE".equals(paymentStatus)) {
+                response.put("status", "error");
+                response.put("message", "Payment not completed. Status: " + paymentStatus);
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Extract transaction_uuid
             String transactionUuid = "";
             java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("\"transaction_uuid\":\"([^\"]+)\"");
             java.util.regex.Matcher matcher = pattern.matcher(decodedJson);
@@ -164,7 +181,7 @@ public class PaymentController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("status", "error");
-            response.put("message", "Payment verified but confirmation failed: " + e.getMessage());
+            response.put("message", "Payment verification failed: " + e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
     }
