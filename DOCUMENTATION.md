@@ -102,10 +102,10 @@ GrihaMate is a modern room rental platform in Nepal that connects verified landl
    - eSewa credentials
    - Sprite API credentials
 3. Run: `mvn spring-boot:run`
-4. Server starts on `http://localhost:8080`
+4. Server starts on `http://localhost:8081`
 
 ### Frontend Setup
-1. Navigate to `griha-mate-frontend`
+1. Navigate to `griha-mate-react`
 2. Install dependencies: `npm install`
 3. Run: `npm run dev`
 4. App starts on `http://localhost:3000`
@@ -185,7 +185,7 @@ sprite.api.secret=your-sprite-secret
 
 ### Frontend (`.env.local`)
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8080/api
+NEXT_PUBLIC_API_URL=http://localhost:8081/api
 ```
 
 ## Testing with TestSprite
