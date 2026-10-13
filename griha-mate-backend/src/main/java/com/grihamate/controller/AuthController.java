@@ -20,6 +20,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+/**
+ * Public auth endpoints: registration, login (JWT), email verification,
+ * email/OTP verification, and the forgot-password / reset-password flow.
+ */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor

@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Startup seed data: always ensures the default admin account exists, then seeds
+ * sample properties on a fresh database (skipped once properties exist).
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j
