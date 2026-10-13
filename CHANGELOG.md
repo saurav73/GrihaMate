@@ -1,5 +1,15 @@
 # GrihaMate Changelog
 
+## 2026-10-13
+- Fixed frontend setup docs: `VITE_API_URL` (not `NEXT_PUBLIC_API_URL`), `npm run dev` (not `npm start`) in root README and `DOCUMENTATION.md`
+- Fixed `app.base.url` in `application.properties` to match `server.port` (8081)
+- Added class-level Javadoc to `AuthController` and `DataSeeder`
+
+## 2026-10-11
+- Added root README: overview, features, structure, docs index, setup
+- Added CHANGELOG covering the January 2026 build history
+- Fixed `DOCUMENTATION.md`: backend port 8080→8081, frontend directory name
+
 ## 2026-01-19
 - Applied pending fixes across the platform (`apply all the fixes`)
 - Enhanced the voice-interactive search feature (`enhance the voice interactive feaature`)
