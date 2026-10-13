@@ -185,7 +185,7 @@ sprite.api.secret=your-sprite-secret
 
 ### Frontend (`.env.local`)
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8081/api
+VITE_API_URL=http://localhost:8081/api
 ```
 
 ## Testing with TestSprite
@@ -214,7 +214,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8081/api
 
 ### Frontend
 1. Build: `npm run build`
-2. Start: `npm start`
+2. Start: `npm run dev`
 3. Or deploy to Vercel/Netlify
 
 ## Troubleshooting

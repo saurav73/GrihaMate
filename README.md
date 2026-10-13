@@ -39,8 +39,8 @@ mvn spring-boot:run
 ```bash
 cd griha-mate-react
 npm install
-# set NEXT_PUBLIC_API_URL=http://localhost:8081/api in .env.local
-npm start
+# set VITE_API_URL=http://localhost:8081/api in .env.local
+npm run dev
 ```
 
 ## Docs
