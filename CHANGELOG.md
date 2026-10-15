@@ -1,5 +1,8 @@
 # GrihaMate Changelog
 
+## 2026-10-15
+- Added class-level Javadoc to all REST controllers (11), JPA entities (10), service classes (8), and repository interfaces (10)
+
 ## 2026-10-13
 - Fixed frontend setup docs: `VITE_API_URL` (not `NEXT_PUBLIC_API_URL`), `npm run dev` (not `npm start`) in root README and `DOCUMENTATION.md`
 - Fixed `app.base.url` in `application.properties` to match `server.port` (8081)
