@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity persisted in the `feedbacks` table, representing user feedback on the platform.
+ */
 @Entity
 @Table(name = "feedbacks")
 @Data

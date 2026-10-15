@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity persisted in the `availability_subscriptions` table, representing a seeker's subscription to availability alerts.
+ */
 @Entity
 @Table(name = "availability_subscriptions")
 @Data

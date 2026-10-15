@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity persisted in the `property_verifications` table, representing a property verification record.
+ */
 @Entity
 @Table(name = "property_verifications")
 @Data

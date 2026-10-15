@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity persisted in the `users` table, representing an application user (seeker, landlord or admin).
+ */
 @Entity
 @Table(name = "users")
 @Data

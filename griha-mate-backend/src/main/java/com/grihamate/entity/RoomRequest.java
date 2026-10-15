@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity persisted in the `room_requests` table, representing a seeker's request for a room.
+ */
 @Entity
 @Table(name = "room_requests")
 @Data

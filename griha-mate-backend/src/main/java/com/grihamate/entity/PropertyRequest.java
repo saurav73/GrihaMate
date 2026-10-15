@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity persisted in the `property_requests` table, representing a seeker's request for a property.
+ */
 @Entity
 @Table(name = "property_requests")
 @Data

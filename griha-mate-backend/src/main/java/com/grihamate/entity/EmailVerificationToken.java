@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity persisted in the `email_verification_tokens` table, representing an email verification token.
+ */
 @Entity
 @Table(name = "email_verification_tokens")
 @Data

@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity persisted in the `email_otps` table, representing an email one-time passcode for verification.
+ */
 @Entity
 @Table(name = "email_otps")
 @Data

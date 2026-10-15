@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * JPA entity persisted in the `password_reset_tokens` table, representing a password reset token.
+ */
 @Entity
 @Table(name = "password_reset_tokens")
 @Data

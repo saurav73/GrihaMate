@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * JPA entity persisted in the `properties` table, representing a rental property listing.
+ */
 @Entity
 @Table(name = "properties")
 @Data
