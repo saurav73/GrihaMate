@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
+/**
+ * REST controller exposing the /api/subscription endpoints (subscription endpoints).
+ */
 @RestController
 @RequestMapping("/api/subscription")
 @RequiredArgsConstructor

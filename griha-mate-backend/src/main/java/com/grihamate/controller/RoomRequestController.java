@@ -14,6 +14,9 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller exposing the /api/room-requests endpoints (room request endpoints).
+ */
 @RestController
 @RequestMapping("/api/room-requests")
 @RequiredArgsConstructor

@@ -11,6 +11,9 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller exposing the /api/feedbacks endpoints (user feedback endpoints).
+ */
 @RestController
 @RequestMapping("/api/feedbacks")
 @RequiredArgsConstructor

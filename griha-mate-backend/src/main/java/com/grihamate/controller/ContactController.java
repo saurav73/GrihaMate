@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * REST controller exposing the /api/contact endpoints (contact message endpoints).
+ */
 @RestController
 @RequestMapping("/api/contact")
 @RequiredArgsConstructor

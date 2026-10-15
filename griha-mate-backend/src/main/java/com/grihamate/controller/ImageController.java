@@ -9,6 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * REST controller exposing the /api/images endpoints (property image upload endpoints).
+ */
 @RestController
 @RequestMapping("/api/images")
 @RequiredArgsConstructor

@@ -11,6 +11,9 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller exposing the /api/availability-subscriptions endpoints (availability-subscription endpoints).
+ */
 @RestController
 @RequestMapping("/api/availability-subscriptions")
 @RequiredArgsConstructor

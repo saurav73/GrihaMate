@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller exposing the /api/property-requests endpoints (property request endpoints).
+ */
 @RestController
 @RequestMapping("/api/property-requests")
 @RequiredArgsConstructor

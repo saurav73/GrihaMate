@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller exposing the /api/admin endpoints (administration and dashboard endpoints).
+ */
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor

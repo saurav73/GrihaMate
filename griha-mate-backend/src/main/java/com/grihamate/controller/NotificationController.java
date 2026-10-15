@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+/**
+ * REST controller exposing the /api/notifications endpoints (notification endpoints).
+ */
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor

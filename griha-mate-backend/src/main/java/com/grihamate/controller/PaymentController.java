@@ -12,6 +12,9 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * REST controller exposing the /api/payment endpoints (payment endpoints).
+ */
 @RestController
 @RequestMapping("/api/payment")
 @CrossOrigin(origins = "${cors.allowed-origins}")

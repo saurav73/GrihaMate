@@ -12,6 +12,9 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller exposing the /api/properties endpoints (property listing endpoints).
+ */
 @RestController
 @RequestMapping("/api/properties")
 @RequiredArgsConstructor
