@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Service implementing availability subscription business logic.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j

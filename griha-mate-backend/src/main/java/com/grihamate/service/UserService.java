@@ -21,6 +21,9 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
 
+/**
+ * Service implementing user account business logic.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {

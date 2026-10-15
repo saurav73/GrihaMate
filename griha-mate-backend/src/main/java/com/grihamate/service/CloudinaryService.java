@@ -10,6 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Service implementing image upload business logic (Cloudinary).
+ */
 @Service
 @Slf4j
 public class CloudinaryService {

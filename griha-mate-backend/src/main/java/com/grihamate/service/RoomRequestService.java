@@ -16,6 +16,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service implementing room request business logic.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j

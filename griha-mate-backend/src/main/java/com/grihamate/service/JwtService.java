@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Service implementing JWT creation and validation.
+ */
 @Service
 public class JwtService {
     @Value("${jwt.secret}")

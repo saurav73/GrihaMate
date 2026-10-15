@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Service implementing user feedback business logic.
+ */
 @Service
 @RequiredArgsConstructor
 public class FeedbackService {
