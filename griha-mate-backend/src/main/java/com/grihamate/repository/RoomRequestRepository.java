@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Spring Data JPA repository for RoomRequest persistence and queries.
+ */
 @Repository
 public interface RoomRequestRepository extends JpaRepository<RoomRequest, Long> {
     List<RoomRequest> findBySeeker(User seeker);

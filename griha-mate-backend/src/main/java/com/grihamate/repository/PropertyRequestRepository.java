@@ -9,6 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Spring Data JPA repository for PropertyRequest persistence and queries.
+ */
 @Repository
 public interface PropertyRequestRepository extends JpaRepository<PropertyRequest, Long> {
     List<PropertyRequest> findBySeeker(User seeker);

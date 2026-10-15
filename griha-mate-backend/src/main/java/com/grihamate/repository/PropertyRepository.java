@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Spring Data JPA repository for Property persistence and queries.
+ */
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Long> {
         List<Property> findByStatus(Property.PropertyStatus status);

@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/**
+ * Spring Data JPA repository for EmailOtp persistence and queries.
+ */
 @Repository
 public interface EmailOtpRepository extends JpaRepository<EmailOtp, Long> {
     Optional<EmailOtp> findByEmailAndOtpAndUsedFalse(String email, String otp);

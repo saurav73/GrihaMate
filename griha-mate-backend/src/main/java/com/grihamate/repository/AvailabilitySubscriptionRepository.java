@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Spring Data JPA repository for AvailabilitySubscription persistence and queries.
+ */
 @Repository
 public interface AvailabilitySubscriptionRepository extends JpaRepository<AvailabilitySubscription, Long> {
     List<AvailabilitySubscription> findBySeekerAndActive(User seeker, Boolean active);
