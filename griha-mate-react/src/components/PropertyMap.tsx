@@ -1,3 +1,4 @@
+/** Leaflet map rendering property markers with detail popups. */
 import { useEffect, useRef, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'

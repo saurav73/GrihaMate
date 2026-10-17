@@ -1,3 +1,4 @@
+/** Top navigation bar with role-aware links and session controls. */
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Bell, User, Menu, Home, Compass, PlusCircle, LogOut, Settings, LayoutDashboard, Heart, Info, HelpCircle, Star, MessageSquare } from "lucide-react"

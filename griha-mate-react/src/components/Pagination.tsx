@@ -1,3 +1,4 @@
+/** Pagination controls for property listing results. */
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {

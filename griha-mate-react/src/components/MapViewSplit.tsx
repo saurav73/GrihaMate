@@ -1,3 +1,4 @@
+/** Split-view layout pairing listings with a clustered property map. */
 import { useState, useEffect, useCallback } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap, Circle } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'

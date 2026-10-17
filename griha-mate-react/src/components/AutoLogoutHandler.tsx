@@ -1,3 +1,4 @@
+/** Idle-session watcher that logs users out after inactivity. */
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useIdleTimer } from '@/hooks/useIdleTimer';

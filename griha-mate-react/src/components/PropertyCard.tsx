@@ -1,3 +1,4 @@
+/** Property listing card used across search and favorites views. */
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
