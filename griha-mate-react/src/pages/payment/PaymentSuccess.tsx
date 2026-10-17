@@ -1,3 +1,4 @@
+/** Payment success page verifying and confirming booking transactions. */
 import { useEffect, useState } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import { paymentAPI } from "@/lib/api"

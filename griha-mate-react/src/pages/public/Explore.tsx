@@ -1,3 +1,4 @@
+/** Public property explore page with search, filters, voice query, and map views. */
 import { Search, SlidersHorizontal, Grid, MapIcon, Navigation } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

@@ -1,3 +1,4 @@
+/** Seeker favorites page listing saved properties. */
 import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Heart, MapPin, Bed, Bath, Square, Trash2, ExternalLink } from "lucide-react"

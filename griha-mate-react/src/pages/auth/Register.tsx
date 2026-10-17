@@ -1,3 +1,4 @@
+/** User registration page with role selection and signup form. */
 import {
   Building2,
   ArrowRight,

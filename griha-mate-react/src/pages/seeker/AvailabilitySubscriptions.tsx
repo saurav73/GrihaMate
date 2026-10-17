@@ -1,3 +1,4 @@
+/** Seeker page managing availability alerts for new properties. */
 import { useState, useEffect } from "react"
 import { Bell, MapPin, Trash2, CheckCircle2, AlertCircle, Plus, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
