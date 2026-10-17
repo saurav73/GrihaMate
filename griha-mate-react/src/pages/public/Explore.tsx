@@ -210,8 +210,6 @@ export default function ExplorePage() {
     // Use NLP parser
     const parsed = parseVoiceQuery(query)
 
-    console.log('Voice Search - Parsed:', parsed)
-
     // Apply parsed filters (parser already returns correct format)
     const newFilters = { ...filters }
     if (parsed.city) newFilters.city = parsed.city
@@ -263,7 +261,6 @@ export default function ExplorePage() {
       position: "top-right",
       autoClose: 3000,
     })
-    console.log(`Voice Search understood: ${summary}`)
   }
 
   // Pagination State

@@ -25,7 +25,6 @@ export default function AvailabilitySubscriptionsPage() {
         try {
             setLoading(true)
             const data = await availabilitySubscriptionAPI.getMySubscriptions()
-            console.log("Fetched subscriptions:", data) // Debug log
             setSubscriptions(data || [])
         } catch (error: any) {
             console.error("Error fetching subscriptions:", error) // Debug log
@@ -43,8 +42,7 @@ export default function AvailabilitySubscriptionsPage() {
         }
         setSubmitting(true)
         try {
-            const result = await availabilitySubscriptionAPI.subscribe(city, district)
-            console.log("Subscribe result:", result) // Debug log
+            await availabilitySubscriptionAPI.subscribe(city, district)
             toast.success(`Subscribed to ${city}! We'll notify you when a room becomes available.`)
             setCity("")
             setDistrict("")

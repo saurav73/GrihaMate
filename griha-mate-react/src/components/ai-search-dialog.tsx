@@ -63,7 +63,6 @@ export function AISearchDialog({ onSearch }: VoiceSearchDialogProps) {
 
       if (finalTranscript) {
         const finalQuery = finalTranscript.trim()
-        console.log('✅ Final transcript received:', finalQuery)
         setTranscript(finalQuery)
         setQuery(finalQuery)
         latestQueryRef.current = finalQuery
@@ -110,16 +109,13 @@ export function AISearchDialog({ onSearch }: VoiceSearchDialogProps) {
     }
 
     recognition.onend = () => {
-      console.log('🔴 Speech recognition ended')
       setIsListening(false)
 
       // Auto-search when speech recognition ends
       setTimeout(() => {
         const currentQuery = latestQueryRef.current
-        console.log('🔍 Auto-search attempting with query:', currentQuery)
 
         if (currentQuery && currentQuery.trim()) {
-          console.log('✅ Executing search for:', currentQuery)
           onSearch?.(currentQuery.trim())
           setIsOpen(false)
 
@@ -145,8 +141,6 @@ export function AISearchDialog({ onSearch }: VoiceSearchDialogProps) {
 
           // Clear the ref after search
           latestQueryRef.current = ""
-        } else {
-          console.log('❌ No query found, search not executed')
         }
       }, 500)
     }

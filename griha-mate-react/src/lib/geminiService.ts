@@ -76,8 +76,6 @@ Examples:
     // Add the original query as fallback
     searchParams.query = searchParams.query || userQuery
 
-    console.log('🤖 Gemini AI processed query:', { original: userQuery, extracted: searchParams })
-
     return searchParams
   } catch (error) {
     console.error('Error processing query with Gemini AI:', error)
