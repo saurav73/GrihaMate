@@ -1,3 +1,4 @@
+/** Mock property data used for development and offline fallback. */
 // Mock Property Data for Development and Testing
 import type { PropertyDto } from './api'
 

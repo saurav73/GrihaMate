@@ -1,3 +1,4 @@
+/** Gemini AI service converting natural-language queries into structured search parameters. */
 // Gemini AI Service for Natural Language Search Processing
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { config } from './config'

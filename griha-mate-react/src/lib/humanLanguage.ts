@@ -1,3 +1,4 @@
+/** AI-generated human-friendly UI messages for actions and alerts. */
 // Human-like language generation using Gemini AI
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { config } from "./config"

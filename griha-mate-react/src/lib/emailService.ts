@@ -1,3 +1,4 @@
+/** Email notification service for logins, bookings, and listings. */
 // Email Notification Service
 // This service handles sending email notifications for various events in the application
 

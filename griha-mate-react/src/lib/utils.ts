@@ -1,3 +1,4 @@
+/** Shared frontend utilities such as classname merging. */
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 

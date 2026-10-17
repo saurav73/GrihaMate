@@ -1,3 +1,4 @@
+/** Offline NLP parser extracting search filters from voice queries. */
 // Simple NLP Parser for Voice Search Queries
 // Extracts location, property type, price range, bedrooms from natural language
 

@@ -1,3 +1,4 @@
+/** Geolocation helpers for coordinates, reverse geocoding, and address lookup. */
 export interface LocationData {
     latitude: number;
     longitude: number;

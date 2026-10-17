@@ -1,3 +1,4 @@
+/** Environment-backed app configuration for API endpoints and keys. */
 // Configuration file for API keys and environment variables
 
 // Multiple Gemini API Keys for fallback mechanism
