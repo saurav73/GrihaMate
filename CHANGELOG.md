@@ -1,5 +1,9 @@
 # GrihaMate Changelog
 
+## 2026-10-17
+- Removed leftover debug `console.log` statements from frontend components (AI search dialog, Gemini service, Explore voice search, availability subscriptions); kept logs that record real fallback behavior
+- Added file-header JSDoc to App entry, core components, frontend lib modules, and key pages
+
 ## 2026-10-15
 - Added class-level Javadoc to all REST controllers (11), JPA entities (10), service classes (8), and repository interfaces (10)
 
