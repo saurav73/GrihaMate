@@ -1,5 +1,9 @@
 # GrihaMate Changelog
 
+## 2026-10-19
+- Removed the real Gmail app password that was committed in `griha-mate-backend/src/main/resources/application.properties` since the initial commit; replaced with a placeholder. The old value remains in git history, so rotate the app password in the Google account
+- Added a warning comment above the mail password line pointing to the app-password setup instructions
+
 ## 2026-10-17
 - Removed leftover debug `console.log` statements from frontend components (AI search dialog, Gemini service, Explore voice search, availability subscriptions); kept logs that record real fallback behavior
 - Added file-header JSDoc to App entry, core components, frontend lib modules, and key pages
