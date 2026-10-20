@@ -1,5 +1,8 @@
 # GrihaMate Changelog
 
+## 2026-10-20
+- Removed the real Cloudinary API key/secret (embedded in `cloudinary.url`) and the eSewa merchant secret committed in `griha-mate-backend/src/main/resources/application.properties` in an earlier revision; replaced with placeholders plus warning comments. The old values remain in git history, so rotate the Cloudinary API key/secret in the Cloudinary dashboard and the eSewa secret in the eSewa merchant dashboard
+
 ## 2026-10-19
 - Removed the real Gmail app password that was committed in `griha-mate-backend/src/main/resources/application.properties` since the initial commit; replaced with a placeholder. The old value remains in git history, so rotate the app password in the Google account
 - Added a warning comment above the mail password line pointing to the app-password setup instructions
