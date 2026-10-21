@@ -1,5 +1,10 @@
 # GrihaMate Changelog
 
+## 2026-10-21
+- Fixed stale backend port (8080 -> 8081) in `griha-mate-backend/README.md`, `griha-mate-react/GEMINI_AI_INTEGRATION.md`, and `griha-mate-react/HOW_TO_LOGIN_ADMIN.md` to match `server.port=8081` in `application.properties`
+- Documented `jwt.secret` as a must-set local value in the backend README setup guide (the committed value is a redacted placeholder)
+- Audited the repo for new committed secrets after the 2026-10-20 redaction of the Cloudinary API key/secret and eSewa merchant secret: no new secrets found; Gemini keys in `config.ts` remain environment-backed placeholders
+
 ## 2026-10-20
 - Removed the real Cloudinary API key/secret (embedded in `cloudinary.url`) and the eSewa merchant secret committed in `griha-mate-backend/src/main/resources/application.properties` in an earlier revision; replaced with placeholders plus warning comments. The old values remain in git history, so rotate the Cloudinary API key/secret in the Cloudinary dashboard and the eSewa secret in the eSewa merchant dashboard
 
