@@ -43,6 +43,9 @@ Spring Boot backend for the GrihaMate room rental platform in Nepal.
      spring.datasource.username=your_username
      spring.datasource.password=your_password
      
+     # JWT (the committed value is a redacted placeholder; set a real secret locally)
+     jwt.secret=<your-jwt-secret>
+     
      # Email (Gmail SMTP)
      spring.mail.username=your-email@gmail.com
      spring.mail.password=your-app-password
