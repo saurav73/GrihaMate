@@ -71,7 +71,7 @@ Spring Boot backend for the GrihaMate room rental platform in Nepal.
 
    Or run the main class: `com.grihamate.GrihaMateApplication`
 
-5. **The server will start on:** `http://localhost:8080`
+5. **The server will start on:** `http://localhost:8081`
 
 ## API Endpoints
 

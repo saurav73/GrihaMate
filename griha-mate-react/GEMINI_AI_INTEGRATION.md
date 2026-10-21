@@ -82,7 +82,7 @@ Configuration file for API keys:
 ```typescript
 export const config = {
   geminiApiKey: 'AIzaSyDc3AA-6tVOuDFO8QPAXmAZc0M27nDZwPc',
-  apiUrl: 'http://localhost:8080/api',
+  apiUrl: 'http://localhost:8081/api',
 }
 ```
 

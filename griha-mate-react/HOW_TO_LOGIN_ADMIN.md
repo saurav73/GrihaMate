@@ -3,7 +3,7 @@
 ## Quick Steps
 
 ### 1. **Start the Backend Server**
-   - Make sure your backend is running on `http://localhost:8080`
+   - Make sure your backend is running on `http://localhost:8081`
    - The admin user is automatically created when the backend starts
 
 ### 2. **Open the Login Page**
