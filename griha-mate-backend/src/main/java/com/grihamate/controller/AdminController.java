@@ -7,7 +7,6 @@ import com.grihamate.entity.User;
 import com.grihamate.repository.PropertyRepository;
 import com.grihamate.repository.UserRepository;
 import com.grihamate.service.EmailService;
-import com.grihamate.service.PropertyService;
 import com.grihamate.service.RoomRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
