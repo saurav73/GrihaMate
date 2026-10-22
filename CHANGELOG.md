@@ -1,5 +1,9 @@
 # GrihaMate Changelog
 
+## 2026-10-22
+- Removed three genuinely unused imports in the backend (`PropertyService` in `AdminController`, `java.util.HashMap` in `ContactController`, `java.math.BigDecimal` in `RoomRequestService`) — verified no references in the file bodies
+- Re-verified README setup docs against the code: ports (8081) and the `jwt.secret` note are still accurate; no doc changes needed today
+
 ## 2026-10-21
 - Fixed stale backend port (8080 -> 8081) in `griha-mate-backend/README.md`, `griha-mate-react/GEMINI_AI_INTEGRATION.md`, and `griha-mate-react/HOW_TO_LOGIN_ADMIN.md` to match `server.port=8081` in `application.properties`
 - Documented `jwt.secret` as a must-set local value in the backend README setup guide (the committed value is a redacted placeholder)
