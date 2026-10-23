@@ -1,5 +1,11 @@
 # GrihaMate Changelog
 
+## 2026-10-23
+- Fixed stale dev-server port in `griha-mate-react/README.md` (said `http://localhost:5173`, but `vite.config.ts` sets port 3000) — small docs accuracy fix
+- Observation for Saurav: `spring.mail.username` in the backend `application.properties` is a BookBridge-suffixed Gmail address (present since the initial commit); mail IS used (OTP emails via `EmailService`), so confirm whether it is intentional before changing — left untouched
+- Re-verified the backend README config section against `application.properties`: ports (8081) and `jwt.secret` guidance still accurate
+
+
 ## 2026-10-22
 - Removed three genuinely unused imports in the backend (`PropertyService` in `AdminController`, `java.util.HashMap` in `ContactController`, `java.math.BigDecimal` in `RoomRequestService`) — verified no references in the file bodies
 - Re-verified README setup docs against the code: ports (8081) and the `jwt.secret` note are still accurate; no doc changes needed today
