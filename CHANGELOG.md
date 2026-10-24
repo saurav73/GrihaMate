@@ -1,5 +1,8 @@
 # GrihaMate Changelog
 
+## 2026-10-24
+- Re-verified the README structure table: `griha-mate-react/AI_FEATURES.md` exists as documented, backend port 8081 matches `server.port` in `application.properties`, frontend README port (3000) and API URL (8081/api) claims still accurate; yesterday's `spring.mail.username` observation remains pending Saurav's call — no changes needed
+
 ## 2026-10-23
 - Fixed stale dev-server port in `griha-mate-react/README.md` (said `http://localhost:5173`, but `vite.config.ts` sets port 3000) — small docs accuracy fix
 - Observation for Saurav: `spring.mail.username` in the backend `application.properties` is a BookBridge-suffixed Gmail address (present since the initial commit); mail IS used (OTP emails via `EmailService`), so confirm whether it is intentional before changing — left untouched
