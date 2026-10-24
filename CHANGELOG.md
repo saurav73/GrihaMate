@@ -1,6 +1,7 @@
 # GrihaMate Changelog
 
 ## 2026-10-24
+- Fixed a stale README claim: the Stripe card-payment endpoints (`/stripe/initiate`, `/stripe/process`) are live code in `PaymentController`, not "in history" — the Payments bullet now describes both eSewa and Stripe
 - Re-verified the README structure table: `griha-mate-react/AI_FEATURES.md` exists as documented, backend port 8081 matches `server.port` in `application.properties`, frontend README port (3000) and API URL (8081/api) claims still accurate; yesterday's `spring.mail.username` observation remains pending Saurav's call — no changes needed
 
 ## 2026-10-23
