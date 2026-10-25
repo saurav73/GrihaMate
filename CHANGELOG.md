@@ -1,5 +1,9 @@
 # GrihaMate Changelog
 
+## 2026-10-25
+- Added `griha-mate-react/.env.example`: the root README told developers to set `VITE_API_URL` in `.env.local`, but no template existed — it now covers every variable `src/lib/config.ts` reads (`VITE_API_URL`, the Gemini `_1`/`_2`/`_3` fallback chain plus the legacy key), placeholders only
+- Re-verified the README feature claims: Stripe endpoints live in `PaymentController`, backend port 8081 matches `server.port`, `AI_FEATURES.md` exists — docs accurate
+
 ## 2026-10-24
 - Fixed a stale README claim: the Stripe card-payment endpoints (`/stripe/initiate`, `/stripe/process`) are live code in `PaymentController`, not "in history" — the Payments bullet now describes both eSewa and Stripe
 - Re-verified the README structure table: `griha-mate-react/AI_FEATURES.md` exists as documented, backend port 8081 matches `server.port` in `application.properties`, frontend README port (3000) and API URL (8081/api) claims still accurate; yesterday's `spring.mail.username` observation remains pending Saurav's call — no changes needed
