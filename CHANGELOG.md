@@ -1,5 +1,9 @@
 # GrihaMate Changelog
 
+## 2026-10-26
+- README: pinned the backend to Spring Boot 3.2.0 in the structure table (was unversioned 3.2) and documented `griha-mate-react/.env.example` — the frontend setup now tells developers to copy it to `.env.local` instead of hand-writing variables
+- Re-verified the README feature claims: Stripe endpoints live in `PaymentController`, backend port 8081 matches `server.port`, `AI_FEATURES.md` exists — docs accurate
+
 ## 2026-10-25
 - Added `griha-mate-react/.env.example`: the root README told developers to set `VITE_API_URL` in `.env.local`, but no template existed — it now covers every variable `src/lib/config.ts` reads (`VITE_API_URL`, the Gemini `_1`/`_2`/`_3` fallback chain plus the legacy key), placeholders only
 - Re-verified the README feature claims: Stripe endpoints live in `PaymentController`, backend port 8081 matches `server.port`, `AI_FEATURES.md` exists — docs accurate
