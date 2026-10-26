@@ -18,8 +18,9 @@ Live stack: **Spring Boot backend** + **React frontend**.
 
 | Path | What it is |
 |---|---|
-| `griha-mate-backend/` | Spring Boot 3.2 / Java 17 API (JWT, MySQL, Cloudinary, eSewa) |
+| `griha-mate-backend/` | Spring Boot 3.2.0 / Java 17 API (JWT, MySQL, Cloudinary, eSewa) |
 | `griha-mate-react/` | React frontend |
+| `griha-mate-react/.env.example` | Frontend env template (`VITE_API_URL`, Gemini keys) — copy to `.env.local` |
 | `DOCUMENTATION.md` | Full platform documentation |
 | `COMPLETION_STATUS.md` | Build completion status |
 | `IMPLEMENTATION_SUMMARY.md` | Implementation notes |
@@ -39,7 +40,7 @@ mvn spring-boot:run
 ```bash
 cd griha-mate-react
 npm install
-# set VITE_API_URL=http://localhost:8081/api in .env.local
+# copy .env.example to .env.local and set VITE_API_URL=http://localhost:8081/api
 npm run dev
 ```
 
