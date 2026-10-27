@@ -1,5 +1,8 @@
 # GrihaMate Changelog
 
+## 2026-10-27
+- README: pinned the frontend to React 19 + Vite 7 in the structure table, matching griha-mate-react/package.json
+
 ## 2026-10-26
 - README: pinned the backend to Spring Boot 3.2.0 in the structure table (was unversioned 3.2) and documented `griha-mate-react/.env.example` — the frontend setup now tells developers to copy it to `.env.local` instead of hand-writing variables
 - Re-verified the README feature claims: Stripe endpoints live in `PaymentController`, backend port 8081 matches `server.port`, `AI_FEATURES.md` exists — docs accurate
