@@ -1,5 +1,10 @@
 # GrihaMate Changelog
 
+
+## 2026-10-28
+- README: documented the frontend env template precisely - numbered `VITE_GEMINI_API_KEY_1/2/3` keys plus the legacy single-key fallback, matching griha-mate-react/.env.example
+- Re-verified the README feature claims: Stripe endpoints live in `PaymentController`, backend port 8081 matches `server.port`, `AI_FEATURES.md` exists
+
 ## 2026-10-27
 - README: pinned the frontend to React 19 + Vite 7 in the structure table, matching griha-mate-react/package.json
 
