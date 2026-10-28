@@ -20,7 +20,7 @@ Live stack: **Spring Boot backend** + **React frontend**.
 |---|---|
 | `griha-mate-backend/` | Spring Boot 3.2.0 / Java 17 API (JWT, MySQL, Cloudinary, eSewa) |
 | `griha-mate-react/` | React 19 + Vite 7 frontend |
-| `griha-mate-react/.env.example` | Frontend env template (`VITE_API_URL`, Gemini keys) — copy to `.env.local` |
+| `griha-mate-react/.env.example` | Frontend env template (`VITE_API_URL`, numbered `VITE_GEMINI_API_KEY_1/2/3` plus the legacy `VITE_GEMINI_API_KEY` fallback) — copy to `.env.local` |
 | `DOCUMENTATION.md` | Full platform documentation |
 | `COMPLETION_STATUS.md` | Build completion status |
 | `IMPLEMENTATION_SUMMARY.md` | Implementation notes |
