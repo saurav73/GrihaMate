@@ -1,6 +1,10 @@
 # GrihaMate Changelog
 
 
+## 2026-10-29
+- README: corrected the AI feature description - natural-language property search (text input, optional voice) powered by Gemini, matching AI_FEATURES.md, not voice-only
+- Re-verified the README feature claims: Stripe endpoints live in `PaymentController`, backend port 8081 matches `server.port`, React 19 + Vite 7 match griha-mate-react/package.json
+
 ## 2026-10-28
 - README: documented the frontend env template precisely - numbered `VITE_GEMINI_API_KEY_1/2/3` keys plus the legacy single-key fallback, matching griha-mate-react/.env.example
 - Re-verified the README feature claims: Stripe endpoints live in `PaymentController`, backend port 8081 matches `server.port`, `AI_FEATURES.md` exists
