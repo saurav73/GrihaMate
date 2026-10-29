@@ -10,7 +10,7 @@ Live stack: **Spring Boot backend** + **React frontend**.
 - **Verification system** — seekers verify with citizenship; landlords with KYC + property documents
 - **Property listings** — CRUD, detail pages, premium listings
 - **Payments** — eSewa integration + Stripe card-payment endpoints (`/stripe/initiate`, `/stripe/process` in `PaymentController`)
-- **AI features** — voice-interactive search (see `griha-mate-react/AI_FEATURES.md`)
+- **AI features** — natural-language property search (text input, optional voice) powered by Gemini (see `griha-mate-react/AI_FEATURES.md`)
 - **Uploads** — Cloudinary for property images and verification documents
 - **Auth** — JWT, email verification with resend
 
