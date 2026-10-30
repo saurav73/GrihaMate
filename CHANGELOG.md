@@ -1,6 +1,10 @@
 # GrihaMate Changelog
 
 
+## 2026-10-30
+- README: backend structure row now counts its 12 controllers, counted from griha-mate-backend controller sources
+- Re-verified: backend still runs on port 8081 and Spring Boot 3.2.0 / Java 17, matching the README setup section
+
 ## 2026-10-29
 - README: corrected the AI feature description - natural-language property search (text input, optional voice) powered by Gemini, matching AI_FEATURES.md, not voice-only
 - Re-verified the README feature claims: Stripe endpoints live in `PaymentController`, backend port 8081 matches `server.port`, React 19 + Vite 7 match griha-mate-react/package.json
