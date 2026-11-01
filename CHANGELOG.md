@@ -1,6 +1,10 @@
 # GrihaMate Changelog
 
 
+## 2026-11-01
+- README: backend row now states 56 Java files across 8 packages, counted from griha-mate-backend/src/
+- Re-verified: all 12 backend controller files still present
+
 ## 2026-10-31
 - README: React row now counts its page components (44 across 8 groups: admin, auth, landlord, payment, property, public, seeker, user), counted from griha-mate-react/src/pages/
 - Re-verified: backend still runs on port 8081 and Spring Boot 3.2.0 / Java 17, matching the README setup section
