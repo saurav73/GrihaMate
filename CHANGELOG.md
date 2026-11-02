@@ -1,6 +1,10 @@
 # GrihaMate Changelog
 
 
+## 2026-11-02
+- README: frontend row now counts the component/hook/lib files (74 components, 3 hooks, 9 lib modules), counted from griha-mate-react/src/
+- Re-verified: all 12 backend controller files still present
+
 ## 2026-11-01
 - README: backend row now states 56 Java files across 8 packages, counted from griha-mate-backend/src/
 - Re-verified: all 12 backend controller files still present
