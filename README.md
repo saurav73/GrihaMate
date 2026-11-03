@@ -19,7 +19,7 @@ Live stack: **Spring Boot backend** + **React frontend**.
 | Path | What it is |
 |---|---|
 | `griha-mate-backend/` | Spring Boot 3.2.0 / Java 17 API (JWT, MySQL, Cloudinary, eSewa) across 12 controllers (auth, admin, properties, payments, notifications, contact, feedback, images, availability subscriptions, property requests, room requests, subscriptions) — 56 Java files across 8 packages (`config`, `controller`, `dto`, `entity`, `exception`, `repository`, `security`, `service`), counted from `griha-mate-backend/src/` |
-| `griha-mate-react/` | React 19 + Vite 7 frontend (44 page components across 8 groups: admin, auth, landlord, payment, property, public, seeker, user) — plus 74 component files in `components/` (12 top-level, 57 `ui/`, 2 `admin/`, 2 `landlord/`, 1 `payment/`), 3 hooks, and 9 `lib/` modules, counted from `griha-mate-react/src/` |
+| `griha-mate-react/` | React 19 + Vite 7 frontend (44 page components across 8 groups: admin, auth, landlord, payment, property, public, seeker, user) — plus 74 component files in `components/` (12 top-level, 57 `ui/`, 2 `admin/`, 2 `landlord/`, 1 `payment/`), 3 hooks (`use-mobile`, `use-toast`, `useIdleTimer`), and 9 `lib/` modules, counted from `griha-mate-react/src/` |
 | `griha-mate-react/.env.example` | Frontend env template (`VITE_API_URL`, numbered `VITE_GEMINI_API_KEY_1/2/3` plus the legacy `VITE_GEMINI_API_KEY` fallback) — copy to `.env.local` |
 | `DOCUMENTATION.md` | Full platform documentation |
 | `COMPLETION_STATUS.md` | Build completion status |
