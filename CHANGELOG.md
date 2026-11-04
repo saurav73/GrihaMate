@@ -1,6 +1,11 @@
 # GrihaMate Changelog
 
 
+
+## 2026-11-04
+- README: backend row now states the per-package breakdown (12 controllers, 10 entities, 10 repositories, 9 DTOs, 9 services, 3 config, 1 security, 1 exception, plus the application class), counted from `griha-mate-backend/src/`
+- Re-verified: all 12 backend controller files still present
+
 ## 2026-11-03
 - README: frontend row now names the 3 hooks (use-mobile, use-toast, useIdleTimer), counted from griha-mate-react/src/
 - Re-verified: all 12 backend controller files still present
