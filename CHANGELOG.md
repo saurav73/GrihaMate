@@ -2,6 +2,10 @@
 
 
 
+## 2026-11-05
+- README: frontend row now states the per-group page counts (admin 10, public 13, auth 5, landlord 6, seeker 6, payment 2, property 1, user 1 = 44), counted from `griha-mate-react/src/pages/`
+- Re-verified: all 12 backend controller files still present
+
 ## 2026-11-04
 - README: backend row now states the per-package breakdown (12 controllers, 10 entities, 10 repositories, 9 DTOs, 9 services, 3 config, 1 security, 1 exception, plus the application class), counted from `griha-mate-backend/src/`
 - Re-verified: all 12 backend controller files still present
