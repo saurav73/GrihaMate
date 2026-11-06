@@ -2,6 +2,10 @@
 
 
 
+## 2026-11-06
+- README: backend row now states the 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across the 12 controllers, counted from the controller sources
+- Re-verified: all 12 backend controller files still present
+
 ## 2026-11-05
 - README: frontend row now states the per-group page counts (admin 10, public 13, auth 5, landlord 6, seeker 6, payment 2, property 1, user 1 = 44), counted from `griha-mate-react/src/pages/`
 - Re-verified: all 12 backend controller files still present
