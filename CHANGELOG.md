@@ -2,6 +2,10 @@
 
 
 
+## 2026-11-08
+- `DOCUMENTATION.md`: frontend stack corrected from stale Next.js 16 to React 19 + Vite 7 (the Next.js to React migration), and the Payments endpoint list corrected to the real `PaymentController` paths (`/api/payment/esewa`, `/verify`, `/stripe/initiate`, `/stripe/process`)
+- Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers, the frontend still holds 44 page components, and the Stripe endpoints are still in `PaymentController`
+
 ## 2026-11-07
 - README: `.env.example` row now states it is read by `src/lib/config.ts`, where `VITE_API_URL` defaults to `http://localhost:8081/api` when unset, counted from `.env.example` and `src/lib/config.ts`
 - Re-verified: the 12 controller names in the README (auth, admin, properties, payments, notifications, contact, feedback, images, availability subscriptions, property requests, room requests, subscriptions) match the 12 files in `controller/`, and the Stripe endpoints `/stripe/initiate` + `/stripe/process` are still in `PaymentController`
