@@ -41,7 +41,7 @@ GrihaMate is a modern room rental platform in Nepal that connects verified landl
 ## Technical Stack
 
 ### Frontend
-- **Framework**: Next.js 16 (React 19)
+- **Framework**: React 19 + Vite 7 (migrated from Next.js — see `REACT_MIGRATION_SUMMARY.md`)
 - **Styling**: Tailwind CSS
 - **UI Components**: Radix UI, shadcn/ui
 - **State Management**: React Hooks
@@ -81,9 +81,10 @@ GrihaMate is a modern room rental platform in Nepal that connects verified landl
 - `POST /api/images/upload-property-document` - Upload property document
 
 ### Payments
-- `POST /api/payments/esewa/initiate` - Initiate eSewa payment
-- `POST /api/payments/esewa/verify` - Verify eSewa payment
-- `POST /api/payments/card/process` - Process card payment (Sprite)
+- `POST /api/payment/esewa` - Initiate eSewa payment
+- `POST /api/payment/verify` - Verify eSewa payment
+- `POST /api/payment/stripe/initiate` - Initiate Stripe card payment (test mode)
+- `POST /api/payment/stripe/process` - Process Stripe card payment (test mode)
 
 ### Admin
 - `GET /api/admin/users` - Get all users (admin only)
