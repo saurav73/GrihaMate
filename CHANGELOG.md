@@ -2,6 +2,12 @@
 
 
 
+## 2026-11-09
+- Fixed a broken card-payment flow: `PropertyDetail.tsx` called `paymentAPI.initiateSprite()` / `processSprite()`, which do not exist — `paymentAPI` only defines `initiateStripe()` / `processStripe()` (backed by `/api/payment/stripe/initiate` and `/stripe/process`), so clicking "Pay with Card" threw a TypeError; the three call sites now use the Stripe methods that exist
+- `PaymentController`: corrected the misleading "Sprite Test API" comments — the Stripe flow is fully simulated in test mode (test transaction id fabricated, card validated locally, no external gateway call) and the `SPRITE_API_KEY` / `SPRITE_API_SECRET` env vars are read but never sent anywhere
+- `DOCUMENTATION.md`: the "Sprite" gateway story is corrected throughout — no `sprite.api.*` properties exist; the setup list, feature list, tech stack, payment-flow section, env-var block and troubleshooting note now describe the simulated Stripe test-mode flow
+- Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers, the frontend still holds 44 page components, and no `Sprite` references remain in the frontend sources
+
 ## 2026-11-08
 - `DOCUMENTATION.md`: frontend stack corrected from stale Next.js 16 to React 19 + Vite 7 (the Next.js to React migration), and the Payments endpoint list corrected to the real `PaymentController` paths (`/api/payment/esewa`, `/verify`, `/stripe/initiate`, `/stripe/process`)
 - Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers, the frontend still holds 44 page components, and the Stripe endpoints are still in `PaymentController`
