@@ -267,7 +267,7 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
         form.submit()
       } else {
         setShowPayment(true)
-        await paymentAPI.initiateSprite(property.price, property.id)
+        await paymentAPI.initiateStripe(property.price, property.id)
         toast.info("Payment form ready", {
           position: "top-right",
           autoClose: 2000,
@@ -978,7 +978,7 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
         </DialogContent>
       </Dialog>
 
-      {/* Sprite Payment Dialog */}
+      {/* Stripe Payment Dialog */}
       <Dialog open={showPayment} onOpenChange={setShowPayment} >
         <DialogContent className="sm:max-w-md" aria-describedby="payment-dialog-description">
           <DialogHeader>
@@ -1051,8 +1051,8 @@ export default function PropertyDetailPage({ isDashboard = false }: { isDashboar
                   if (!property) return
                   setProcessingPayment(true)
                   try {
-                    const result = await paymentAPI.initiateSprite(property.price, property.id)
-                    await paymentAPI.processSprite(result.transactionId, cardDetails)
+                    const result = await paymentAPI.initiateStripe(property.price, property.id)
+                    await paymentAPI.processStripe(result.transactionId, cardDetails)
                     toast.success("Payment processed successfully!", {
                       position: "top-right",
                       autoClose: 5000,
