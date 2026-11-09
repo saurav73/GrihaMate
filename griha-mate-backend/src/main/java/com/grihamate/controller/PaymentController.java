@@ -212,8 +212,11 @@ public class PaymentController {
     public ResponseEntity<Map<String, Object>> initiateStripePayment(
             @RequestBody Map<String, Object> payload) {
 
-        // Sprite Test API integration
-        // In production, use actual Sprite API credentials
+        // Simulated test-mode card payment: no external gateway is called.
+        // SPRITE_API_KEY / SPRITE_API_SECRET are read below but never sent
+        // anywhere; the flow just fabricates a test transaction id and
+        // redirects to the frontend Stripe form (/payment/stripe), where
+        // /stripe/process validates the card locally.
         String spriteApiKey = System.getenv("SPRITE_API_KEY") != null
                 ? System.getenv("SPRITE_API_KEY")
                 : "test_api_key";
