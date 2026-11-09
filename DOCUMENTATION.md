@@ -26,7 +26,7 @@ GrihaMate is a modern room rental platform in Nepal that connects verified landl
 
 ### 4. Payment Integration
 - **eSewa Payment**: Integrated eSewa payment gateway for rent payments
-- **Card Payment**: Sprite test API integration for card payments
+- **Card Payment**: Simulated Stripe test-mode flow for card payments (no real gateway call — `POST /api/payment/stripe/initiate` fabricates a test transaction and the frontend Stripe form collects test card details)
 - **Payment Flow**: Users can pay directly from property detail pages
 
 ### 5. Contact System
@@ -55,7 +55,7 @@ GrihaMate is a modern room rental platform in Nepal that connects verified landl
 - **Security**: Spring Security with JWT
 - **File Storage**: Cloudinary
 - **Email**: Gmail SMTP
-- **Payment**: eSewa, Sprite (test API)
+- **Payment**: eSewa, Stripe (simulated test mode)
 
 ## API Endpoints
 
@@ -101,7 +101,7 @@ GrihaMate is a modern room rental platform in Nepal that connects verified landl
    - Gmail SMTP credentials (App Password)
    - Cloudinary credentials
    - eSewa credentials
-   - Sprite API credentials
+   - (Card payments need no gateway credentials: the Stripe flow is simulated in test mode)
 3. Run: `mvn spring-boot:run`
 4. Server starts on `http://localhost:8081`
 
@@ -137,11 +137,11 @@ GrihaMate is a modern room rental platform in Nepal that connects verified landl
 5. After payment, eSewa redirects to callback URL
 6. Backend verifies payment via `/api/payments/esewa/verify`
 
-### Sprite Card Payment
+### Stripe Card Payment (simulated test mode)
 1. User clicks "Pay with Card"
-2. Frontend opens Sprite payment form
+2. Frontend opens the Stripe payment form (`/payment/stripe`)
 3. User enters card details (test mode)
-4. Payment processed via Sprite API
+4. No external gateway is called: `POST /api/payment/stripe/initiate` fabricates a test transaction id and `POST /api/payment/stripe/process` validates the card locally (accepts test cards starting with 4, 5 or 3)
 5. Confirmation sent to user
 
 ## Security Features
@@ -179,9 +179,10 @@ cloudinary.api.secret=your-api-secret
 esewa.product.code=EPAYTEST
 esewa.secret=your-secret
 
-# Sprite
-sprite.api.key=your-sprite-key
-sprite.api.secret=your-sprite-secret
+# Card payments (simulated Stripe test mode)
+# No gateway credentials are configured here: the Stripe flow is
+# simulated in PaymentController. SPRITE_API_KEY / SPRITE_API_SECRET
+# environment variables are read there but are not sent to any API.
 ```
 
 ### Frontend (`.env.local`)
@@ -227,7 +228,7 @@ VITE_API_URL=http://localhost:8081/api
 - Ensure email service is configured
 
 ### Payment Issues
-- Verify eSewa/Sprite credentials
+- Verify eSewa credentials (card payments are simulated in test mode, no gateway credentials)
 - Check payment callback URLs
 - Review payment logs
 
