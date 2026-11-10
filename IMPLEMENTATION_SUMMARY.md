@@ -51,14 +51,14 @@
 ### 3. Payment Integration
 - ✅ UI for eSewa and Card payment
 - ✅ Backend PaymentController structure exists
-- ⚠️ Sprite payment API integration needed
+- ⚠️ Stripe payment API integration needed
 - ⚠️ Payment callback handling needed
 
 ## ❌ Still Needed
 
-### 1. Sprite Payment Integration
-- Add Sprite test API credentials to application.properties
-- Implement Sprite payment form
+### 1. Stripe Payment Integration
+- Add Stripe test API credentials to application.properties
+- Implement Stripe payment form
 - Handle payment callbacks
 - Store payment transactions
 
@@ -118,7 +118,7 @@ To test login and registration:
    - Test profile image upload
 
 2. **Complete Payment Integration:**
-   - Add Sprite API credentials
+   - Add Stripe API credentials
    - Implement payment forms
    - Test payment flows
 
@@ -172,7 +172,7 @@ To test login and registration:
 
 3. **Payment:**
    - eSewa integration exists but needs testing
-   - Sprite integration not yet implemented
+   - Stripe integration not yet implemented
 
 4. **Contact:**
    - UI exists but backend API not implemented
@@ -181,7 +181,7 @@ To test login and registration:
 
 1. Add property coordinates to database
 2. Implement contact API endpoint
-3. Add Sprite payment integration
+3. Add Stripe payment integration
 4. Connect admin panel to backend API
 5. Test all flows with TestSprite
 
