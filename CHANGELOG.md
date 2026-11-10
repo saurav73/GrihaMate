@@ -2,6 +2,12 @@
 
 
 
+## 2026-11-10
+- README: the Stripe card-payment endpoints now carry their full paths (`/api/payment/stripe/initiate`, `/api/payment/stripe/process`) — the Payments line listed the bare `/stripe/*` paths, which 404 because `PaymentController` is mapped to `/api/payment`
+- `COMPLETION_STATUS.md`: the Sprite gateway name is corrected to Stripe throughout — the completed card-payment feature, the endpoint list (`/api/payment/sprite/*` -> `/api/payment/stripe/*`), and the production next step, which wrongly told setup to add real Sprite API keys (the flow is simulated; the `SPRITE_API_KEY` / `SPRITE_API_SECRET` env vars are read but never sent anywhere, so there is no production gateway to enable)
+- `IMPLEMENTATION_SUMMARY.md`: the Sprite gateway name is corrected to Stripe in the payment-integration items; the `TestSprite` testing-tool references stay untouched, as in the other doc
+- Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers, the frontend still holds 44 page components across the 8 groups (admin 10, public 13, auth 5, landlord 6, seeker 6, payment 2, property 1, user 1) and 74 component files (12 top-level, 57 `ui/`, 2 `admin/`, 2 `landlord/`, 1 `payment/`), and no `Sprite` references remain outside the `SPRITE_API_KEY` / `SPRITE_API_SECRET` env-var names in `PaymentController` and the `TestSprite` tool references
+
 ## 2026-11-09
 - Fixed a broken card-payment flow: `PropertyDetail.tsx` called `paymentAPI.initiateSprite()` / `processSprite()`, which do not exist — `paymentAPI` only defines `initiateStripe()` / `processStripe()` (backed by `/api/payment/stripe/initiate` and `/stripe/process`), so clicking "Pay with Card" threw a TypeError; the three call sites now use the Stripe methods that exist
 - `PaymentController`: corrected the misleading "Sprite Test API" comments — the Stripe flow is fully simulated in test mode (test transaction id fabricated, card validated locally, no external gateway call) and the `SPRITE_API_KEY` / `SPRITE_API_SECRET` env vars are read but never sent anywhere
