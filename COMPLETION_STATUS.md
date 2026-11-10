@@ -33,7 +33,7 @@
 
 ### 5. Payment Integration ✅
 - ✅ eSewa payment integration (initiate and verify)
-- ✅ Sprite card payment integration (test mode)
+- ✅ Stripe card payment integration (simulated test mode)
 - ✅ Payment dialog/form for card payments
 - ✅ Payment API endpoints
 - ✅ Payment success/failure handling
@@ -84,8 +84,8 @@
 
 ### Payment
 - `POST /api/payment/esewa` - Initiate eSewa payment
-- `POST /api/payment/sprite/initiate` - Initiate Sprite payment
-- `POST /api/payment/sprite/process` - Process Sprite payment
+- `POST /api/payment/stripe/initiate` - Initiate Stripe card payment (test mode)
+- `POST /api/payment/stripe/process` - Process Stripe card payment (test mode)
 - `POST /api/payment/verify` - Verify payment
 
 ### Admin
@@ -137,7 +137,7 @@
 
 ### Payment
 - [ ] eSewa payment flow
-- [ ] Sprite card payment (test mode)
+- [ ] Stripe card payment (simulated test mode)
 - [ ] Payment verification
 
 ### Admin
@@ -148,8 +148,8 @@
 
 ## Next Steps for Production
 
-1. **Add Sprite Production Credentials**
-   - Update `application.properties` with real Sprite API keys
+1. **Card payments: no production gateway to enable**
+   - The card flow is a simulated Stripe test-mode flow (test transaction id fabricated, card validated locally, no external gateway call); the `SPRITE_API_KEY` / `SPRITE_API_SECRET` env vars are read but never sent anywhere, so there are no production gateway credentials to add
    - Test payment flow in production mode
 
 2. **Add Property Coordinates**
@@ -183,7 +183,7 @@
 - `service/PropertyService.java` - Verification enforcement
 - `controller/AdminController.java` - User verification
 - `controller/ContactController.java` - Contact functionality
-- `controller/PaymentController.java` - Added Sprite payment
+- `controller/PaymentController.java` - Added Stripe card payment (simulated test mode)
 - `config/SecurityConfig.java` - Updated security rules
 
 ### Frontend
@@ -201,7 +201,7 @@ The GrihaMate platform is now fully functional with all requested features:
 - ✅ E-commerce navbar
 - ✅ Location-based property search
 - ✅ Contact landlord functionality
-- ✅ eSewa and Sprite payment integration
+- ✅ eSewa and Stripe (simulated test mode) payment integration
 - ✅ Admin verification panel
 - ✅ Verification enforcement
 - ✅ Complete documentation
