@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Converts validation failures, runtime errors and unexpected exceptions into JSON error responses.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

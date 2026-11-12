@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * Loads users by email for Spring Security; inactive accounts are locked/disabled and roles map to ROLE_ authorities.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
