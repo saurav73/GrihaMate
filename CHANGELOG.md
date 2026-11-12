@@ -2,6 +2,10 @@
 
 
 
+## 2026-11-12
+- Docs: class-level Javadoc added to the last 14 undocumented backend classes — all nine DTOs, the security/exception-handling classes (`SecurityConfig`, `UserDetailsServiceImpl`, `JwtAuthenticationFilter`, `GlobalExceptionHandler`) and the `GrihaMateApplication` entry point; every class in the backend now carries a class-level Javadoc
+- Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers
+
 ## 2026-11-11
 - `LINTER_FIXES_PLAN.md`: section 3.1 corrected — its Sprite API framing, endpoint, and line numbers are stale since the Nov 9 Stripe correction; the note now records that `spriteApiKey` / `spriteApiSecret` live in `/stripe/initiate`, the flow is documented as simulated Stripe test mode with no production gateway, and that the unused-variable finding still stands for `expiryDate` / `cvv` / `cardholderName` in `/stripe/process` (only `cardNumber` is validated)
 - Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers, the frontend still holds 44 page components across the 8 groups (admin 10, public 13, auth 5, landlord 6, seeker 6, payment 2, property 1, user 1) and 74 component files (12 top-level, 57 `ui/`, 2 `admin/`, 2 `landlord/`, 1 `payment/`), 3 hooks and 9 `lib/` modules, and no `Sprite` references remain outside the `SPRITE_API_KEY` / `SPRITE_API_SECRET` env-var names in `PaymentController` and the `TestSprite` tool references
