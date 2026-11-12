@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+/**
+ * Registration request body: role, contact details, password and KYC documents.
+ */
 @Data
 public class RegisterRequest {
     @NotNull(message = "User type is required")

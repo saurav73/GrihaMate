@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Admin dashboard counters: user, property and request totals plus growth data.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

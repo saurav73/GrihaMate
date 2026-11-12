@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
+/**
+ * Public view of a seeker's feedback on a landlord, with the seeker's name (or Anonymous).
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

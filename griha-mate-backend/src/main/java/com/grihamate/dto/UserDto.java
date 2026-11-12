@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Public user view for API responses, including verification and subscription state.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

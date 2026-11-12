@@ -4,6 +4,9 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import com.grihamate.entity.PropertyRequest.RequestStatus;
 
+/**
+ * A seeker's inquiry on a property, with seeker and property snapshots.
+ */
 @Data
 public class PropertyRequestDto {
     private Long id;

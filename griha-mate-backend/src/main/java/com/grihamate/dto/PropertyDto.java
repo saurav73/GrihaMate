@@ -9,6 +9,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Full property view for API responses, including landlord contact details when set.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

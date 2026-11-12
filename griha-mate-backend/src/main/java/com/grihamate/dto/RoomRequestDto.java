@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * A seeker's room request: preferred location, budget and room criteria.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
