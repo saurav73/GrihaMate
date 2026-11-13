@@ -33,6 +33,11 @@ public class AdminController {
     private final com.grihamate.repository.PropertyRequestRepository propertyRequestRepository;
     private final com.grihamate.service.AvailabilitySubscriptionService availabilitySubscriptionService;
 
+    /**
+     * Returns the admin dashboard totals: user and property counts split by
+     * verification status, active room requests and property inquiries, plus
+     * the number of users created in each of the last six months.
+     */
     @GetMapping("/stats")
     public ResponseEntity<com.grihamate.dto.AdminStatsDto> getStats() {
         long totalUsers = userRepository.count();
@@ -76,6 +81,10 @@ public class AdminController {
                 .build());
     }
 
+    /**
+     * Returns every property inquiry (seeker request for a property) as DTOs,
+     * including the seeker and property details.
+     */
     @GetMapping("/property-requests")
     public ResponseEntity<List<com.grihamate.dto.PropertyRequestDto>> getAllPropertyRequests() {
         List<com.grihamate.entity.PropertyRequest> requests = propertyRequestRepository.findAll();
@@ -103,6 +112,9 @@ public class AdminController {
         return dto;
     }
 
+    /**
+     * Returns every registered user as DTOs.
+     */
     @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<User> users = userRepository.findAll();
@@ -112,6 +124,10 @@ public class AdminController {
         return ResponseEntity.ok(userDtos);
     }
 
+    /**
+     * Returns one user by id, or throws a {@code RuntimeException} ("User not found")
+     * when no user with that id exists.
+     */
     @GetMapping("/users/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         User user = userRepository.findById(id)
@@ -119,6 +135,9 @@ public class AdminController {
         return ResponseEntity.ok(UserDto.fromEntity(user));
     }
 
+    /**
+     * Returns only the users whose subscription status is PREMIUM.
+     */
     @GetMapping("/users/premium")
     public ResponseEntity<List<UserDto>> getPremiumUsers() {
         List<User> users = userRepository.findAll().stream()
@@ -130,24 +149,37 @@ public class AdminController {
         return ResponseEntity.ok(userDtos);
     }
 
+    /**
+     * Marks the user with the given id as verified.
+     */
     @PutMapping("/users/{id}/verify")
     public ResponseEntity<?> verifyUser(@PathVariable Long id) {
         userService.verifyUser(id);
         return ResponseEntity.ok(java.util.Map.of("message", "User verified successfully"));
     }
 
+    /**
+     * Marks the user with the given id as rejected.
+     */
     @PutMapping("/users/{id}/reject")
     public ResponseEntity<?> rejectUser(@PathVariable Long id) {
         userService.rejectUser(id);
         return ResponseEntity.ok(java.util.Map.of("message", "User rejected"));
     }
 
+    /**
+     * Resets the user with the given id to PENDING verification status.
+     */
     @PutMapping("/users/{id}/reset-verification")
     public ResponseEntity<?> resetUserVerificationStatus(@PathVariable Long id) {
         userService.resetUserVerificationStatus(id);
         return ResponseEntity.ok(java.util.Map.of("message", "User verification status reset to pending"));
     }
 
+    /**
+     * Downgrades the user identified by the "email" field in the request body
+     * from premium to the free plan.
+     */
     @PutMapping("/users/downgrade-subscription")
     public ResponseEntity<?> downgradeSubscription(@RequestBody java.util.Map<String, String> request) {
         String email = request.get("email");
@@ -155,12 +187,18 @@ public class AdminController {
         return ResponseEntity.ok(java.util.Map.of("message", "Subscription downgraded for user: " + email));
     }
 
+    /**
+     * Downgrades the user with the given id from premium to the free plan.
+     */
     @PutMapping("/users/{id}/downgrade-subscription")
     public ResponseEntity<?> downgradeSubscriptionById(@PathVariable Long id) {
         userService.downgradeToFreeById(id);
         return ResponseEntity.ok(java.util.Map.of("message", "Subscription downgraded successfully"));
     }
 
+    /**
+     * Returns every property listing as DTOs.
+     */
     @GetMapping("/properties")
     public ResponseEntity<List<PropertyDto>> getAllProperties() {
         List<Property> properties = propertyRepository.findAll();
@@ -170,6 +208,9 @@ public class AdminController {
         return ResponseEntity.ok(propertyDtos);
     }
 
+    /**
+     * Returns the property listings owned by the landlord with the given id.
+     */
     @GetMapping("/users/{id}/properties")
     public ResponseEntity<List<PropertyDto>> getPropertiesByLandlord(@PathVariable Long id) {
         List<Property> properties = propertyRepository.findAll().stream()
@@ -181,6 +222,12 @@ public class AdminController {
         return ResponseEntity.ok(propertyDtos);
     }
 
+    /**
+     * Marks the property with the given id as verified, emails the landlord the
+     * VERIFIED status, and notifies seekers whose room requests or availability
+     * subscriptions match it. A failed email or notification is logged and does
+     * not change the success response.
+     */
     @PutMapping("/properties/{id}/verify")
     public ResponseEntity<?> verifyProperty(@PathVariable Long id) {
         Property property = propertyRepository.findById(id)
@@ -211,6 +258,11 @@ public class AdminController {
         return ResponseEntity.ok(java.util.Map.of("message", "Property verified successfully"));
     }
 
+    /**
+     * Marks the property with the given id as not verified and emails the
+     * landlord the REJECTED status. A failed email is logged and does not
+     * change the success response.
+     */
     @PutMapping("/properties/{id}/reject")
     public ResponseEntity<?> rejectProperty(@PathVariable Long id) {
         Property property = propertyRepository.findById(id)
