@@ -2,6 +2,10 @@
 
 
 
+## 2026-11-13
+- Docs: method-level Javadoc added to the last 20 undocumented controller endpoints — all 14 `AdminController` endpoints (dashboard stats, user and property management, verification and subscription changes) and the 6 endpoints in `FeedbackController`, `NotificationController` and `ContactController`, including their role checks and 400 cases
+- Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers
+
 ## 2026-11-12
 - Docs: class-level Javadoc added to the last 14 undocumented backend classes — all nine DTOs, the security/exception-handling classes (`SecurityConfig`, `UserDetailsServiceImpl`, `JwtAuthenticationFilter`, `GlobalExceptionHandler`) and the `GrihaMateApplication` entry point; every class in the backend now carries a class-level Javadoc
 - Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers
