@@ -17,6 +17,10 @@ import java.util.Map;
 public class NotificationController {
     private final EmailService emailService;
 
+    /**
+     * Sends an HTML email to the address in the "to" field, with the given
+     * subject and body. Returns 400 when any of the three fields is missing.
+     */
     @PostMapping("/email")
     public ResponseEntity<?> sendEmail(@RequestBody Map<String, String> request) {
         String to = request.get("to");

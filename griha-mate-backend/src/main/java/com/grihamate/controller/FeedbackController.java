@@ -21,6 +21,10 @@ import java.util.Map;
 public class FeedbackController {
     private final FeedbackService feedbackService;
 
+    /**
+     * Submits feedback for the signed-in seeker, taking the comment and rating
+     * from the request body. Seekers only.
+     */
     @PostMapping("/submit")
     @PreAuthorize("hasRole('SEEKER')")
     public ResponseEntity<FeedbackDto> submitFeedback(@RequestBody Map<String, Object> request, Principal principal) {
@@ -29,12 +33,19 @@ public class FeedbackController {
         return ResponseEntity.ok(feedbackService.submitFeedback(principal.getName(), comment, rating));
     }
 
+    /**
+     * Returns all submitted feedback. Admins only.
+     */
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<FeedbackDto>> getAllFeedbacks() {
         return ResponseEntity.ok(feedbackService.getAllFeedback());
     }
 
+    /**
+     * Deletes the feedback with the given id. Admins only; a missing id
+     * returns 400 with the error message instead of deleting anything.
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> deleteFeedback(@PathVariable Long id) {
@@ -46,6 +57,10 @@ public class FeedbackController {
         }
     }
 
+    /**
+     * Reports whether the signed-in seeker has already submitted feedback.
+     * Seekers only.
+     */
     @GetMapping("/check")
     @PreAuthorize("hasRole('SEEKER')")
     public ResponseEntity<Map<String, Boolean>> checkFeedbackStatus(Principal principal) {

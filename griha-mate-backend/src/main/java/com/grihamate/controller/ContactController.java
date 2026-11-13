@@ -25,6 +25,14 @@ public class ContactController {
     private final UserRepository userRepository;
     private final EmailService emailService;
 
+    /**
+     * Lets the signed-in seeker contact the landlord of the given property by
+     * email. Both the seeker and the landlord must be verified, otherwise the
+     * request is rejected with 400. The message defaults to an expression of
+     * interest in the property and the phone number defaults to the seeker's
+     * own; a confirmation email goes to the seeker and the landlord's contact
+     * details come back in the response.
+     */
     @PostMapping("/landlord/{propertyId}")
     public ResponseEntity<?> contactLandlord(
             @PathVariable Long propertyId,
