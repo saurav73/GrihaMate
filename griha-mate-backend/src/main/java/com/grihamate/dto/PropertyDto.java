@@ -42,6 +42,13 @@ public class PropertyDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    /**
+     * Builds the public view of a property listing, including the landlord's contact
+     * details and the listing's location, price, size and verification state.
+     *
+     * @param property persisted property entity
+     * @return DTO carrying the listing's fields for API responses
+     */
     public static PropertyDto fromEntity(Property property) {
         PropertyDto dto = new PropertyDto();
         dto.setId(property.getId());

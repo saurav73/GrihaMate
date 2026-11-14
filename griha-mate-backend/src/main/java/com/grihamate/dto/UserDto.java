@@ -32,6 +32,13 @@ public class UserDto {
     private LocalDateTime subscriptionExpiry;
     private LocalDateTime createdAt;
 
+    /**
+     * Builds the public view of a user account, including role, verification and
+     * subscription state. The password hash is never copied into the DTO.
+     *
+     * @param user persisted user entity
+     * @return DTO carrying the user's public profile fields for API responses
+     */
     public static UserDto fromEntity(User user) {
         return new UserDto(
                 user.getId(),

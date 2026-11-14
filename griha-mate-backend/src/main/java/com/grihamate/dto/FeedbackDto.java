@@ -19,6 +19,13 @@ public class FeedbackDto {
     private Integer rating;
     private LocalDateTime createdAt;
 
+    /**
+     * Builds the public view of a feedback entry. The seeker's name is shown, or
+     * "Anonymous" when the feedback has no linked seeker.
+     *
+     * @param feedback persisted feedback entity
+     * @return DTO carrying the feedback's id, seeker name, comment, rating and timestamp
+     */
     public static FeedbackDto fromEntity(Feedback feedback) {
         FeedbackDto dto = new FeedbackDto();
         dto.setId(feedback.getId());

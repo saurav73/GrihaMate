@@ -49,6 +49,13 @@ public class PasswordResetToken {
         }
     }
 
+    /**
+     * Checks whether this reset token has passed its expiry time. Expired tokens are
+     * rejected by {@code UserService#validatePasswordResetToken} and
+     * {@code UserService#resetPassword}.
+     *
+     * @return true if the current time is past the token's expiry date
+     */
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(expiryDate);
     }

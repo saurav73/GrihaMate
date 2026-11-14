@@ -98,6 +98,17 @@ public class PaymentController {
     private final com.grihamate.service.PropertyRequestService propertyRequestService;
     private final com.grihamate.service.UserService userService;
 
+    /**
+     * Builds the payment controller from the configured eSewa product code and secret,
+     * the frontend base URL used for success/failure redirects, and the services that
+     * confirm payments and upgrade subscriptions.
+     *
+     * @param productCode eSewa merchant product code
+     * @param secret eSewa secret key used to sign payment requests
+     * @param frontendUrl base URL of the frontend, for payment result redirects
+     * @param propertyRequestService service confirming a paid property request
+     * @param userService service upgrading a landlord to premium after payment
+     */
     public PaymentController(
             @Value("${esewa.product.code:EPAYTEST}") String productCode,
             @Value("${esewa.secret:8gBm/:&EnhH.1/q}") String secret,
