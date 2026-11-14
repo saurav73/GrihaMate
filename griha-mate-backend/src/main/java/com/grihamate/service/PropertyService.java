@@ -23,6 +23,11 @@ public class PropertyService {
     private final PropertyRequestRepository propertyRequestRepository;
     private final UserRepository userRepository;
 
+    /**
+     * Lists every property that is AVAILABLE and admin-verified, for the public browse page.
+     *
+     * @return available verified properties, as DTOs
+     */
     public List<PropertyDto> getAllAvailableProperties() {
         List<Property> properties = propertyRepository.findByStatusAndVerified(
                 Property.PropertyStatus.AVAILABLE, true);
@@ -31,6 +36,12 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Lists AVAILABLE verified properties in one city.
+     *
+     * @param city city to filter by
+     * @return available verified properties in that city, as DTOs
+     */
     public List<PropertyDto> getPropertiesByCity(String city) {
         List<Property> properties = propertyRepository.findByCity(city);
         return properties.stream()
@@ -39,6 +50,19 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Searches properties by city, price range, type and minimum bedrooms. Only AVAILABLE
+     * verified properties are returned; a property with an ACCEPTED or PAID request is
+     * silently flipped to RENTED (with today's rented date) and hidden, which repairs
+     * listings whose status was never updated after a request was accepted.
+     *
+     * @param city city to filter by, or null for any city
+     * @param minPrice minimum monthly price, or null
+     * @param maxPrice maximum monthly price, or null
+     * @param propertyType property type to filter by, or null
+     * @param minBedrooms minimum bedroom count, or null
+     * @return matching available verified properties, as DTOs
+     */
     public List<PropertyDto> searchProperties(String city, java.math.BigDecimal minPrice, java.math.BigDecimal maxPrice,
             Property.PropertyType propertyType, Integer minBedrooms) {
         // Pass AVAILABLE status as parameter to ensure only available properties are returned
@@ -75,6 +99,13 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Loads one property by id, for the property detail page.
+     *
+     * @param id property id
+     * @return the property, as a DTO
+     * @throws RuntimeException if no property with that id exists
+     */
     public PropertyDto getPropertyById(Long id) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Property not found"));
@@ -82,6 +113,17 @@ public class PropertyService {
     }
 
     @Transactional
+    /**
+     * Creates a new listing for a verified landlord. Free-plan landlords are limited to
+     * 2 properties. The new listing starts AVAILABLE but unverified until an admin
+     * verifies it.
+     *
+     * @param propertyDto listing details supplied by the landlord
+     * @param landlordEmail email of the landlord creating the listing
+     * @return the saved listing, as a DTO
+     * @throws RuntimeException if the landlord is missing, is not a landlord, is unverified,
+     *                          or has hit the free-plan listing limit
+     */
     public PropertyDto createProperty(PropertyDto propertyDto, String landlordEmail) {
         User landlord = userRepository.findByEmail(landlordEmail)
                 .orElseThrow(() -> new RuntimeException("Landlord not found"));
@@ -128,6 +170,13 @@ public class PropertyService {
         return PropertyDto.fromEntity(savedProperty);
     }
 
+    /**
+     * Lists every property owned by one landlord, regardless of status, for their dashboard.
+     *
+     * @param landlordEmail email of the landlord
+     * @return the landlord's properties, as DTOs
+     * @throws RuntimeException if no user with that email exists
+     */
     public List<PropertyDto> getLandlordProperties(String landlordEmail) {
         User landlord = userRepository.findByEmail(landlordEmail)
                 .orElseThrow(() -> new RuntimeException("Landlord not found"));
@@ -139,6 +188,16 @@ public class PropertyService {
     }
 
     @Transactional
+    /**
+     * Updates a listing's details. Only the owning landlord may update it; verification
+     * status is intentionally left unchanged by an edit.
+     *
+     * @param id property id
+     * @param propertyDto new listing details
+     * @param landlordEmail email of the landlord requesting the update
+     * @return the updated listing, as a DTO
+     * @throws RuntimeException if the property is missing or belongs to another landlord
+     */
     public PropertyDto updateProperty(Long id, PropertyDto propertyDto, String landlordEmail) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Property not found"));
@@ -172,6 +231,14 @@ public class PropertyService {
     }
 
     @Transactional
+    /**
+     * Deletes a listing and all of its property requests first, so the delete does not
+     * fail on the foreign-key constraint. Only the owning landlord may delete it.
+     *
+     * @param id property id
+     * @param landlordEmail email of the landlord requesting the delete
+     * @throws RuntimeException if the property is missing or belongs to another landlord
+     */
     public void deleteProperty(Long id, String landlordEmail) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Property not found"));
@@ -190,6 +257,18 @@ public class PropertyService {
     }
 
     @Transactional
+    /**
+     * Changes a listing's status. Only the owning landlord may do this. A RENTED listing
+     * cannot return to AVAILABLE until 3 months after its rented date; marking a listing
+     * RENTED stamps the rented date, and leaving RENTED clears it.
+     *
+     * @param id property id
+     * @param newStatus status to move the listing to
+     * @param landlordEmail email of the landlord requesting the change
+     * @return the updated listing, as a DTO
+     * @throws RuntimeException if the property is missing, belongs to another landlord,
+     *                          or the 3-month rented lock is still in force
+     */
     public PropertyDto updateStatus(Long id, Property.PropertyStatus newStatus, String landlordEmail) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Property not found"));
