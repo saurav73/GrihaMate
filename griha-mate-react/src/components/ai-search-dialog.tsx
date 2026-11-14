@@ -221,7 +221,7 @@ export function AISearchDialog({ onSearch }: VoiceSearchDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-primary hover:bg-primary-dark text-white rounded-xl h-12 px-6 flex items-center gap-2 flex-shrink-0 shadow-md">
+        <Button type="button" className="bg-primary hover:bg-primary-dark text-white rounded-xl h-12 px-6 flex items-center gap-2 flex-shrink-0 shadow-md">
           Voice Search
           <AudioOutlined style={{ fontSize: '16px' }} />
         </Button>
