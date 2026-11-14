@@ -36,6 +36,18 @@ public class UserService {
     private final EmailService emailService;
 
     @Transactional
+    /**
+     * Registers a new seeker or landlord. The email must be unused, and a seeker's
+     * citizenship number must not already be registered. The password is stored
+     * BCrypt-encoded. Email is treated as verified at registration (verified by OTP
+     * during signup) and the account starts VERIFIED. Landlords who supplied a property
+     * address get a PENDING property-verification record. A welcome email is attempted
+     * but a failure does not fail registration.
+     *
+     * @param request registration details (name, email, password, role, role-specific documents)
+     * @return the saved user
+     * @throws RuntimeException if the email (or the seeker's citizenship number) is already registered
+     */
     public User register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
@@ -95,6 +107,12 @@ public class UserService {
         return savedUser;
     }
 
+    /**
+     * Generates a cryptographically random URL-safe token (32 random bytes, Base64
+     * encoded) for email verification links.
+     *
+     * @return random verification token
+     */
     public String generateVerificationToken() {
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[32];
@@ -103,6 +121,13 @@ public class UserService {
     }
 
     @Transactional
+    /**
+     * Issues a fresh email-verification token (valid 1 day) and emails the verification
+     * link to a user whose email is not yet verified.
+     *
+     * @param email email address of the unverified user
+     * @throws RuntimeException if the user is missing or the email is already verified
+     */
     public void resendVerificationEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -125,6 +150,14 @@ public class UserService {
     }
 
     @Transactional
+    /**
+     * Verifies a user's email from a verification link token. The token must be unused
+     * and unexpired; it is marked used so a link works only once.
+     *
+     * @param token verification token from the email link
+     * @return true when the email was verified
+     * @throws RuntimeException if the token is unknown, already used, or expired
+     */
     public boolean verifyEmail(String token) {
         EmailVerificationToken verificationToken = tokenRepository.findByTokenAndUsedFalse(token)
                 .orElseThrow(() -> new RuntimeException("Invalid or expired verification token"));
@@ -195,6 +228,14 @@ public class UserService {
     }
 
     @Transactional
+    /**
+     * Approves a user (admin action): sets verification status to VERIFIED so the user
+     * can list properties or send requests, and emails them the outcome. A failed
+     * email does not undo the approval.
+     *
+     * @param userId id of the user to approve
+     * @throws RuntimeException if no user with that id exists
+     */
     public void verifyUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -212,6 +253,13 @@ public class UserService {
     }
 
     @Transactional
+    /**
+     * Rejects a user (admin action): sets verification status to REJECTED and emails
+     * them the outcome. A failed email does not undo the rejection.
+     *
+     * @param userId id of the user to reject
+     * @throws RuntimeException if no user with that id exists
+     */
     public void rejectUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -229,6 +277,13 @@ public class UserService {
     }
 
     @Transactional
+    /**
+     * Sends a user back to PENDING verification (admin action), for example when
+     * documents must be re-checked.
+     *
+     * @param userId id of the user
+     * @throws RuntimeException if no user with that id exists
+     */
     public void resetUserVerificationStatus(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -236,12 +291,27 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /**
+     * Loads a user by email address.
+     *
+     * @param email email address to look up
+     * @return the user
+     * @throws RuntimeException if no user with that email exists
+     */
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @Transactional
+    /**
+     * Upgrades a landlord to the PREMIUM subscription for 3 months from today.
+     * Only landlords may hold a premium subscription.
+     *
+     * @param email email of the landlord
+     * @return the upgraded user, as a DTO
+     * @throws RuntimeException if the user is missing or is not a landlord
+     */
     public UserDto upgradeToPremium(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -257,6 +327,14 @@ public class UserService {
     }
 
     @Transactional
+    /**
+     * Upgrades a user to PREMIUM for 3 months by id (used after a payment callback,
+     * where only the user id is known). Unlike {@link #upgradeToPremium(String)} this
+     * does not check the role.
+     *
+     * @param id id of the user to upgrade
+     * @throws RuntimeException if no user with that id exists
+     */
     public void upgradeToPremiumById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -266,6 +344,13 @@ public class UserService {
     }
 
     @Transactional
+    /**
+     * Downgrades a user to the FREE subscription by email (used when a premium
+     * subscription expires).
+     *
+     * @param email email of the user
+     * @throws RuntimeException if no user with that email exists
+     */
     public void downgradeToFree(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -274,6 +359,13 @@ public class UserService {
     }
 
     @Transactional
+    /**
+     * Downgrades a user to the FREE subscription by id (used by the scheduled
+     * expiry check, where only the user id is known).
+     *
+     * @param userId id of the user
+     * @throws RuntimeException if no user with that id exists
+     */
     public void downgradeToFreeById(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
