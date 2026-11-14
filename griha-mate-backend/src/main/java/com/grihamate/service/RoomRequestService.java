@@ -28,6 +28,16 @@ public class RoomRequestService {
     private final EmailService emailService;
 
     @Transactional
+    /**
+     * Creates a room-wanted request for a verified seeker. Each seeker may have only one
+     * active request at a time. After saving, existing AVAILABLE verified properties are
+     * checked and the seeker is emailed about any match.
+     *
+     * @param dto wanted-room criteria (city, price range, bedrooms, property type, ...)
+     * @param seeker authenticated seeker creating the request
+     * @return the saved request, as a DTO
+     * @throws RuntimeException if the seeker is unverified or already has an active request
+     */
     public RoomRequestDto createRequest(RoomRequestDto dto, User seeker) {
         // Check if seeker is verified
         if (seeker.getVerificationStatus() != User.VerificationStatus.VERIFIED) {
@@ -64,6 +74,12 @@ public class RoomRequestService {
         return convertToDto(saved);
     }
 
+    /**
+     * Lists all room requests made by one seeker.
+     *
+     * @param seeker authenticated seeker
+     * @return the seeker's room requests, as DTOs
+     */
     public List<RoomRequestDto> getRequestsBySeeker(User seeker) {
         return roomRequestRepository.findBySeeker(seeker)
             .stream()
@@ -71,6 +87,11 @@ public class RoomRequestService {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Lists every active room request, for the landlord browse view of what seekers want.
+     *
+     * @return all active room requests, as DTOs
+     */
     public List<RoomRequestDto> getAllActiveRequests() {
         return roomRequestRepository.findByActive(true)
             .stream()
@@ -78,6 +99,12 @@ public class RoomRequestService {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Lists active room requests in one city, for landlords browsing demand by location.
+     *
+     * @param city city to filter by
+     * @return active room requests in that city, as DTOs
+     */
     public List<RoomRequestDto> getRequestsByCity(String city) {
         return roomRequestRepository.findActiveByCity(city)
             .stream()
@@ -86,6 +113,12 @@ public class RoomRequestService {
     }
 
     @Transactional
+    /**
+     * Checks a room request against every AVAILABLE verified property and emails the
+     * seeker about each match. Used when a request is created or updated.
+     *
+     * @param request room request to match properties against
+     */
     public void checkAndNotifyMatches(RoomRequest request) {
         List<Property> properties = propertyRepository.findByStatusAndVerified(
             Property.PropertyStatus.AVAILABLE, true
@@ -103,6 +136,12 @@ public class RoomRequestService {
     }
 
     @Transactional
+    /**
+     * Checks a newly available verified property against every active room request and
+     * emails each matching seeker. Unverified or non-available properties notify nobody.
+     *
+     * @param property newly available verified property
+     */
     public void checkAndNotifyForNewProperty(Property property) {
         if (property.getStatus() != Property.PropertyStatus.AVAILABLE || !property.getVerified()) {
             return;
@@ -174,6 +213,17 @@ public class RoomRequestService {
     }
 
     @Transactional
+    /**
+     * Updates one of the seeker's own room requests, changing only the fields supplied
+     * in the DTO. If the request stays active, matches are re-checked and the seeker
+     * is emailed about any new match.
+     *
+     * @param id room request id
+     * @param dto fields to change; null fields are left as-is
+     * @param seeker authenticated seeker (must own the request)
+     * @return the updated request, as a DTO
+     * @throws RuntimeException if the request is missing or belongs to another seeker
+     */
     public RoomRequestDto updateRequest(Long id, RoomRequestDto dto, User seeker) {
         RoomRequest request = roomRequestRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Room request not found"));
@@ -210,6 +260,13 @@ public class RoomRequestService {
     }
 
     @Transactional
+    /**
+     * Deletes one of the seeker's own room requests.
+     *
+     * @param id room request id
+     * @param seeker authenticated seeker (must own the request)
+     * @throws RuntimeException if the request is missing or belongs to another seeker
+     */
     public void deleteRequest(Long id, User seeker) {
         RoomRequest request = roomRequestRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Room request not found"));

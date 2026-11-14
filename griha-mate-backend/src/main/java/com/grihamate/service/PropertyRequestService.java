@@ -27,6 +27,20 @@ public class PropertyRequestService {
     private final EmailService emailService;
 
     @Transactional
+    /**
+     * Creates a rental request from a verified seeker for a property. The seeker may not
+     * request their own property, and may not open a second request while a PENDING or
+     * ACCEPTED one exists for the same property. The landlord is emailed about the new
+     * request; a failed email is printed but does not fail the request.
+     *
+     * @param seekerId id of the seeker making the request
+     * @param propertyId id of the property being requested
+     * @param message message from the seeker to the landlord
+     * @return the saved request, as a DTO
+     * @throws RuntimeException if the seeker or property is missing, the seeker is
+     *                          unverified, the property is their own, or an active
+     *                          request already exists
+     */
     public PropertyRequestDto createRequest(Long seekerId, Long propertyId, String message) {
         User seeker = userRepository.findById(seekerId)
                 .orElseThrow(() -> new RuntimeException("Seeker not found"));
@@ -78,6 +92,13 @@ public class PropertyRequestService {
         return mapToDto(savedRequest);
     }
 
+    /**
+     * Lists all rental requests made by one seeker, for their dashboard.
+     *
+     * @param seekerId id of the seeker
+     * @return the seeker's requests, as DTOs
+     * @throws RuntimeException if no user with that id exists
+     */
     public List<PropertyRequestDto> getMyRequests(Long seekerId) {
         User seeker = userRepository.findById(seekerId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -86,6 +107,13 @@ public class PropertyRequestService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Lists all rental requests received for one landlord's properties, for their dashboard.
+     *
+     * @param landlordId id of the landlord
+     * @return requests on the landlord's properties, as DTOs
+     * @throws RuntimeException if no user with that id exists
+     */
     public List<PropertyRequestDto> getLandlordRequests(Long landlordId) {
         User landlord = userRepository.findById(landlordId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -96,6 +124,19 @@ public class PropertyRequestService {
     }
 
     @Transactional
+    /**
+     * Accepts or rejects a rental request. Only the landlord of the property may change
+     * its status. Accepting marks the property RENTED (and stamps the rented date);
+     * rejecting returns the property to AVAILABLE when no other ACCEPTED/PAID request
+     * remains, subject to the 3-month rented lock when payment was completed. The
+     * seeker is emailed the new status.
+     *
+     * @param requestId id of the request
+     * @param userId id of the user changing the status (must be the landlord)
+     * @param status new status (ACCEPTED or REJECTED)
+     * @return the updated request, as a DTO
+     * @throws RuntimeException if the request is missing or the caller is not the landlord
+     */
     public PropertyRequestDto updateStatus(Long requestId, Long userId, PropertyRequest.RequestStatus status) {
         PropertyRequest request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("Request not found"));
@@ -168,6 +209,13 @@ public class PropertyRequestService {
     }
 
     @Transactional
+    /**
+     * Marks a request PAID after the payment callback confirms it, and marks the
+     * property RENTED with today's rented date.
+     *
+     * @param requestId id of the request whose payment was confirmed
+     * @throws RuntimeException if no request with that id exists
+     */
     public void confirmPayment(Long requestId) {
         PropertyRequest request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("Request not found"));
@@ -181,6 +229,15 @@ public class PropertyRequestService {
         propertyRepository.save(property);
     }
 
+    /**
+     * Finds the most recent request a seeker made for one property, so the UI can show
+     * its current state (for example a Requested button) instead of offering a new request.
+     *
+     * @param seekerId id of the seeker
+     * @param propertyId id of the property
+     * @return the most recent request, or null if the seeker never requested this property
+     * @throws RuntimeException if the seeker or property is missing
+     */
     public PropertyRequestDto getRequestBySeekerAndProperty(Long seekerId, Long propertyId) {
         User seeker = userRepository.findById(seekerId)
                 .orElseThrow(() -> new RuntimeException("Seeker not found"));
@@ -197,6 +254,15 @@ public class PropertyRequestService {
     }
 
     @Transactional
+    /**
+     * Deletes one of the seeker's own requests. Only REJECTED requests may be deleted,
+     * so an in-flight negotiation cannot be wiped by mistake.
+     *
+     * @param requestId id of the request
+     * @param userId id of the seeker requesting the delete
+     * @throws RuntimeException if the request is missing, belongs to another seeker,
+     *                          or is not REJECTED
+     */
     public void deleteRequest(Long requestId, Long userId) {
         PropertyRequest request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("Request not found"));
@@ -215,6 +281,13 @@ public class PropertyRequestService {
     }
 
     @Transactional
+    /**
+     * Deletes all of a seeker's REJECTED requests in one go, to clear a cluttered inbox.
+     *
+     * @param userId id of the seeker
+     * @return how many rejected requests were deleted
+     * @throws RuntimeException if no user with that id exists
+     */
     public int deleteAllRejectedRequests(Long userId) {
         User seeker = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
