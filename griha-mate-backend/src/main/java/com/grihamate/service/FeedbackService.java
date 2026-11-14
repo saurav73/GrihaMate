@@ -23,6 +23,16 @@ public class FeedbackService {
     private final UserRepository userRepository;
 
     @Transactional
+    /**
+     * Saves one feedback entry for a seeker. Each seeker may submit feedback only once;
+     * a second attempt is rejected.
+     *
+     * @param seekerEmail email of the seeker submitting feedback
+     * @param comment feedback text
+     * @param rating numeric rating given by the seeker
+     * @return the saved feedback, as a DTO
+     * @throws RuntimeException if the seeker is missing or has already submitted feedback
+     */
     public FeedbackDto submitFeedback(String seekerEmail, String comment, Integer rating) {
         User seeker = userRepository.findByEmail(seekerEmail)
                 .orElseThrow(() -> new RuntimeException("Seeker not found"));
@@ -42,6 +52,14 @@ public class FeedbackService {
         return FeedbackDto.fromEntity(savedFeedback);
     }
 
+    /**
+     * Checks whether a seeker has already submitted feedback, so the UI can hide the
+     * feedback form after the one allowed submission.
+     *
+     * @param seekerEmail email of the seeker to check
+     * @return true if the seeker has already submitted feedback
+     * @throws RuntimeException if no user with that email exists
+     */
     public boolean hasUserSubmittedFeedback(String seekerEmail) {
         User seeker = userRepository.findByEmail(seekerEmail)
                 .orElseThrow(() -> new RuntimeException("Seeker not found"));
@@ -49,6 +67,11 @@ public class FeedbackService {
     }
 
     @Transactional(readOnly = true)
+    /**
+     * Lists all submitted feedback with its seeker, for the admin view.
+     *
+     * @return all feedback entries, as DTOs
+     */
     public List<FeedbackDto> getAllFeedback() {
         List<Feedback> feedbacks = feedbackRepository.findAllWithSeeker();
         return feedbacks.stream()
@@ -57,6 +80,12 @@ public class FeedbackService {
     }
 
     @Transactional
+    /**
+     * Deletes one feedback entry (admin action).
+     *
+     * @param id feedback id
+     * @throws RuntimeException if no feedback with that id exists
+     */
     public void deleteFeedback(Long id) {
         Feedback feedback = feedbackRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Feedback not found"));

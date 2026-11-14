@@ -193,6 +193,16 @@ public class EmailService {
         }
     }
 
+    /**
+     * Emails a landlord the outcome of an admin's verification review of one of their
+     * properties. A send failure is logged and swallowed: the verification decision
+     * itself has already been recorded, and a missed email must not roll it back.
+     *
+     * @param toEmail landlord's email address
+     * @param userName landlord's display name
+     * @param propertyTitle title of the reviewed property
+     * @param status verification outcome (for example APPROVED or REJECTED)
+     */
     public void sendPropertyVerificationStatus(String toEmail, String userName, String propertyTitle, String status) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -489,6 +499,14 @@ public class EmailService {
         }
     }
 
+    /**
+     * Sends a raw HTML email. This is the low-level helper used for one-off messages
+     * that have no dedicated template method yet.
+     *
+     * @param to recipient email address
+     * @param subject email subject
+     * @param htmlBody HTML body of the email
+     */
     public void sendHtmlEmail(String to, String subject, String htmlBody) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
