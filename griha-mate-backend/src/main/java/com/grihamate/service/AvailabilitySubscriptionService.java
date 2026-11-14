@@ -24,6 +24,16 @@ public class AvailabilitySubscriptionService {
     private final EmailService emailService;
 
     @Transactional
+    /**
+     * Creates an active availability alert for a seeker in a city (and optionally a district).
+     * The seeker is emailed whenever a matching verified property becomes available.
+     *
+     * @param seekerEmail email of the seeker subscribing
+     * @param city preferred city
+     * @param district preferred district, or null/empty for the whole city
+     * @return the saved subscription
+     * @throws RuntimeException if no user with that email exists
+     */
     public AvailabilitySubscription subscribe(String seekerEmail, String city, String district) {
         User seeker = userRepository.findByEmail(seekerEmail)
                 .orElseThrow(() -> new RuntimeException("Seeker not found"));
@@ -37,6 +47,13 @@ public class AvailabilitySubscriptionService {
         return subscriptionRepository.save(subscription);
     }
 
+    /**
+     * Lists a seeker's active availability subscriptions.
+     *
+     * @param seekerEmail email of the seeker
+     * @return active subscriptions belonging to the seeker
+     * @throws RuntimeException if no user with that email exists
+     */
     public List<AvailabilitySubscription> getSeekerSubscriptions(String seekerEmail) {
         User seeker = userRepository.findByEmail(seekerEmail)
                 .orElseThrow(() -> new RuntimeException("Seeker not found"));
@@ -44,6 +61,13 @@ public class AvailabilitySubscriptionService {
     }
 
     @Transactional
+    /**
+     * Deactivates one of the seeker's subscriptions. Only the owning seeker may unsubscribe it.
+     *
+     * @param id subscription id
+     * @param seekerEmail email of the seeker requesting the unsubscribe
+     * @throws RuntimeException if the subscription is missing or belongs to another seeker
+     */
     public void unsubscribe(Long id, String seekerEmail) {
         AvailabilitySubscription subscription = subscriptionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Subscription not found"));
@@ -56,6 +80,14 @@ public class AvailabilitySubscriptionService {
         subscriptionRepository.save(subscription);
     }
 
+    /**
+     * Emails every seeker subscribed to a property's city (and district, when the
+     * subscription names one) about a newly verified AVAILABLE property. Unverified or
+     * non-available properties notify nobody, and a failed email for one subscriber
+     * is logged and does not stop the others.
+     *
+     * @param property newly available verified property to announce
+     */
     public void notifyMatchingSubscriptions(Property property) {
         if (!property.getVerified() || property.getStatus() != Property.PropertyStatus.AVAILABLE) {
             return;
