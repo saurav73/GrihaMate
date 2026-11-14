@@ -4,7 +4,7 @@ import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="w-full border-t-4 border-primary bg-white mt-16 pt-16 pb-8 shadow-inner">
+    <footer className="w-full border-t-4 border-primary bg-white mt-16 pt-12 pb-8 shadow-inner">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
           {/* Brand */}
@@ -13,22 +13,22 @@ export function Footer() {
               <img 
                 src="/logo.png" 
                 alt="GrihaMate Logo" 
-                className="h-14 w-14 object-contain"
+                className="h-10 w-10 object-contain"
               />
               <span className="text-xl font-bold bg-gradient-to-r from-[#2E5E99] via-[#1E4A7E] to-[#2E5E99] bg-clip-text text-transparent">GrihaMate</span>
             </div>
             <p className="text-sm text-gray-700 leading-relaxed">
               Nepal's most trusted platform for finding rooms, flats, and roommates. We make renting safer and easier.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="text-gray-600 hover:text-primary hover:scale-125 transition-all duration-300">
-                <Facebook className="h-5 w-5" />
+            <div className="flex gap-3">
+              <a href="#" aria-label="GrihaMate on Facebook" className="size-9 rounded-full border border-primary-lightest flex items-center justify-center text-gray-600 hover:bg-primary hover:border-primary hover:text-white transition-all duration-300">
+                <Facebook className="h-4 w-4" />
               </a>
-              <a href="#" className="text-gray-600 hover:text-primary hover:scale-125 transition-all duration-300">
-                <Twitter className="h-5 w-5" />
+              <a href="#" aria-label="GrihaMate on Twitter" className="size-9 rounded-full border border-primary-lightest flex items-center justify-center text-gray-600 hover:bg-primary hover:border-primary hover:text-white transition-all duration-300">
+                <Twitter className="h-4 w-4" />
               </a>
-              <a href="#" className="text-gray-600 hover:text-primary hover:scale-125 transition-all duration-300">
-                <Instagram className="h-5 w-5" />
+              <a href="#" aria-label="GrihaMate on Instagram" className="size-9 rounded-full border border-primary-lightest flex items-center justify-center text-gray-600 hover:bg-primary hover:border-primary hover:text-white transition-all duration-300">
+                <Instagram className="h-4 w-4" />
               </a>
             </div>
           </div>
@@ -106,7 +106,7 @@ export function Footer() {
         </div>
 
 
-        <div className="mt-16 border-t border-gray-100 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-12 border-t border-gray-100 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-500">© {new Date().getFullYear()} GrihaMate. All rights reserved. Designed for Nepal.</p>
           <div className="flex items-center gap-6">
             <Link to="/admin/login" className="text-[10px] text-gray-400 hover:text-primary-dark uppercase tracking-widest font-bold transition-all duration-300">

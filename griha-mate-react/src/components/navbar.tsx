@@ -1,9 +1,10 @@
 /** Top navigation bar with role-aware links and session controls. */
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { Bell, User, Menu, Home, Compass, PlusCircle, LogOut, Settings, LayoutDashboard, Heart, Info, HelpCircle, Star, MessageSquare } from "lucide-react"
+import { Bell, User, Menu, X, Home, Compass, PlusCircle, LogOut, Settings, LayoutDashboard, Heart, Info, HelpCircle, MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,6 +38,11 @@ export function Navbar() {
     } else {
       setIsLoggedIn(false)
     }
+  }, [location.pathname])
+
+  // Close the mobile menu whenever the route changes
+  useEffect(() => {
+    setIsMenuOpen(false)
   }, [location.pathname])
 
   const handleLogout = async () => {
@@ -76,7 +82,7 @@ export function Navbar() {
           <img 
             src="/logo.png" 
             alt="GrihaMate Logo" 
-            className="h-16 w-16 object-contain transition-all duration-300 group-hover:scale-110"
+            className="h-10 w-10 object-contain transition-all duration-300 group-hover:scale-110"
           />
           <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-[#2E5E99] via-[#1E4A7E] to-[#2E5E99] bg-clip-text text-transparent group-hover:from-[#3D6BA8] group-hover:via-[#2E5E99] group-hover:to-[#3D6BA8] transition-all duration-300">GrihaMate</span>
         </Link>
@@ -91,8 +97,10 @@ export function Navbar() {
                 key={item.href}
                 to={item.href}
                 className={cn(
-                  "flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary",
-                  location.pathname === item.href ? "text-primary font-bold" : "text-gray-700",
+                  "flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
+                  location.pathname === item.href
+                    ? "bg-primary-lightest text-primary font-bold"
+                    : "text-gray-700 hover:bg-primary-lightest/60 hover:text-primary",
                 )}
               >
                 <item.icon className="h-4 w-4" />
@@ -175,15 +183,24 @@ export function Navbar() {
         <button
           className="inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-primary-lightest hover:text-primary md:hidden"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-expanded={isMenuOpen}
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         >
-          <Menu className="h-6 w-6" />
+          {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
       {/* Mobile Navigation */}
+      <AnimatePresence>
       {isMenuOpen && (
-        <div className="border-t bg-white p-4 md:hidden">
-          <div className="flex flex-col gap-4">
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="border-t bg-white md:hidden overflow-hidden"
+        >
+          <div className="flex flex-col gap-1 p-4">
             {navItems.map((item) => {
               if (item.requireAuth && !isLoggedIn) return null
               if (item.requireRole && user?.role !== item.requireRole) return null
@@ -192,8 +209,8 @@ export function Navbar() {
                   key={item.href}
                   to={item.href}
                   className={cn(
-                    "flex items-center gap-2 text-lg font-medium transition-colors",
-                    location.pathname === item.href ? "text-primary font-bold" : "text-gray-700 hover:text-primary"
+                    "flex items-center gap-2 rounded-xl px-3 py-2.5 text-base font-medium transition-colors",
+                    location.pathname === item.href ? "bg-primary-lightest text-primary font-bold" : "text-gray-700 hover:bg-primary-lightest/60 hover:text-primary"
                   )}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -202,22 +219,22 @@ export function Navbar() {
                 </Link>
               )
             })}
-            <hr />
+            <hr className="my-2" />
             {isLoggedIn ? (
               <>
                 <Link to={user?.role === 'SEEKER' ? '/dashboard/seeker' : '/dashboard/landlord'} className="w-full" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start gap-2 text-lg">
+                  <Button variant="ghost" className="w-full justify-start gap-2 text-base">
                     <LayoutDashboard className="h-5 w-5" />
                     Dashboard
                   </Button>
                 </Link>
                 <Link to="/profile" className="w-full" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start gap-2 text-lg">
+                  <Button variant="ghost" className="w-full justify-start gap-2 text-base">
                     <Settings className="h-5 w-5" />
                     Settings
                   </Button>
                 </Link>
-                <Button variant="ghost" className="w-full justify-start gap-2 text-lg text-red-600" onClick={handleLogout}>
+                <Button variant="ghost" className="w-full justify-start gap-2 text-base text-red-600" onClick={handleLogout}>
                   <LogOut className="h-5 w-5" />
                   Log out
                 </Button>
@@ -225,19 +242,20 @@ export function Navbar() {
             ) : (
               <>
                 <Link to="/login" className="w-full" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="outline" className="w-full justify-start gap-2 text-lg border-primary text-primary hover:bg-primary hover:text-white">
+                  <Button variant="outline" className="w-full justify-start gap-2 text-base border-primary text-primary hover:bg-primary hover:text-white">
                     <User className="h-5 w-5" />
                     Sign In
                   </Button>
                 </Link>
                 <Link to="/register" className="w-full" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="w-full text-lg bg-primary hover:bg-primary-dark text-white">Get Started</Button>
+                  <Button className="w-full text-base bg-primary hover:bg-primary-dark text-white">Get Started</Button>
                 </Link>
               </>
             )}
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </nav>
   )
 }
