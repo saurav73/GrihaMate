@@ -1,5 +1,9 @@
 # GrihaMate Changelog
 
+## 2026-11-14
+- Docs: method-level Javadoc added to the service layer — `CloudinaryService` (all six upload/delete methods), `JwtService` (token creation, extraction and validation), `PropertyService` (all nine listing methods including the search-time RENTED repair and the 3-month re-list lock), `AvailabilitySubscriptionService`, `FeedbackService` and `EmailService` (verification-status and raw-HTML senders), `PropertyRequestService` and `RoomRequestService` (all request lifecycle methods), `UserService` (registration, email verification, admin approve/reject and premium upgrade/downgrade), the three DTO `fromEntity` converters, `PasswordResetToken.isExpired`, the app entry point and the `PaymentController` constructor
+- Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers
+
 
 
 ## 2026-11-13
