@@ -1,7 +1,9 @@
 /** Public property explore page with search, filters, voice query, and map views. */
-import { Search, SlidersHorizontal, Grid, MapIcon, Navigation } from "lucide-react"
+import { Search, SearchX, SlidersHorizontal, Grid, MapIcon, Navigation } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { AISearchDialog } from "@/components/ai-search-dialog"
@@ -16,6 +18,34 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Card } from "@/components/ui/card"
 import { parseVoiceQuery, summarizeParsedQuery } from "@/lib/nlpParser"
 import { toast } from "react-toastify"
+
+/** Card-shaped loading placeholder matching the PropertyCard layout. */
+function PropertyCardSkeleton({ variant }: { variant: 'grid' | 'list' }) {
+  if (variant === 'list') {
+    return (
+      <div className="bg-white rounded-[2rem] border border-primary-lightest p-3 flex flex-col sm:flex-row gap-4">
+        <Skeleton className="w-full sm:w-48 md:w-56 h-44 sm:h-40 rounded-2xl bg-primary-lightest" />
+        <div className="flex-1 space-y-3 py-2">
+          <Skeleton className="h-5 w-3/4 rounded-lg bg-primary-lightest" />
+          <Skeleton className="h-4 w-1/2 rounded-lg bg-primary-lightest" />
+          <Skeleton className="h-4 w-2/3 rounded-lg bg-primary-lightest" />
+          <Skeleton className="h-6 w-1/3 rounded-lg bg-primary-lightest" />
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div className="bg-white rounded-2xl border border-primary-lightest overflow-hidden flex flex-col">
+      <Skeleton className="aspect-[4/3] w-full rounded-none bg-primary-lightest" />
+      <div className="p-4 space-y-3">
+        <Skeleton className="h-5 w-3/4 rounded-lg bg-primary-lightest" />
+        <Skeleton className="h-4 w-1/2 rounded-lg bg-primary-lightest" />
+        <Skeleton className="h-4 w-2/3 rounded-lg bg-primary-lightest" />
+        <Skeleton className="h-6 w-1/3 rounded-lg bg-primary-lightest" />
+      </div>
+    </div>
+  )
+}
 
 export default function ExplorePage() {
   const [properties, setProperties] = useState<PropertyDto[]>([])
@@ -313,7 +343,7 @@ export default function ExplorePage() {
   const displayedProperties = viewMode === 'grid' ? paginatedProperties : sortedProperties
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 md:px-6 py-6 w-full">
@@ -330,14 +360,14 @@ export default function ExplorePage() {
           {/* Main Window - Unified Header + Results */}
           <div className="flex-1 min-w-0 flex flex-col gap-6">
             {/* Unified Search Header - Sticky Card spanning full width of content + map */}
-            <div className="sticky top-24 z-30 bg-slate-50/95 backdrop-blur-sm pb-2 pt-0 transition-all duration-300">
-              <Card className="flex flex-col md:flex-row gap-4 items-center p-3 md:p-4 bg-white rounded-3xl shadow-sm border border-indigo-50/50 w-full">
+            <div className="sticky top-24 z-30 bg-background/95 backdrop-blur-sm pb-2 pt-0 transition-all duration-300">
+              <Card className="flex flex-col md:flex-row gap-4 items-center p-3 md:p-4 bg-white rounded-3xl shadow-sm border border-primary-lightest w-full">
                 {/* Search Input - Maximized Length */}
                 <div className="relative flex-[4] w-full min-w-0">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
                   <Input
                     placeholder="Search by location, title..."
-                    className="pl-12 h-12 bg-gray-50/50 border-gray-100 rounded-full text-base shadow-none hover:bg-white hover:border-primary/30 focus:bg-white focus:border-primary transition-all w-full"
+                    className="pl-12 h-12 bg-primary-lightest/50 border-primary-lightest rounded-full text-base shadow-none hover:bg-white hover:border-primary/30 focus:bg-white focus:border-primary transition-all w-full"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && fetchProperties()}
@@ -353,7 +383,7 @@ export default function ExplorePage() {
                     variant={searchNearby ? "default" : "outline"}
                     size="sm"
                     onClick={handleSearchNearby}
-                    className={`h-11 rounded-full px-4 ${searchNearby ? 'bg-primary text-white' : 'border-gray-200 hover:bg-gray-50 hover:!text-gray-900'}`}
+                    className={`h-11 rounded-full px-4 ${searchNearby ? 'bg-primary text-white' : 'border-primary-lightest hover:bg-primary-lightest/60 hover:text-primary-dark'}`}
                     title={searchNearby ? "Showing properties within 5km. Click to disable." : "Click to show properties within 5km of your location"}
                   >
                     <Navigation className="size-4 mr-2" />
@@ -362,7 +392,7 @@ export default function ExplorePage() {
 
                   <Sheet open={showMobileFilters} onOpenChange={setShowMobileFilters}>
                     <SheetTrigger asChild>
-                      <Button variant="outline" size="sm" className="lg:hidden h-11 rounded-full px-5 border-gray-200 hover:bg-gray-50 hover:!text-gray-900">
+                      <Button variant="outline" size="sm" className="lg:hidden h-11 rounded-full px-5 border-primary-lightest hover:bg-primary-lightest/60 hover:text-primary-dark">
                         <SlidersHorizontal className="size-4 mr-2" /> Filters
                       </Button>
                     </SheetTrigger>
@@ -378,7 +408,7 @@ export default function ExplorePage() {
                     </SheetContent>
                   </Sheet>
 
-                  <div className="flex bg-gray-100/80 rounded-full p-1.5 h-11 items-center border border-gray-100">
+                  <div className="flex bg-primary-lightest/70 rounded-full p-1.5 h-11 items-center border border-primary-lightest">
                     <Button
                       size="sm"
                       variant="ghost"
@@ -405,16 +435,25 @@ export default function ExplorePage() {
               {/* Property Cards Column */}
               <div className="flex-1 min-w-0">
 
+                {/* Results count */}
+                {!loading && displayedProperties.length > 0 && (
+                  <p className="text-sm text-muted-foreground mb-4">
+                    <span className="font-bold text-primary-dark tabular-nums">{sortedProperties.length}</span>{" "}
+                    {sortedProperties.length === 1 ? "home" : "homes"} found
+                    {searchNearby && userLocation ? " within 5 km of you" : ""}
+                  </p>
+                )}
+
                 {/* Property Cards */}
                 <div className={`space-y-4 pb-12 ${viewMode === 'grid' ? 'w-full' : ''}`}>
                   {loading ? (
                     viewMode === 'split' ? (
                       <div className="space-y-4">
-                        {[1, 2, 3].map(i => <div key={i} className="bg-gray-200 rounded-xl h-40 animate-pulse" />)}
+                        {[1, 2, 3].map(i => <PropertyCardSkeleton key={i} variant="list" />)}
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="bg-gray-200 rounded-xl h-80 animate-pulse" />)}
+                        {[1, 2, 3, 4, 5, 6].map(i => <PropertyCardSkeleton key={i} variant="grid" />)}
                       </div>
                     )
                   ) : displayedProperties.length > 0 ? (
@@ -469,16 +508,29 @@ export default function ExplorePage() {
                       </>
                     )
                   ) : (
-                    <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-200">
-                      <p className="text-gray-500">No properties found matching your criteria.</p>
-                    </div>
+                    <Empty className="bg-white border border-dashed border-primary-light py-16">
+                      <EmptyHeader>
+                        <EmptyMedia variant="icon">
+                          <SearchX className="size-6 text-primary" />
+                        </EmptyMedia>
+                        <EmptyTitle>No homes match your search</EmptyTitle>
+                        <EmptyDescription>
+                          Try widening your price range, choosing another city, or clearing your filters to see all available homes.
+                        </EmptyDescription>
+                      </EmptyHeader>
+                      <EmptyContent>
+                        <Button onClick={handleResetFilters} className="bg-primary hover:bg-primary-dark text-white rounded-full px-6">
+                          Clear all filters
+                        </Button>
+                      </EmptyContent>
+                    </Empty>
                   )}
                 </div>
               </div>
 
               {/* Map View - Sticky */}
               {viewMode === 'split' && (
-                <div className="hidden lg:block w-[450px] shrink-0 sticky top-48 h-[calc(100vh-200px)] rounded-2xl overflow-hidden shadow-md border border-gray-200">
+                <div className="hidden lg:block w-[450px] shrink-0 sticky top-48 h-[calc(100vh-200px)] rounded-2xl overflow-hidden shadow-md border border-primary-lightest">
                   <MapViewSplit
                     properties={sortedProperties}
                     userLocation={userLocation}
