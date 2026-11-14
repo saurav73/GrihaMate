@@ -19,6 +19,14 @@ public class CloudinaryService {
 
     private final Cloudinary cloudinary;
 
+    /**
+     * Builds the Cloudinary client from the configured cloud name, API key and API secret
+     * ({@code cloudinary.cloud.name}, {@code cloudinary.api.key}, {@code cloudinary.api.secret}).
+     *
+     * @param cloudName Cloudinary cloud name
+     * @param apiKey Cloudinary API key
+     * @param apiSecret Cloudinary API secret
+     */
     public CloudinaryService(
             @Value("${cloudinary.cloud.name}") String cloudName,
             @Value("${cloudinary.api.key}") String apiKey,
@@ -30,6 +38,14 @@ public class CloudinaryService {
         ));
     }
 
+    /**
+     * Uploads a property image to the {@code grihamate/properties} folder in Cloudinary.
+     *
+     * @param file image file to upload; must not be null or empty
+     * @return secure (HTTPS) URL of the uploaded image
+     * @throws IllegalArgumentException if the file is null or empty
+     * @throws IOException if the upload to Cloudinary fails
+     */
     public String uploadImage(MultipartFile file) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty or null");
@@ -53,6 +69,14 @@ public class CloudinaryService {
         }
     }
 
+    /**
+     * Uploads a general document to the {@code grihamate/documents} folder in Cloudinary.
+     *
+     * @param file document file to upload; must not be null or empty
+     * @return secure (HTTPS) URL of the uploaded document
+     * @throws IllegalArgumentException if the file is null or empty
+     * @throws IOException if the upload to Cloudinary fails
+     */
     public String uploadDocument(MultipartFile file) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty or null");
@@ -76,6 +100,16 @@ public class CloudinaryService {
         }
     }
 
+    /**
+     * Uploads a citizenship document to the {@code grihamate/citizenship/<type>} folder,
+     * where {@code type} distinguishes the side of the document (for example front/back).
+     *
+     * @param file citizenship document file to upload; must not be null or empty
+     * @param type sub-folder identifying which side of the citizenship document this is
+     * @return secure (HTTPS) URL of the uploaded document
+     * @throws IllegalArgumentException if the file is null or empty
+     * @throws IOException if the upload to Cloudinary fails
+     */
     public String uploadCitizenship(MultipartFile file, String type) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty or null");
@@ -99,6 +133,14 @@ public class CloudinaryService {
         }
     }
 
+    /**
+     * Uploads a KYC document to the {@code grihamate/kyc} folder in Cloudinary.
+     *
+     * @param file KYC document file to upload; must not be null or empty
+     * @return secure (HTTPS) URL of the uploaded document
+     * @throws IllegalArgumentException if the file is null or empty
+     * @throws IOException if the upload to Cloudinary fails
+     */
     public String uploadKycDocument(MultipartFile file) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty or null");
@@ -122,6 +164,15 @@ public class CloudinaryService {
         }
     }
 
+    /**
+     * Uploads a property ownership document to the {@code grihamate/property-documents}
+     * folder in Cloudinary.
+     *
+     * @param file property document file to upload; must not be null or empty
+     * @return secure (HTTPS) URL of the uploaded document
+     * @throws IllegalArgumentException if the file is null or empty
+     * @throws IOException if the upload to Cloudinary fails
+     */
     public String uploadPropertyDocument(MultipartFile file) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty or null");
@@ -145,6 +196,13 @@ public class CloudinaryService {
         }
     }
 
+    /**
+     * Deletes an uploaded asset from Cloudinary by deriving its public id from the
+     * stored URL. A null or blank URL is a no-op, and a failed delete is logged
+     * rather than thrown so callers are not blocked by a stale asset reference.
+     *
+     * @param imageUrl secure URL of the asset to delete
+     */
     public void deleteImage(String imageUrl) {
         if (imageUrl == null || imageUrl.isEmpty()) {
             return;
