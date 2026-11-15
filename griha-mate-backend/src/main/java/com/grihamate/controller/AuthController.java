@@ -36,6 +36,9 @@ public class AuthController {
     private final UserDetailsService userDetailsService;
     private final EmailService emailService;
 
+    /** Registers a new user from the validated request and returns the created user profile.
+         * @param request validated registration details
+         * @return the created user, or a 400/500 response with an error message when registration fails */
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         try {
@@ -50,6 +53,10 @@ public class AuthController {
         }
     }
 
+    /** Logs a user in: rejects deactivated, unverified, or unapproved-landlord accounts, then
+         * authenticates the credentials, issues a JWT, and best-effort sends a login notification email.
+         * @param request validated email and password
+         * @return the JWT plus the user profile, or a 401/500 response with an error message */
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody AuthRequest request) {
         try {
@@ -102,6 +109,9 @@ public class AuthController {
         }
     }
 
+    /** Verifies an email address from the token sent in the verification email.
+         * @param token email verification token
+         * @return a success message, or a 400/500 response when the token is invalid or expired */
     @GetMapping("/verify-email")
     public ResponseEntity<?> verifyEmail(@RequestParam String token) {
         try {
@@ -117,6 +127,9 @@ public class AuthController {
         }
     }
 
+    /** Re-sends the verification email to the address in the request body.
+         * @param request map containing the {@code email} to re-verify
+         * @return a confirmation message, or a 500 response when sending fails */
     @PostMapping("/resend-verification")
     public ResponseEntity<?> resendVerification(@RequestBody java.util.Map<String, String> request) {
         try {
@@ -129,6 +142,9 @@ public class AuthController {
         }
     }
 
+    /** Returns the profile of the currently authenticated user.
+         * @param principal the authenticated user
+         * @return the caller's user profile */
     @GetMapping("/profile")
     public ResponseEntity<UserDto> getProfile(Principal principal) {
         User user = userRepository.findByEmail(principal.getName())
@@ -136,6 +152,9 @@ public class AuthController {
         return ResponseEntity.ok(UserDto.fromEntity(user));
     }
 
+    /** Sends a one-time email verification code to an address that is not yet registered.
+         * @param request map containing the {@code email} and optional {@code userName}
+         * @return a confirmation message, or a 400/500 response when the email is missing or already registered */
     @PostMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestBody java.util.Map<String, String> request) {
         try {
@@ -159,6 +178,9 @@ public class AuthController {
         }
     }
 
+    /** Verifies the one-time email code sent by {@link #sendOtp}.
+         * @param request map containing the {@code email} and the {@code otp} to check
+         * @return a success message with {@code verified=true}, or a 400 response for a wrong or expired code */
     @PostMapping("/verify-otp")
     public ResponseEntity<?> verifyOtp(@RequestBody java.util.Map<String, String> request) {
         try {
@@ -184,6 +206,10 @@ public class AuthController {
         }
     }
 
+    /** Starts the password-reset flow for the given email. Always returns the same success message
+         * whether or not the email exists, so the response never reveals registered addresses.
+         * @param request map containing the {@code email} to reset
+         * @return a message saying a reset link has been sent (when the email exists) */
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody java.util.Map<String, String> request) {
         try {
@@ -201,6 +227,9 @@ public class AuthController {
         }
     }
 
+    /** Checks whether a password-reset token is still valid, without resetting anything.
+         * @param request map containing the reset {@code token}
+         * @return {@code {"valid": true/false}}, or a 400 response when the token is missing */
     @PostMapping("/validate-reset-token")
     public ResponseEntity<?> validateResetToken(@RequestBody java.util.Map<String, String> request) {
         try {
@@ -217,6 +246,9 @@ public class AuthController {
         }
     }
 
+    /** Resets the password for a valid reset token; the new password must be at least 6 characters.
+         * @param request map containing the reset {@code token} and the {@code newPassword}
+         * @return a success message, or a 400 response when the token or password is invalid */
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody java.util.Map<String, String> request) {
         try {
