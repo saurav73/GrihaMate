@@ -25,6 +25,10 @@ public class RoomRequestController {
     private final RoomRequestService roomRequestService;
     private final UserRepository userRepository;
 
+    /** Posts a room request from the authenticated seeker.
+         * @param dto validated room request details
+         * @param principal the authenticated seeker
+         * @return the created room request, or a 400 response when creation fails */
     @PostMapping
     @PreAuthorize("hasRole('SEEKER')")
     public ResponseEntity<?> createRequest(@Valid @RequestBody RoomRequestDto dto, Principal principal) {
@@ -39,6 +43,9 @@ public class RoomRequestController {
         }
     }
 
+    /** Lists the room requests posted by the authenticated seeker.
+         * @param principal the authenticated seeker
+         * @return the caller's room requests */
     @GetMapping("/my-requests")
     @PreAuthorize("hasRole('SEEKER')")
     public ResponseEntity<List<RoomRequestDto>> getMyRequests(Principal principal) {
@@ -49,6 +56,8 @@ public class RoomRequestController {
         return ResponseEntity.ok(requests);
     }
 
+    /** Lists every active room request. Admin only.
+         * @return all active room requests */
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<RoomRequestDto>> getAllRequests() {
@@ -56,6 +65,9 @@ public class RoomRequestController {
         return ResponseEntity.ok(requests);
     }
 
+    /** Lists active room requests in one city. Admins and landlords only.
+         * @param city city name
+         * @return the matching room requests */
     @GetMapping("/city/{city}")
     @PreAuthorize("hasAnyRole('ADMIN', 'LANDLORD')")
     public ResponseEntity<List<RoomRequestDto>> getRequestsByCity(@PathVariable String city) {
@@ -63,6 +75,11 @@ public class RoomRequestController {
         return ResponseEntity.ok(requests);
     }
 
+    /** Updates one of the authenticated seeker's room requests.
+         * @param id room request id
+         * @param dto validated replacement request details
+         * @param principal the authenticated seeker
+         * @return the updated room request, or a 400 response when the update fails */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('SEEKER')")
     public ResponseEntity<?> updateRequest(@PathVariable Long id, 
@@ -79,6 +96,10 @@ public class RoomRequestController {
         }
     }
 
+    /** Deletes one of the authenticated seeker's room requests.
+         * @param id room request id
+         * @param principal the authenticated seeker
+         * @return a confirmation message, or a 400 response when deletion fails */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SEEKER')")
     public ResponseEntity<?> deleteRequest(@PathVariable Long id, Principal principal) {
