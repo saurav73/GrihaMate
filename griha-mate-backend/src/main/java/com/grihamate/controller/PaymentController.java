@@ -29,6 +29,11 @@ public class PaymentController {
     @Value("${app.frontend.url:http://localhost:3000}")
     private String frontendUrl;
 
+    /** Builds the signed eSewa payment form: formats the amount, derives a {@code TYPE_ID_TIMESTAMP}
+         * transaction id, and HMAC-SHA256 signs {@code total_amount,transaction_uuid,product_code}.
+         * @param payload payment request containing the amount and the booking or subscription id
+         * @param request the HTTP request (unused; kept for the eSewa form contract)
+         * @return the eSewa form fields, signature and sandbox action URL */
     @PostMapping("/esewa")
     public ResponseEntity<Map<String, Object>> initiateEsewaPayment(
             @RequestBody Map<String, Object> payload,
@@ -122,6 +127,10 @@ public class PaymentController {
         this.userService = userService;
     }
 
+    /** Verifies an eSewa callback: base64-decodes the payload, checks the HMAC signature when present,
+         * requires status {@code COMPLETE}, then confirms the booking or upgrades the subscription.
+         * @param params eSewa callback parameters ({@code data} and {@code signature})
+         * @return success with the decoded payload, or a 400 response with the failure reason */
     @PostMapping("/verify")
     public ResponseEntity<Map<String, String>> verifyPayment(
             @RequestParam Map<String, String> params) {
@@ -200,6 +209,9 @@ public class PaymentController {
         }
     }
 
+    /** eSewa success redirect target: acknowledges a completed payment.
+         * @param params eSewa redirect parameters
+         * @return a success status message */
     @GetMapping("/success")
     public ResponseEntity<Map<String, String>> paymentSuccess(
             @RequestParam Map<String, String> params) {
@@ -209,6 +221,9 @@ public class PaymentController {
         return ResponseEntity.ok(response);
     }
 
+    /** eSewa failure redirect target: acknowledges a failed or cancelled payment.
+         * @param params eSewa redirect parameters
+         * @return a failure status message */
     @GetMapping("/failure")
     public ResponseEntity<Map<String, String>> paymentFailure(
             @RequestParam Map<String, String> params) {
@@ -219,6 +234,10 @@ public class PaymentController {
     }
 
     // Stripe Card Payment Integration
+    /** Starts a test-mode Stripe card payment: fabricates a transaction id and returns the frontend
+         * Stripe form URL. No external gateway is called; the card is validated locally by {@link #processStripePayment}.
+         * @param payload payment request containing the amount
+         * @return the transaction id, amount and payment form URL */
     @PostMapping("/stripe/initiate")
     public ResponseEntity<Map<String, Object>> initiateStripePayment(
             @RequestBody Map<String, Object> payload) {
@@ -249,6 +268,10 @@ public class PaymentController {
         return ResponseEntity.ok(response);
     }
 
+    /** Processes a test-mode Stripe card payment: accepts test cards (4242 and other 3/4/5 prefixes),
+         * then confirms the booking or upgrades the subscription.
+         * @param payload card details plus the transaction id, request id and payment type
+         * @return success with the transaction id, or a 400 response for an invalid or unsupported card */
     @PostMapping("/stripe/process")
     public ResponseEntity<Map<String, String>> processStripePayment(
             @RequestBody Map<String, Object> payload) {
