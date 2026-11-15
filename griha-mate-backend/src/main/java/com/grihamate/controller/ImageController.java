@@ -19,6 +19,9 @@ import java.util.Map;
 public class ImageController {
     private final CloudinaryService cloudinaryService;
 
+    /** Uploads a property image to Cloudinary and returns its URL.
+         * @param file the image file to upload
+         * @return the hosted image URL, or a 400 response when the upload fails */
     @PostMapping("/upload")
     public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
@@ -34,6 +37,9 @@ public class ImageController {
         }
     }
 
+    /** Uploads a generic document to Cloudinary and returns its URL.
+         * @param file the document file to upload
+         * @return the hosted document URL, or a 400 response when the upload fails */
     @PostMapping("/upload-document")
     public ResponseEntity<?> uploadDocument(@RequestParam("file") MultipartFile file) {
         try {
@@ -49,6 +55,10 @@ public class ImageController {
         }
     }
 
+    /** Uploads a citizenship document (front or back, per {@code type}) to Cloudinary.
+         * @param file the citizenship image to upload
+         * @param type which side of the citizenship document this is (for example front/back)
+         * @return the hosted document URL, or a 400 response when the upload fails */
     @PostMapping("/upload-citizenship")
     public ResponseEntity<?> uploadCitizenship(
             @RequestParam("file") MultipartFile file,
@@ -66,6 +76,9 @@ public class ImageController {
         }
     }
 
+    /** Uploads a KYC document to Cloudinary and returns its URL.
+         * @param file the KYC document file to upload
+         * @return the hosted document URL, or a 400 response when the upload fails */
     @PostMapping("/upload-kyc")
     public ResponseEntity<?> uploadKyc(@RequestParam("file") MultipartFile file) {
         try {
@@ -81,6 +94,9 @@ public class ImageController {
         }
     }
 
+    /** Uploads a property ownership document to Cloudinary and returns its URL.
+         * @param file the property document file to upload
+         * @return the hosted document URL, or a 400 response when the upload fails */
     @PostMapping("/upload-property-document")
     public ResponseEntity<?> uploadPropertyDocument(@RequestParam("file") MultipartFile file) {
         try {
