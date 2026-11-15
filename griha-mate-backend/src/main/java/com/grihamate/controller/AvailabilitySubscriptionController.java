@@ -21,6 +21,10 @@ import java.util.Map;
 public class AvailabilitySubscriptionController {
     private final AvailabilitySubscriptionService subscriptionService;
 
+    /** Subscribes the authenticated seeker to availability alerts for a city/district.
+         * @param request map containing the {@code city} and {@code district} to watch
+         * @param principal the authenticated seeker
+         * @return the created availability subscription */
     @PostMapping("/subscribe")
     @PreAuthorize("hasRole('SEEKER')")
     public ResponseEntity<AvailabilitySubscription> subscribe(@RequestBody Map<String, String> request,
@@ -30,12 +34,19 @@ public class AvailabilitySubscriptionController {
         return ResponseEntity.ok(subscriptionService.subscribe(principal.getName(), city, district));
     }
 
+    /** Lists the availability subscriptions of the authenticated seeker.
+         * @param principal the authenticated seeker
+         * @return the caller's subscriptions */
     @GetMapping("/my-subscriptions")
     @PreAuthorize("hasRole('SEEKER')")
     public ResponseEntity<List<AvailabilitySubscription>> getMySubscriptions(Principal principal) {
         return ResponseEntity.ok(subscriptionService.getSeekerSubscriptions(principal.getName()));
     }
 
+    /** Cancels one of the authenticated seeker's availability subscriptions.
+         * @param id subscription id
+         * @param principal the authenticated seeker
+         * @return a confirmation message */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SEEKER')")
     public ResponseEntity<?> unsubscribe(@PathVariable Long id, Principal principal) {

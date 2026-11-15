@@ -23,6 +23,9 @@ public class SubscriptionController {
 
     private final UserService userService;
 
+    /** Upgrades the authenticated landlord to a premium subscription.
+         * @param principal the authenticated landlord
+         * @return the updated user profile with premium status */
     @PostMapping("/upgrade")
     @PreAuthorize("hasRole('LANDLORD')")
     public ResponseEntity<UserDto> upgradeToPremium(Principal principal) {
