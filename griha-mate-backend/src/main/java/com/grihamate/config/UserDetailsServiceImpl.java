@@ -21,6 +21,11 @@ import java.util.Collections;
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
+    /** Loads a user by email for Spring Security; the role becomes a single {@code ROLE_<ROLE>}
+         * authority and inactive accounts are locked and disabled.
+         * @param email the user's email address
+         * @return the security user details
+         * @throws UsernameNotFoundException when no user has that email */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)

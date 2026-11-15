@@ -35,6 +35,12 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthFilter;
 
+    /** Stateless JWT filter chain: CSRF off, CORS on, public auth and image-upload routes open,
+         * landlord/seeker/admin routes restricted by role, every other request authenticated, and the
+         * JWT filter run before the username/password filter.
+         * @param http the security builder
+         * @return the configured filter chain
+         * @throws Exception when the chain cannot be built */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -78,6 +84,8 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /** DAO authentication provider backed by the app's user-details service and BCrypt passwords.
+         * @return the authentication provider */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -86,16 +94,24 @@ public class SecurityConfig {
         return authProvider;
     }
 
+    /** Exposes Spring Security's authentication manager (used by the login endpoint).
+         * @param config authentication configuration
+         * @return the authentication manager
+         * @throws Exception when the manager cannot be created */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
+    /** BCrypt password encoder used for storing and checking user passwords.
+         * @return the BCrypt encoder */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /** CORS policy for the local frontends (ports 3000-3002): all methods and headers, credentials allowed.
+         * @return the CORS configuration source */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

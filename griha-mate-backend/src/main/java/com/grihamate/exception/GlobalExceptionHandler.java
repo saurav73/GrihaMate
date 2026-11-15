@@ -16,6 +16,9 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /** Turns bean-validation failures into a 400 response mapping each field to its error message.
+         * @param ex the validation exception
+         * @return field-to-message errors with HTTP 400 */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -27,6 +30,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
+    /** Turns unexpected runtime errors into a 400 response carrying the error message.
+         * @param ex the runtime exception
+         * @return the error message with HTTP 400 */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
         Map<String, String> error = new HashMap<>();
@@ -34,6 +40,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    /** Catch-all for anything not handled elsewhere: a 500 response carrying the error message.
+         * @param ex the unexpected exception
+         * @return the error message with HTTP 500 */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
         Map<String, String> error = new HashMap<>();

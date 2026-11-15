@@ -30,6 +30,9 @@ public class DataSeeder implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /** Runs on startup: always ensures the default admin account exists, then seeds six sample
+         * properties with a seed landlord on a fresh database; skipped entirely once properties exist.
+         * @param args command-line arguments (ignored) */
     @Override
     @Transactional
     public void run(String... args) {
