@@ -1,5 +1,9 @@
 # GrihaMate Changelog
 
+## 2026-11-16
+- Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers; every public method in the backend still carries a Javadoc (re-scanned today, zero undocumented)
+
+
 ## 2026-11-15
 - Docs: method-level Javadoc added to the last 57 undocumented public methods — all 47 controller endpoints (`Auth` 10, `Property` 9, `PropertyRequest` 7, `RoomRequest` 6, `Payment` 6, `Image` 5, `AvailabilitySubscription` 3, `Subscription` 1) plus the five `SecurityConfig` beans, `DataSeeder.run`, the three `GlobalExceptionHandler` handlers and `UserDetailsServiceImpl.loadUserByUsername`; every public method in the backend now carries a Javadoc
 - Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers
