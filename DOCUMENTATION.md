@@ -211,12 +211,12 @@ VITE_API_URL=http://localhost:8081/api
 
 ### Backend
 1. Build: `mvn clean package`
-2. Run JAR: `java -jar target/griha-mate-backend.jar`
+2. Run JAR: `java -jar target/griha-mate-backend-1.0.0.jar`
 3. Or deploy to cloud platform (Heroku, AWS, etc.)
 
 ### Frontend
 1. Build: `npm run build`
-2. Start: `npm run dev`
+2. Serve the production build: `npm run preview`
 3. Or deploy to Vercel/Netlify
 
 ## Troubleshooting
