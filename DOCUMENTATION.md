@@ -46,7 +46,7 @@ GrihaMate is a modern room rental platform in Nepal that connects verified landl
 - **UI Components**: Radix UI, shadcn/ui
 - **State Management**: React Hooks
 - **Notifications**: react-toastify
-- **API Client**: Fetch API with interceptors
+- **API Client**: Axios with interceptors
 
 ### Backend
 - **Framework**: Spring Boot (Java 17)
