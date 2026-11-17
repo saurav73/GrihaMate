@@ -1,5 +1,13 @@
 # GrihaMate Changelog
 
+## 2026-11-17
+- Fixed wrong eSewa endpoint paths in `DOCUMENTATION.md`: the Payment Integration flow cited `/api/payments/esewa/initiate` and `/api/payments/esewa/verify`, but `PaymentController` is mapped to `/api/payment` with `POST /esewa` and `POST /verify` — now matches the code and the API Endpoints section of the same document
+- Fixed the API client claim in `DOCUMENTATION.md`: the frontend uses Axios (`src/lib/api.ts` imports it), not the Fetch API
+- Fixed the deployment commands in `DOCUMENTATION.md`: the built JAR is `griha-mate-backend-1.0.0.jar` (default Maven artifactId-version name, no `finalName` in `pom.xml`), and the production build is served with `npm run preview`, not `npm run dev`
+- Closed a `.gitignore` gap: `griha-mate-react/.gitignore` now ignores all `.env.*` variants except `.env.example` — `.env.production` / `.env.staging` holding real Gemini keys were previously committable
+- Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers; the frontend still has 44 page components, 74 component files, 3 hooks and 9 `lib/` modules as the README states
+
+
 ## 2026-11-16
 - Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers; every public method in the backend still carries a Javadoc (re-scanned today, zero undocumented)
 
