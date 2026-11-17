@@ -131,11 +131,11 @@ GrihaMate is a modern room rental platform in Nepal that connects verified landl
 
 ### eSewa Integration
 1. User clicks "Pay with eSewa"
-2. Frontend calls `/api/payments/esewa/initiate`
+2. Frontend calls `POST /api/payment/esewa`
 3. Backend generates eSewa payment URL
 4. User redirected to eSewa
 5. After payment, eSewa redirects to callback URL
-6. Backend verifies payment via `/api/payments/esewa/verify`
+6. Backend verifies payment via `POST /api/payment/verify`
 
 ### Stripe Card Payment (simulated test mode)
 1. User clicks "Pay with Card"
