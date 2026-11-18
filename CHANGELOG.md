@@ -1,5 +1,12 @@
 # GrihaMate Changelog
 
+## 2026-11-18
+- Fixed a stale frontend directory name in `IMPLEMENTATION_SUMMARY.md`: the TestSprite section told readers to `cd griha-mate-frontend` and passed it as `--projectPath` / `--projectName`, but the frontend lives in `griha-mate-react` (`griha-mate-frontend` never existed in this repo) — all four references updated so the documented commands work as written
+- Fixed the frontend dev-server port in `REACT_MIGRATION_SUMMARY.md`: it cited `http://localhost:5173` (the Vite default) in three places, but `vite.config.ts` sets `server.port` to 3000
+- Removed dead code in `PaymentController.processStripePayment` (`/stripe/process`): `expiryDate`, `cvv` and `cardholderName` were extracted from the payload but never read — only `cardNumber` is validated in the simulated Stripe test-mode flow; the standing finding in `LINTER_FIXES_PLAN.md` section 3.1 is now closed and recorded there
+- Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers; the frontend still has 44 page components, 74 component files, 3 hooks and 9 `lib/` modules as the README states
+
+
 ## 2026-11-17
 - Fixed wrong eSewa endpoint paths in `DOCUMENTATION.md`: the Payment Integration flow cited `/api/payments/esewa/initiate` and `/api/payments/esewa/verify`, but `PaymentController` is mapped to `/api/payment` with `POST /esewa` and `POST /verify` — now matches the code and the API Endpoints section of the same document
 - Fixed the API client claim in `DOCUMENTATION.md`: the frontend uses Axios (`src/lib/api.ts` imports it), not the Fetch API
