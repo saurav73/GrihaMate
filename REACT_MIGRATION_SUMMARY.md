@@ -15,7 +15,7 @@ Your GrihaMate application has been successfully migrated from Next.js to React.
 
 ### New React App
 - **Location**: `griha-mate-react/`
-- **Port**: http://localhost:5173
+- **Port**: http://localhost:3000
 - **Status**: ✅ **Running and Ready**
 
 ---
@@ -107,7 +107,7 @@ cd "griha-mate-react"
 npm run dev
 ```
 
-The app will be available at **http://localhost:5173/**
+The app will be available at **http://localhost:3000/**
 
 ### Build for Production
 
@@ -260,7 +260,7 @@ If you encounter any issues:
 
 **Migration completed successfully! 🎉**
 
-Your React application is ready to use at: **http://localhost:5173/**
+Your React application is ready to use at: **http://localhost:3000/**
 
 
 
