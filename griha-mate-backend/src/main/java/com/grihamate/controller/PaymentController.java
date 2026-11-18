@@ -278,9 +278,6 @@ public class PaymentController {
 
         String transactionId = (String) payload.get("transactionId");
         String cardNumber = (String) payload.get("cardNumber");
-        String expiryDate = (String) payload.get("expiryDate");
-        String cvv = (String) payload.get("cvv");
-        String cardholderName = (String) payload.get("cardholderName");
 
         Map<String, String> response = new HashMap<>();
 

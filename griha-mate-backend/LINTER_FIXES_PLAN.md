@@ -63,6 +63,8 @@ Simply delete these unused import statements. No functionality changes.
 
 > **Correction (2026-11-11):** this section is stale — the code has moved on since the plan was written. `spriteApiKey` / `spriteApiSecret` now live in `/stripe/initiate` (lines 220-225), not `/stripe/process` lines 197-226, and the "In production, use actual Sprite API" comment is gone: `PaymentController` now documents the flow as simulated Stripe test mode (the `SPRITE_API_KEY` / `SPRITE_API_SECRET` env vars are read but never sent anywhere, and there is no production gateway to enable). The unused-variable finding itself still stands for the card fields — `expiryDate`, `cvv` and `cardholderName` are still extracted in `/stripe/process` (now lines 247-249) and never used; only `cardNumber` is validated. The recommendation below to add `@SuppressWarnings` "for future Stripe integration" is moot: the Stripe test-mode flow is the integration.
 
+> **Fixed (2026-11-18):** the three unused card-field extractions (`expiryDate`, `cvv`, `cardholderName`) were removed from `/stripe/process` — only `cardNumber` is validated in test mode, and the other fields were never read. This section's card-field finding is now closed; the `spriteApiKey` / `spriteApiSecret` part was already resolved by the move to `/stripe/initiate`.
+
 **Location:** Lines 197-226 (in `/stripe/process` endpoint)
 
 **Variables:**
