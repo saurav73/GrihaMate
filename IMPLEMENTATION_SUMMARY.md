@@ -94,20 +94,20 @@ To test login and registration:
 
 2. **Start the frontend:**
    ```bash
-   cd griha-mate-frontend
+   cd griha-mate-react
    npm run dev
    ```
 
 3. **Run TestSprite:**
    ```bash
    # Bootstrap tests
-   testsprite bootstrap --type frontend --localPort 3000 --projectPath "$(pwd)/griha-mate-frontend" --testScope codebase
+   testsprite bootstrap --type frontend --localPort 3000 --projectPath "$(pwd)/griha-mate-react" --testScope codebase
    
    # Generate test plan
-   testsprite generate-frontend-test-plan --projectPath "$(pwd)/griha-mate-frontend" --needLogin true
+   testsprite generate-frontend-test-plan --projectPath "$(pwd)/griha-mate-react" --needLogin true
    
    # Run tests
-   testsprite generate-code-and-execute --projectName griha-mate-frontend --projectPath "$(pwd)/griha-mate-frontend" --testIds []
+   testsprite generate-code-and-execute --projectName griha-mate-react --projectPath "$(pwd)/griha-mate-react" --testIds []
    ```
 
 ## Next Steps
