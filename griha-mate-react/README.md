@@ -105,23 +105,54 @@ VITE_API_URL=http://your-api-url.com/api
 
 ## 📱 Available Routes
 
+Counted from `src/App.tsx` (40 paths, plus the landlord dashboard index route and a `*` catch-all for unknown URLs):
+
+**Public**
 - `/` - Home page
 - `/about` - About GrihaMate
 - `/explore` - Browse properties
 - `/how-it-works` - How it works page
-- `/list-property` - List a new property (Landlord only)
 - `/login` - User login
 - `/register` - User registration
+- `/forgot-password` - Request a password reset
+- `/reset-password` - Set a new password
 - `/profile` - User profile
 - `/property/:id` - Property details
-- `/dashboard/seeker` - Seeker dashboard
-- `/dashboard/landlord` - Landlord dashboard
-- `/admin` - Admin panel
+- `/favorites` - Saved properties
+- `/room-request` - Request a room
 - `/contact` - Contact page
 - `/terms` - Terms of service
 - `/privacy` - Privacy policy
 - `/help` - Help center
 - `/trust-safety` - Trust & Safety
+
+**Seeker dashboard**
+- `/dashboard/seeker` - Seeker dashboard
+- `/dashboard/seeker/my-requests` - Own room requests
+- `/dashboard/seeker/feedback` - Leave feedback
+- `/dashboard/seeker/availability-requests` - Availability subscriptions
+
+**Landlord dashboard** (nested under `/dashboard/landlord`)
+- `/dashboard/landlord` - Landlord dashboard
+- `/dashboard/landlord/requests` - Incoming requests
+- `/dashboard/landlord/profile` - Landlord profile
+- `/dashboard/landlord/manage-properties` - Manage listings
+- `/dashboard/landlord/edit-property/:id` - Edit a listing
+- `/dashboard/landlord/properties/:id` - Listing details
+- `/dashboard/landlord/list-property` - List a new property
+
+**Admin**
+- `/admin` - Admin panel
+- `/admin/login` - Admin login
+- `/admin/users` and `/admin/users/:id` - Manage users
+- `/admin/properties` and `/admin/properties/:id` - Manage properties
+- `/admin/premium-users` and `/admin/premium-users/:id` - Premium users
+- `/admin/requests` - Property requests
+- `/admin/user-feedback` - User feedback
+
+**Payments**
+- `/payment/success` - Payment succeeded
+- `/payment/failure` - Payment failed
 
 ## 🔐 Authentication
 
