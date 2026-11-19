@@ -1,5 +1,11 @@
 # GrihaMate Changelog
 
+## 2026-11-19
+- Fixed the React Router version in `griha-mate-react/README.md`: the Key Features list said v6, but `package.json` pins `react-router-dom` ^7.12.0 (the Technologies section already said 7.12.0)
+- Fixed the API Configuration section in `griha-mate-react/README.md`: the snippet read the backend URL from `process.env.VITE_API_URL`, which Vite does not provide — `src/lib/api.ts` uses `import.meta.env.VITE_API_URL`; the env-file instruction now says to copy `.env.example` to `.env.local`, as `.env.example` itself instructs
+- Expanded the Available Routes list in `griha-mate-react/README.md` to match `src/App.tsx`: it listed 17 routes but the router defines 40 paths (password-reset pages, `/favorites`, `/room-request`, payment result pages, seeker sub-pages, all landlord nested routes, and most admin routes were missing) — now grouped by area and counted from the router
+- Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers, including the Stripe endpoints `/api/payment/stripe/initiate` and `/api/payment/stripe/process` in `PaymentController`; the frontend still has 44 page components, 74 component files, 3 hooks and 9 `lib/` modules as the README states, and `.env.example` still matches `src/lib/config.ts`
+
 ## 2026-11-18
 - Fixed a stale frontend directory name in `IMPLEMENTATION_SUMMARY.md`: the TestSprite section told readers to `cd griha-mate-frontend` and passed it as `--projectPath` / `--projectName`, but the frontend lives in `griha-mate-react` (`griha-mate-frontend` never existed in this repo) — all four references updated so the documented commands work as written
 - Fixed the frontend dev-server port in `REACT_MIGRATION_SUMMARY.md`: it cited `http://localhost:5173` (the Vite default) in three places, but `vite.config.ts` sets `server.port` to 3000
