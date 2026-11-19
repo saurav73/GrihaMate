@@ -94,10 +94,10 @@ The application connects to the backend API at `http://localhost:8081/api` by de
 To change this, update the `API_BASE_URL` in `src/lib/api.ts`:
 
 ```typescript
-const API_BASE_URL = process.env.VITE_API_URL || 'http://localhost:8081/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081/api';
 ```
 
-Then create a `.env` file:
+Then copy `.env.example` to `.env.local` and set it there:
 
 ```env
 VITE_API_URL=http://your-api-url.com/api
