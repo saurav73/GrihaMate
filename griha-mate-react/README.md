@@ -68,7 +68,7 @@ griha-mate-react/
 
 ## 🔑 Key Features
 
-- **React Router v6** - Client-side routing
+- **React Router v7** - Client-side routing
 - **Vite** - Fast build tool and dev server
 - **TypeScript** - Type-safe code
 - **Tailwind CSS v4** - Utility-first styling
