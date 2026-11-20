@@ -1,5 +1,10 @@
 # GrihaMate Changelog
 
+## 2026-11-20
+- README: the root structure table now records the backend and frontend rows as re-verified 2026-11-20
+- Backend README: the API Endpoints section now says it is a selected subset (17 documented endpoints) of the 67 mappings the 12 controllers expose, with a pointer to the root README's full breakdown
+- Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers, and all 17 endpoints documented in the backend README exist in the controllers (auth register/login/profile, properties CRUD + city search + my-properties, the 5 image upload endpoints, eSewa initiate/verify/success/failure); the frontend still has 44 page components across the same 8 groups, 74 component files, 3 hooks and 9 `lib/` modules as the README states, the Available Routes list still resolves to the same 40 paths (6 landlord routes are nested relative paths under `/dashboard/landlord`, plus the landlord index route and the `*` catch-all), and `.env.example` still matches `src/lib/config.ts`
+
 ## 2026-11-19
 - Fixed the React Router version in `griha-mate-react/README.md`: the Key Features list said v6, but `package.json` pins `react-router-dom` ^7.12.0 (the Technologies section already said 7.12.0)
 - Fixed the API Configuration section in `griha-mate-react/README.md`: the snippet read the backend URL from `process.env.VITE_API_URL`, which Vite does not provide — `src/lib/api.ts` uses `import.meta.env.VITE_API_URL`; the env-file instruction now says to copy `.env.example` to `.env.local`, as `.env.example` itself instructs
