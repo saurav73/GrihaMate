@@ -78,6 +78,8 @@ Spring Boot backend for the GrihaMate room rental platform in Nepal.
 
 ## API Endpoints
 
+The endpoints below are the most-used ones (auth, properties, images, payments) — a selected subset of the full surface. The backend exposes 67 endpoint mappings across 12 controllers (25 GET, 25 POST, 11 PUT, 6 DELETE), counted from the controller sources; see the structure table in the repo-root README for the full breakdown.
+
 ### Authentication Endpoints
 
 #### Register User
