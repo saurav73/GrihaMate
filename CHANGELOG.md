@@ -1,5 +1,9 @@
 # GrihaMate Changelog
 
+## 2026-11-22
+- README: the root structure table now records the `.env.example` row as re-verified 2026-11-22
+- Re-verified: `.env.example` still lists `VITE_API_URL` (default `http://localhost:8081/api`), the numbered `VITE_GEMINI_API_KEY_1/2/3` keys plus the legacy `VITE_GEMINI_API_KEY` fallback, matching `src/lib/config.ts` exactly; the backend still has 56 Java files with 67 endpoint mappings across 12 controllers and the frontend still has 44 page components, 74 component files, 3 hooks and 9 `lib/` modules as the README states
+
 ## 2026-11-20
 - README: the root structure table now records the backend and frontend rows as re-verified 2026-11-20
 - Backend README: the API Endpoints section now says it is a selected subset (17 documented endpoints) of the 67 mappings the 12 controllers expose, with a pointer to the root README's full breakdown
