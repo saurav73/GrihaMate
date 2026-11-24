@@ -1,5 +1,9 @@
 # GrihaMate Changelog
 
+## 2026-11-24
+- README: the backend, frontend and `.env.example` rows now record re-verification 2026-11-24
+- Re-verified: the backend still has 56 Java files with 67 endpoint mappings (25 GET, 25 POST, 11 PUT, 6 DELETE) across 12 controllers; the frontend still has 44 page components, 74 component files (12 top-level, 57 `ui/` including the `use-toast.ts` helper, 2 `admin/`, 2 `landlord/`, 1 `payment/`), 3 hooks and 9 `lib/` modules as the README states; `.env.example` still lists `VITE_API_URL` (default `http://localhost:8081/api`), the numbered `VITE_GEMINI_API_KEY_1/2/3` keys plus the legacy `VITE_GEMINI_API_KEY` fallback, matching `src/lib/config.ts` exactly
+
 ## 2026-11-22
 - README: the root structure table now records the `.env.example` row as re-verified 2026-11-22
 - Re-verified: `.env.example` still lists `VITE_API_URL` (default `http://localhost:8081/api`), the numbered `VITE_GEMINI_API_KEY_1/2/3` keys plus the legacy `VITE_GEMINI_API_KEY` fallback, matching `src/lib/config.ts` exactly; the backend still has 56 Java files with 67 endpoint mappings across 12 controllers and the frontend still has 44 page components, 74 component files, 3 hooks and 9 `lib/` modules as the README states
